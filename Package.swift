@@ -24,6 +24,3 @@ let package = Package(
         .Package(url: "https://github.com/tris-foundation/cryptoswift.git", majorVersion: 0),
     ]
 )
-
-let lib = Product(name: "TarantoolModule", type: .Library(.Dynamic), modules: "TarantoolModule")
-products.append(lib)
