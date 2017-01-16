@@ -136,7 +136,7 @@ extension IProtoConnection {
     }
 
     public func eval(_ expression: String, with tuple: Tuple = []) throws -> Tuple {
-        return try request(code: .call, keys: [.functionName: .string(expression), .tuple: .array(tuple)])
+        return try request(code: .eval, keys: [.expression: .string(expression), .tuple: .array(tuple)])
     }
 
     public func auth(username: String, password: String) throws {
