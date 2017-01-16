@@ -126,7 +126,6 @@ public class IProtoConnection {
 }
 
 extension IProtoConnection {
-    @discardableResult
     public func ping() throws {
         _ = try request(code: .ping)
     }
