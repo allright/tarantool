@@ -20,11 +20,11 @@ public struct Space {
     }
 
     public func select(_ iterator: Iterator, keys: Tuple = [], indexId: Int = 0, offset: Int = 0, limit: Int = Int.max) throws -> [Tuple] {
-        return try source.select(spaceId: id, iterator: iterator, keys: keys, indexId: indexId, offset: offset, limit: limit)
+        return try source.select(spaceId: id, indexId: indexId, iterator: iterator, keys: keys, offset: offset, limit: limit)
     }
 
     public func get(_ keys: Tuple, indexId: Int = 0) throws -> Tuple? {
-        return try source.get(spaceId: id, keys: keys, indexId: indexId)
+        return try source.get(spaceId: id, indexId: indexId, keys: keys)
     }
 
     public func insert(_ tuple: Tuple) throws {
@@ -36,15 +36,15 @@ public struct Space {
     }
 
     public func delete(_ keys: Tuple, indexId: Int = 0) throws {
-        try source.delete(spaceId: id, keys: keys, indexId: indexId)
+        try source.delete(spaceId: id, indexId: indexId, keys: keys)
     }
 
     public func update(_ keys: Tuple, ops: Tuple = [], indexId: Int = 0) throws {
-        try source.update(spaceId: id, keys: keys, ops: ops, indexId: indexId)
+        try source.update(spaceId: id, indexId: indexId, keys: keys, ops: ops)
     }
 
     public func upsert(_ tuple: Tuple, ops: Tuple = [], indexId: Int = 0) throws {
-        try source.upsert(spaceId: id, tuple: tuple, ops: ops, indexId: indexId)
+        try source.upsert(spaceId: id, indexId: indexId, tuple: tuple, ops: ops)
     }
 }
 

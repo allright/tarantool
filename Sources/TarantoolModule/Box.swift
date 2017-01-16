@@ -13,7 +13,7 @@ import MessagePack
 import Foundation
 
 public struct Box {
-    static func select(spaceId: UInt32, iterator: Iterator, indexId: UInt32, keys: [UInt8]) throws -> [Tuple] {
+    static func select(spaceId: UInt32, indexId: UInt32, iterator: Iterator, keys: [UInt8]) throws -> [Tuple] {
         let pointer = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
         guard let iterator = box_index_iterator(spaceId, indexId, Int32(iterator.rawValue), pointer, pointer+keys.count) else {
             throw BoxError()

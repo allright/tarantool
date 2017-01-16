@@ -18,11 +18,11 @@ public protocol SchemaProtocol {
 }
 
 public protocol DataSource {
-    func select(spaceId: Int, iterator: Iterator, keys: Tuple, indexId: Int, offset: Int, limit: Int) throws -> [Tuple]
-    func get(spaceId: Int, keys: Tuple, indexId: Int) throws -> Tuple?
+    func select(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple, offset: Int, limit: Int) throws -> [Tuple]
+    func get(spaceId: Int, indexId: Int, keys: Tuple) throws -> Tuple?
     func insert(spaceId: Int, tuple: Tuple) throws
     func replace(spaceId: Int, tuple: Tuple) throws
-    func delete(spaceId: Int, keys: Tuple, indexId: Int) throws
-    func update(spaceId: Int, keys: Tuple, ops: Tuple, indexId: Int) throws
-    func upsert(spaceId: Int, tuple: Tuple, ops: Tuple, indexId: Int) throws
+    func delete(spaceId: Int, indexId: Int, keys: Tuple) throws
+    func update(spaceId: Int, indexId: Int, keys: Tuple, ops: Tuple) throws
+    func upsert(spaceId: Int, indexId: Int, tuple: Tuple, ops: Tuple) throws
 }

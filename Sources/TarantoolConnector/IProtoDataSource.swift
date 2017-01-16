@@ -18,7 +18,7 @@ public struct IProtoDataSource: DataSource {
         self.connection = connection
     }
 
-    public func select(spaceId: Int, iterator: Iterator = .eq, keys: Tuple = [], indexId: Int = 0, offset: Int = 0, limit: Int = 1000) throws -> [Tuple] {
+    public func select(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple, offset: Int = 0, limit: Int = 1000) throws -> [Tuple] {
         let result = try connection.request(code: .select, keys: [
             .spaceId:  .int(spaceId),
             .indexId:  .int(indexId),
@@ -35,7 +35,7 @@ public struct IProtoDataSource: DataSource {
         return rows
     }
 
-    public func get(spaceId: Int, keys: Tuple, indexId: Int) throws -> Tuple? {
+    public func get(spaceId: Int, indexId: Int, keys: Tuple) throws -> Tuple? {
         let result = try connection.request(code: .select, keys: [
             .spaceId:  .int(spaceId),
             .indexId:  .int(indexId),
@@ -62,7 +62,7 @@ public struct IProtoDataSource: DataSource {
         )
     }
 
-    public func delete(spaceId: Int, keys: Tuple, indexId: Int = 0) throws {
+    public func delete(spaceId: Int, indexId: Int = 0, keys: Tuple) throws {
         _ = try connection.request(code: .delete, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
@@ -70,7 +70,7 @@ public struct IProtoDataSource: DataSource {
         )
     }
 
-    public func update(spaceId: Int, keys: Tuple, ops: Tuple, indexId: Int = 0) throws {
+    public func update(spaceId: Int, indexId: Int = 0, keys: Tuple, ops: Tuple) throws {
         _ = try connection.request(code: .update, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
@@ -79,7 +79,7 @@ public struct IProtoDataSource: DataSource {
         )
     }
 
-    public func upsert(spaceId: Int, tuple: Tuple, ops: Tuple, indexId: Int = 0) throws {
+    public func upsert(spaceId: Int, indexId: Int = 0, tuple: Tuple, ops: Tuple) throws {
         _ = try connection.request(code: .upsert, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),

@@ -14,7 +14,7 @@ let _vspace: Int = 281
 public struct Schema: SchemaProtocol {
     public let spaces: [String: Space]
     public init(_ source: DataSource) throws {
-        let tuples = try source.select(spaceId: _vspace, iterator: .all, keys: [], indexId: 0, offset: 0, limit: Int.max)
+        let tuples = try source.select(spaceId: _vspace, indexId: 0, iterator: .all, keys: [], offset: 0, limit: Int.max)
 
         var spaces: [String: Space] = [:]
         for tuple in tuples {
