@@ -13,6 +13,16 @@ import MessagePack
 import Foundation
 
 public struct Box {
+    static func count(spaceId: UInt32, indexId: UInt32, iterator: Iterator, keys: [UInt8]) throws -> Int {
+        let pKeys = try copyToInternalMemory(keys)
+        let count = box_index_count(spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeys+keys.count)
+        guard count >= 0 else {
+            throw BoxError()
+        }
+
+        return count
+    }
+
     static func select(spaceId: UInt32, indexId: UInt32, iterator: Iterator, keys: [UInt8]) throws -> [Tuple] {
         let pointer = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
         guard let iterator = box_index_iterator(spaceId, indexId, Int32(iterator.rawValue), pointer, pointer+keys.count) else {

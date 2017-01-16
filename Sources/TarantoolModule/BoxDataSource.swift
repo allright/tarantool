@@ -16,6 +16,11 @@ import MessagePack
 public struct BoxDataSource: DataSource {
     public init() {}
 
+    public func count(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple) throws -> Int {
+        let keys = MessagePack.serialize(.array(keys))
+        return try Box.count(spaceId: UInt32(spaceId), indexId: UInt32(indexId), iterator: iterator, keys: keys)
+    }
+
     public func select(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple, offset: Int, limit: Int) throws -> [Tuple] {
         let keys = MessagePack.serialize(.array(keys))
         return try Box.select(spaceId: UInt32(spaceId), indexId: UInt32(indexId), iterator: iterator, keys: keys)

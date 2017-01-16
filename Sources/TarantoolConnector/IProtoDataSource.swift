@@ -18,6 +18,14 @@ public struct IProtoDataSource: DataSource {
         self.connection = connection
     }
 
+    public func count(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple) throws -> Int {
+        let result = try connection.eval("return box.space[\(spaceId)].index[\(indexId)]:count()")
+        guard let first = result.first, let count = Int(first) else {
+            throw TarantoolError.invalidTuple(message: "expected integer, received: \(result)")
+        }
+        return count
+    }
+
     public func select(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple, offset: Int = 0, limit: Int = 1000) throws -> [Tuple] {
         let result = try connection.request(code: .select, keys: [
             .spaceId:  .int(spaceId),

@@ -19,6 +19,10 @@ public struct Space {
         self.id = id
     }
 
+    public func count(_ iterator: Iterator = .all, keys: Tuple = [], indexId: Int = 0) throws -> Int {
+        return try source.count(spaceId: id, indexId: indexId, iterator: iterator, keys: keys)
+    }
+
     public func select(_ iterator: Iterator, keys: Tuple = [], indexId: Int = 0, offset: Int = 0, limit: Int = Int.max) throws -> [Tuple] {
         return try source.select(spaceId: id, indexId: indexId, iterator: iterator, keys: keys, offset: offset, limit: limit)
     }

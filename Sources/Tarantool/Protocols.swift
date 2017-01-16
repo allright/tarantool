@@ -18,6 +18,7 @@ public protocol SchemaProtocol {
 }
 
 public protocol DataSource {
+    func count(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple) throws -> Int
     func select(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple, offset: Int, limit: Int) throws -> [Tuple]
     func get(spaceId: Int, indexId: Int, keys: Tuple) throws -> Tuple?
     func insert(spaceId: Int, tuple: Tuple) throws
