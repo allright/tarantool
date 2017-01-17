@@ -115,7 +115,7 @@ public class IProtoConnection {
         let (header, body) = try receive()
 
         //check header
-        guard let packedErrorCode = Map(header)?[0],
+        guard let packedErrorCode = Map(header)?.first?.value,
             let errorCode = Int(packedErrorCode) else {
             throw IProtoError.invalidPacket(reason: .invalidHeader)
         }

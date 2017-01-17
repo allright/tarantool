@@ -38,7 +38,10 @@ public struct IProtoDataSource: DataSource {
 
         var rows: [Tuple] = []
         for tuple in Tuple(result) {
-            rows.append(Tuple(tuple)!)
+            guard let row = Tuple(tuple) else {
+                throw TarantoolError.invalidTuple(message: "expected array, received: \(tuple)")
+            }
+            rows.append(row)
         }
         return rows
     }
