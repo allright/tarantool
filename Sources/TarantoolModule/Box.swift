@@ -19,7 +19,6 @@ public struct Box {
         guard count >= 0 else {
             throw BoxError()
         }
-
         return count
     }
 

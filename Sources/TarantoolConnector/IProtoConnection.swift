@@ -38,8 +38,28 @@ public class IProtoConnection {
         try? socket.close(silent: true)
     }
 
+    //  Request/Response:
+    //
+    //  0        5
+    //  +--------+ +============+ +===================================+
+    //  | BODY + | |            | |                                   |
+    //  | HEADER | |   HEADER   | |               BODY                |
+    //  |  SIZE  | |            | |                                   |
+    //  +--------+ +============+ +===================================+
+    //    MP_INT       MP_MAP                     MP_MAP
+
+    //  UNIFIED HEADER:
+    //
+    //  +================+================+=====================+
+    //  |                |                |                     |
+    //  |   0x00: CODE   |   0x01: SYNC   |    0x05: SCHEMA_ID  |
+    //  | MP_INT: MP_INT | MP_INT: MP_INT |  MP_INT: MP_INT     |
+    //  |                |                |                     |
+    //  +================+================+=====================+
+    //                            MP_MAP
+
     private func send(code: Code, keys: Keys = [:], sync: MessagePack? = nil, schemaId: MessagePack? = nil) throws {
-        // 2/3 - header - MP_MAP
+        // header
         var header: Map = [:]
         header[Key.code.rawValue] = code.rawValue
         if let sync = sync {
@@ -49,7 +69,7 @@ public class IProtoConnection {
             header[Key.schemaId.rawValue] = schemaId
         }
 
-        // 3/3 - body - MP_MAP
+        // body
         var body: Map = [:]
         for (key, value) in keys {
             body[key.rawValue] = value
@@ -60,7 +80,7 @@ public class IProtoConnection {
         serializer.pack(body)
         let packet = serializer.bytes
 
-        // 1/3 - header + body size
+        // body + header size
         let size = try HeaderLength(packet.count).bytes
 
         _ = try socket.write(bytes: size + packet)
@@ -107,7 +127,6 @@ public class IProtoConnection {
             throw IProtoError.badRequest(code: errorCode, message: description)
         }
 
-
         guard let response = Map(body) else {
             throw IProtoError.invalidPacket(reason: .invalidBody)
         }
@@ -117,7 +136,7 @@ public class IProtoConnection {
             return []
         }
 
-        //body packed as [0x30 : MP_MAP]
+        //body packed as [0x30 : MP_OBJECT]
         guard let data = response[Key.data.rawValue], let tuple = Tuple(data) else {
             throw IProtoError.invalidPacket(reason: .invalidBody)
         }
