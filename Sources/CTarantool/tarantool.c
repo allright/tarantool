@@ -14,11 +14,9 @@
 #include <stdlib.h>
 #include <dlfcn.h>
 
-void __attribute__ ((constructor)) tarantool_module_init(void);
-
 void resolve(void *handle, const char *symbol, void **func) {
     *func = dlsym(handle, symbol);
-    if (!func) {
+    if (*func == NULL) {
         printf("can't resolve %s", symbol);
         dlclose(handle);
         exit(1);
@@ -26,7 +24,7 @@ void resolve(void *handle, const char *symbol, void **func) {
 }
 
 void tarantool_module_init() {
-    void* handle = dlopen(NULL, RTLD_LAZY | RTLD_GLOBAL);
+    void* handle = dlopen(NULL, RTLD_NOW | RTLD_GLOBAL);
     if (!handle) {
         perror("dlopen error");
         exit(1);

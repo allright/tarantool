@@ -10,6 +10,5 @@
 
 #include <module.h>
 
-void tarantool_module_init();
 void fiber_wrapper(void* ctx, void (*closure)(void*));
 int box_error_set_wrapper(const char* file, unsigned line, uint32_t code, const char* message);
