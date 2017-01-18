@@ -138,7 +138,10 @@ public class IProtoConnection {
 
         //body packed as [0x30 : MP_OBJECT]
         guard let data = response[Key.data.rawValue], let tuple = Tuple(data) else {
-            throw IProtoError.invalidPacket(reason: .invalidBody)
+            guard let error = response[Key.error.rawValue], let description = String(error) else {
+                throw IProtoError.invalidPacket(reason: .invalidBody)
+            }
+            throw IProtoError.badRequest(code: 0x31, message: description)
         }
         return tuple
     }
