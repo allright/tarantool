@@ -55,10 +55,6 @@
 #include <sys/types.h> /* ssize_t */
 
 /** \cond public */
-void (*sayfunc)(int, const char *, int, const char *,
-const char *, ...);
-/** \endcond public */
-/** \cond public */
 
 struct fiber;
 /**

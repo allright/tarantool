@@ -32,7 +32,6 @@ void tarantool_module_init() {
         exit(1);
     }
 
-    resolve(handle, "sayfunc", (void**)&sayfunc);
     resolve(handle, "fiber_new", (void**)&fiber_new);
     resolve(handle, "fiber_yield", (void**)&fiber_yield);
     resolve(handle, "fiber_start", (void**)&fiber_start);
@@ -124,21 +123,4 @@ int fiber_invoke(va_list ap) {
 void fiber_wrapper(void* ctx, void (*closure)(void*)) {
     struct fiber *swift_closure = fiber_new("fiber_wrapper", fiber_invoke);
     fiber_start(swift_closure, ctx, closure);
-}
-
-void say_wrapper(int level, const char* file, int line, const char* message) {
-    int len = strlen(message);
-    if (len <= 0)
-        return;
-
-    char buf[len*2];
-    bzero(buf, len*2);
-    for(int i = 0, j = 0; i < len; i++, j++) {
-        buf[j] = message[i];
-        if(buf[j] == '%') {
-            buf[++j] = '%';
-        }
-    }
-
-    sayfunc(level, file, line, NULL, buf, NULL);
 }
