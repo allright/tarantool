@@ -30,8 +30,9 @@ extension Box {
         return id
     }
 
+    // will be deallocated after transaction finished.
+    // every insert, update, etc is a single statement transaction.
     static func copyToInternalMemory(_ bytes: [UInt8]) throws -> UnsafePointer<CChar> {
-        // will be deallocated on the fiber death
         guard let buffer = box_txn_alloc(bytes.count) else {
             throw TarantoolError.notEnoughMemory
         }
