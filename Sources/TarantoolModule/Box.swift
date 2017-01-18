@@ -31,14 +31,12 @@ public struct Box {
 
         var rows: [Tuple] = []
 
-        let resultPointer = UnsafeMutablePointer<OpaquePointer?>.allocate(capacity: 1)
-        defer { resultPointer.deallocate(capacity: 1) }
-
+        var result: OpaquePointer?
         while true {
-            guard box_iterator_next(iterator, resultPointer) == 0 else {
+            guard box_iterator_next(iterator, &result) == 0 else {
                 throw BoxError()
             }
-            guard let tuple = resultPointer.pointee else {
+            guard let tuple = result else {
                 break
             }
             rows.append(try unpackTuple(tuple))
@@ -48,14 +46,12 @@ public struct Box {
     }
 
     static func get(spaceId: UInt32, indexId: UInt32, keys: [UInt8]) throws -> Tuple? {
-        let resultPointer = UnsafeMutablePointer<OpaquePointer?>.allocate(capacity: 1)
-        defer { resultPointer.deallocate(capacity: 1) }
-
+        var result: OpaquePointer?
         let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        guard box_index_get(spaceId, indexId, pKeys, pKeys+keys.count, resultPointer) == 0 else {
+        guard box_index_get(spaceId, indexId, pKeys, pKeys+keys.count, &result) == 0 else {
             throw BoxError()
         }
-        guard let tuple = resultPointer.pointee else {
+        guard let tuple = result else {
             return nil
         }
         return try unpackTuple(tuple)
