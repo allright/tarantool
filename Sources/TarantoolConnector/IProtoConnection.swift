@@ -152,11 +152,11 @@ extension IProtoConnection {
         _ = try request(code: .ping)
     }
 
-    public func call(_ function: String, with tuple: Tuple = []) throws -> Tuple {
+    public func call(_ function: String, arguments tuple: Tuple = []) throws -> Tuple {
         return try request(code: .call, keys: [.functionName: .string(function), .tuple: .array(tuple)])
     }
 
-    public func eval(_ expression: String, with tuple: Tuple = []) throws -> Tuple {
+    public func eval(_ expression: String, arguments tuple: Tuple = []) throws -> Tuple {
         return try request(code: .eval, keys: [.expression: .string(expression), .tuple: .array(tuple)])
     }
 
