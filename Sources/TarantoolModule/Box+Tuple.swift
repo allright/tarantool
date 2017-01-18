@@ -33,8 +33,7 @@ extension Box {
         return tuple
     }
 
-    public static func returnTuple(_ tuple: Tuple, to context: OpaquePointer) -> Int32 {
-        let bytes = MessagePack.serialize(.array(tuple))
+    public static func returnTuple(_ bytes: [UInt8], to context: OpaquePointer) -> Int32 {
         let pointer = UnsafeRawPointer(bytes).assumingMemoryBound(to: Int8.self)
         let tuple = box_tuple_new(box_tuple_format_default(), pointer, pointer+bytes.count)
         return box_return_tuple(context, tuple)

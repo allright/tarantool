@@ -11,17 +11,24 @@
 import CTarantool
 
 public struct BoxError: Error {
-    public let code: Int
+    public let code: BoxErrorCode
     public let message: String
 
     init(){
         guard let errorPointer = box_error_last() else {
-            self.code = 0
+            self.code = .unknown
             self.message = "success"
             return
         }
-        self.code = Int(box_error_code(errorPointer))
-        self.message  = String(cString: box_error_message(errorPointer)!)
+        let errorCode = box_error_code(errorPointer)
+        let errorMessage = box_error_message(errorPointer)
+
+        self.code = BoxErrorCode(rawValue: errorCode) ?? .unknown
+        self.message = errorMessage != nil ? String(cString: errorMessage!) : "nil"
+    }
+
+    public static func returnError(code: BoxErrorCode, message: String, file: String = #file, line: Int = #line) -> BoxResult {
+        return box_error_set_wrapper(file, UInt32(line), code.rawValue, message)
     }
 }
 
