@@ -985,6 +985,20 @@ box_error_t *
 void
 (*box_error_clear)(void);
 
+/**
+ * Set the last error.
+ *
+ * \param code IPROTO error code (enum \link box_error_code \endlink)
+ * \param format (const char * ) - printf()-like format string
+ * \param ... - format arguments
+ * \returns -1 for convention use
+ *
+ * \sa enum box_error_code
+ */
+int
+(*box_error_set)(const char *file, unsigned line, uint32_t code,
+              const char *format, ...);
+
 /** \endcond public */
 /** \cond public */
 

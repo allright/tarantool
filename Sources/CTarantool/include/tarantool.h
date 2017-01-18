@@ -12,4 +12,4 @@
 
 void tarantool_module_init();
 void fiber_wrapper(void* ctx, void (*closure)(void*));
-void say_wrapper(int level, const char* file, int line, const char* message);
+int box_error_set_wrapper(const char* file, unsigned line, uint32_t code, const char* message);
