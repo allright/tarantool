@@ -9,21 +9,36 @@
  */
 
 import XCTest
+import Foundation
 @testable import TarantoolConnector
 
 class TarantoolConnectorTests: XCTestCase {
     let process = Process()
 
+    var temp: URL {
+        return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("TarantoolConnectorTests")
+    }
+
+    var lock: URL {
+        return temp.appendingPathComponent("lock")
+    }
+
     override func setUp() {
-        let script = "box.cfg{listen=3301}" +
-            "box.schema.user.create('tester', { password = 'tester', if_not_exists = true })" +
-            "box.schema.user.grant('tester', 'read,write,eval,execute', 'universe', nil, { if_not_exists = true })" +
-            "local fiber = require('fiber')" +
-            "fiber.sleep(3)" +
+        let config = temp.appendingPathComponent("init.lua")
+        let script = "box.cfg{listen=3301,snap_dir='\(temp.path)',wal_dir='\(temp.path)',vinyl_dir='\(temp.path)',slab_alloc_arena=0.1}" +
+            "box.schema.user.create('tester', {password='tester'})" +
+            "box.schema.user.grant('tester', 'read,write,eval,execute', 'universe')" +
+            "local fiber = require('fiber')\n" +
+            "local fio = require('fio')\n" +
+            "while fio.stat('\(lock.path)') do \n" +
+            "  fiber.sleep(0.1) \n" +
+            "end \n" +
             "os.exit(0)"
 
         do {
-            try script.write(toFile: "init.lua", atomically: true, encoding: .utf8)
+            try FileManager.default.createDirectory(at: temp, withIntermediateDirectories: true)
+            FileManager.default.createFile(atPath: lock.path, contents: nil)
+            try script.write(to: config, atomically: true, encoding: .utf8)
         } catch {
             XCTFail(String(describing: error))
             return
@@ -34,16 +49,32 @@ class TarantoolConnectorTests: XCTestCase {
     #else
         process.launchPath = "/usr/bin/tarantool"
     #endif
-        process.arguments = ["init.lua"]
+        process.arguments = [config.path]
+
+        let outputPipe = Pipe()
+        process.standardOutput = outputPipe
         process.launch()
         sleep(1)
+        guard process.isRunning else {
+            let data = outputPipe.fileHandleForReading.availableData
+            if let outputString = String(data: data, encoding: .utf8) {
+                XCTFail(outputString)
+            } else {
+                XCTFail("can't launch tarantool")
+            }
+            return
+        }
     }
 
     override func tearDown() {
         if process.isRunning {
             // not yet implemented
             // process.terminate()
+            try? FileManager.default.removeItem(at: lock)
+            process.waitUntilExit()
         }
+        try? FileManager.default.removeItem(at: temp)
+        XCTAssertEqual(process.terminationStatus, 0)
     }
 
     func testTarantoolConnector() {

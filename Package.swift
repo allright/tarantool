@@ -15,7 +15,11 @@ let package = Package(
     targets: [
         Target(name: "TarantoolConnector", dependencies: ["Tarantool"]),
         Target(name: "TarantoolModule", dependencies: ["CTarantool", "Tarantool"]),
-        Target(name: "AsyncTarantool", dependencies: ["CTarantool", "TarantoolModule"])
+        Target(name: "AsyncTarantool", dependencies: ["CTarantool", "TarantoolModule"]),
+        Target(name: "TarantoolModuleTest", dependencies: ["TarantoolModule"])
+    ],
+    products: [
+        .Library(name: "TarantoolModuleTest", type: .dynamic, targets: ["TarantoolModuleTest"])
     ],
     dependencies: [
         .Package(url: "https://github.com/tris-foundation/async.git", majorVersion: 0),
