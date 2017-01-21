@@ -32,16 +32,21 @@ private struct Module {
     }
 
     private var swiftPMModuleUrl: String? {
-        guard var url = URL(string: CommandLine.arguments[1]) else {
+    #if os(macOS)
+        let xctest = CommandLine.arguments[1]
+    #else
+        let xctest = CommandLine.arguments[0]
+    #endif
+        guard var url = URL(string: xctest) else {
             return nil
         }
         url.deleteLastPathComponent()
-        url.appendPathComponent(name)
-        #if os(macOS)
-            url.appendPathExtension("dylib")
-        #else
-            url.appendPathExtension("so")
-        #endif
+        url.appendPathComponent("lib\(name)")
+    #if os(macOS)
+        url.appendPathExtension("dylib")
+    #else
+        url.appendPathExtension("so")
+    #endif
         return url.path
     }
 }
@@ -98,17 +103,17 @@ internal class TarantoolProcess {
             "while fio.stat('\(lock.path)') do\n" +
             "  fiber.sleep(0.1)\n" +
             "end\n" +
-        "os.exit(0)"
+            "os.exit(0)"
 
         try FileManager.default.createDirectory(at: temp, withIntermediateDirectories: true)
-        FileManager.default.createFile(atPath: lock.path, contents: nil)
+        _ = FileManager.default.createFile(atPath: lock.path, contents: nil)
         try script.write(to: config, atomically: true, encoding: .utf8)
 
-        #if os(macOS)
-            process.launchPath = "/usr/local/bin/tarantool"
-        #else
-            process.launchPath = "/usr/bin/tarantool"
-        #endif
+    #if os(macOS)
+        process.launchPath = "/usr/local/bin/tarantool"
+    #else
+        process.launchPath = "/usr/bin/tarantool"
+    #endif
         process.arguments = [config.path]
 
         let outputPipe = Pipe()
