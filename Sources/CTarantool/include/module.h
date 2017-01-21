@@ -80,7 +80,7 @@ typedef int (*fiber_func)(va_list);
  * \sa fiber_start
  */
 struct fiber *
-(*fiber_new)(const char *name, fiber_func f);
+(*_fiber_new)(const char *name, fiber_func f);
 
 /**
  * Return control to another fiber and wait until it'll be woken.
@@ -88,7 +88,7 @@ struct fiber *
  * \sa fiber_wakeup
  */
 void
-(*fiber_yield)(void);
+(*_fiber_yield)(void);
 
 /**
  * Start execution of created fiber.
@@ -99,7 +99,7 @@ void
  * \sa fiber_new
  */
 void
-(*fiber_start)(struct fiber *callee, ...);
+(*_fiber_start)(struct fiber *callee, ...);
 
 /**
  * Interrupt a synchronous wait of a fiber
@@ -107,7 +107,7 @@ void
  * \param f fiber to be woken up
  */
 void
-(*fiber_wakeup)(struct fiber *f);
+(*_fiber_wakeup)(struct fiber *f);
 
 /**
  * Cancel the subject fiber. (set FIBER_IS_CANCELLED flag)
@@ -120,7 +120,7 @@ void
  * \param f fiber to be cancelled
  */
 void
-(*fiber_cancel)(struct fiber *f);
+(*_fiber_cancel)(struct fiber *f);
 
 /**
  * Make it possible or not possible to wakeup the current
@@ -130,14 +130,14 @@ void
  * @return previous state.
  */
 bool
-(*fiber_set_cancellable)(bool yesno);
+(*_fiber_set_cancellable)(bool yesno);
 
 /**
  * Set fiber to be joinable (false by default).
  * \param yesno status to set
  */
 void
-(*fiber_set_joinable)(struct fiber *fiber, bool yesno);
+(*_fiber_set_joinable)(struct fiber *fiber, bool yesno);
 
 /**
  * Wait until the fiber is dead and then move its execution
@@ -149,7 +149,7 @@ void
  * \return fiber function ret code
  */
 int
-(*fiber_join)(struct fiber *f);
+(*_fiber_join)(struct fiber *f);
 
 /**
  * Put the current fiber to sleep for at least 's' seconds.
@@ -159,39 +159,39 @@ int
  * \note this is a cancellation point (\sa fiber_is_cancelled)
  */
 void
-(*fiber_sleep)(double s);
+(*_fiber_sleep)(double s);
 
 /**
  * Check current fiber for cancellation (it must be checked
  * manually).
  */
 bool
-(*fiber_is_cancelled)();
+(*_fiber_is_cancelled)();
 
 /**
  * Report loop begin time as double (cheap).
  */
 double
-(*fiber_time)(void);
+(*_fiber_time)(void);
 
 /**
  * Report loop begin time as 64-bit int.
  */
 uint64_t
-(*fiber_time64)(void);
+(*_fiber_time64)(void);
 
 /**
  * Reschedule fiber to end of event loop cycle.
  */
 void
-(*fiber_reschedule)(void);
+(*_fiber_reschedule)(void);
 
 /**
  * Return slab_cache suitable to use with tarantool/small library
  */
 struct slab_cache;
 struct slab_cache *
-(*cord_slab_cache)(void);
+(*_cord_slab_cache)(void);
 
 /** \endcond public */
 /** \cond public */
@@ -214,14 +214,14 @@ enum {
  * bit flags.
  */
 int
-(*coio_wait)(int fd, int event, double timeout);
+(*_coio_wait)(int fd, int event, double timeout);
 
 /**
  * Close the fd and wake any fiber blocked in
  * coio_wait() call on this fd.
  */
 int
-(*coio_close)(int fd);
+(*_coio_close)(int fd);
 
 /** \endcond public */
 /** \cond public */
@@ -270,9 +270,9 @@ struct addrinfo;
  * @sa getaddrinfo()
  */
 int
-(*coio_getaddrinfo)(const char *host, const char *port,
-                 const struct addrinfo *hints, struct addrinfo **res,
-                 double timeout);
+(*_coio_getaddrinfo)(const char *host, const char *port,
+                     const struct addrinfo *hints, struct addrinfo **res,
+                     double timeout);
 /** \endcond public */
 /** \cond public */
 
@@ -280,7 +280,7 @@ int
  * Return true if there is an active transaction.
  */
 bool
-(*box_txn)(void);
+(*_box_txn)(void);
 
 /**
  * Begin a transaction in the current fiber.
@@ -293,7 +293,7 @@ bool
  * started
  */
 int
-(*box_txn_begin)(void);
+(*_box_txn_begin)(void);
 
 /**
  * Commit the current transaction.
@@ -302,7 +302,7 @@ int
  * started
  */
 int
-(*box_txn_commit)(void);
+(*_box_txn_commit)(void);
 
 /**
  * Rollback the current transaction.
@@ -310,7 +310,7 @@ int
  * statement.
  */
 int
-(*box_txn_rollback)(void);
+(*_box_txn_rollback)(void);
 
 /**
  * Allocate memory on txn memory pool.
@@ -320,7 +320,7 @@ int
  * @retval NULL out of memory
  */
 void *
-(*box_txn_alloc)(size_t size);
+(*_box_txn_alloc)(size_t size);
 
 /** \endcond public */
 /** \cond public */
@@ -334,7 +334,7 @@ typedef struct tuple_format box_tuple_format_t;
  * create tuples which are not attach to any particular space.
  */
 box_tuple_format_t *
-(*box_tuple_format_default)(void);
+(*_box_tuple_format_default)(void);
 
 /**
  * Tuple
@@ -354,7 +354,7 @@ typedef struct tuple box_tuple_t;
  * \sa \code box.tuple.new(data) \endcode
  */
 box_tuple_t *
-(*box_tuple_new)(box_tuple_format_t *format, const char *data, const char *end);
+(*_box_tuple_new)(box_tuple_format_t *format, const char *data, const char *end);
 
 /**
  * Increase the reference counter of tuple.
@@ -375,7 +375,7 @@ box_tuple_t *
  * \sa box_tuple_unref()
  */
 int
-(*box_tuple_ref)(box_tuple_t *tuple);
+(*_box_tuple_ref)(box_tuple_t *tuple);
 
 /**
  * Decrease the reference counter of tuple.
@@ -384,21 +384,21 @@ int
  * \sa box_tuple_ref()
  */
 void
-(*box_tuple_unref)(box_tuple_t *tuple);
+(*_box_tuple_unref)(box_tuple_t *tuple);
 
 /**
  * Return the number of fields in tuple (the size of MsgPack Array).
  * \param tuple a tuple
  */
 uint32_t
-(*box_tuple_field_count)(const box_tuple_t *tuple);
+(*_box_tuple_field_count)(const box_tuple_t *tuple);
 
 /**
  * Return the number of bytes used to store internal tuple data (MsgPack Array).
  * \param tuple a tuple
  */
 size_t
-(*box_tuple_bsize)(const box_tuple_t *tuple);
+(*_box_tuple_bsize)(const box_tuple_t *tuple);
 
 /**
  * Dump raw MsgPack data to the memory byffer \a buf of size \a size.
@@ -411,7 +411,7 @@ size_t
  * which would have been written if enough space had been available.
  */
 ssize_t
-(*box_tuple_to_buf)(const box_tuple_t *tuple, char *buf, size_t size);
+(*_box_tuple_to_buf)(const box_tuple_t *tuple, char *buf, size_t size);
 
 /**
  * Return the associated format.
@@ -419,7 +419,7 @@ ssize_t
  * \return tuple_format
  */
 box_tuple_format_t *
-(*box_tuple_format)(const box_tuple_t *tuple);
+(*_box_tuple_format)(const box_tuple_t *tuple);
 
 /**
  * Return the raw tuple field in MsgPack format.
@@ -432,7 +432,7 @@ box_tuple_format_t *
  * \retval msgpack otherwise
  */
 const char *
-(*box_tuple_field)(const box_tuple_t *tuple, uint32_t fieldno);
+(*_box_tuple_field)(const box_tuple_t *tuple, uint32_t fieldno);
 
 /**
  * Tuple iterator
@@ -468,13 +468,13 @@ typedef struct tuple_iterator box_tuple_iterator_t;
  * \post box_tuple_position(it) == 0
  */
 box_tuple_iterator_t *
-(*box_tuple_iterator)(box_tuple_t *tuple);
+(*_box_tuple_iterator)(box_tuple_t *tuple);
 
 /**
  * Destroy and free tuple iterator
  */
 void
-(*box_tuple_iterator_free)(box_tuple_iterator_t *it);
+(*_box_tuple_iterator_free)(box_tuple_iterator_t *it);
 
 /**
  * Return zero-based next position in iterator.
@@ -487,7 +487,7 @@ void
  * \returns position.
  */
 uint32_t
-(*box_tuple_position)(box_tuple_iterator_t *it);
+(*_box_tuple_position)(box_tuple_iterator_t *it);
 
 /**
  * Rewind iterator to the initial position.
@@ -496,7 +496,7 @@ uint32_t
  * \post box_tuple_position(it) == 0
  */
 void
-(*box_tuple_rewind)(box_tuple_iterator_t *it);
+(*_box_tuple_rewind)(box_tuple_iterator_t *it);
 
 /**
  * Seek the tuple iterator.
@@ -511,7 +511,7 @@ void
  * value is NULL.
  */
 const char *
-(*box_tuple_seek)(box_tuple_iterator_t *it, uint32_t fieldno);
+(*_box_tuple_seek)(box_tuple_iterator_t *it, uint32_t fieldno);
 
 /**
  * Return the next tuple field from tuple iterator.
@@ -525,19 +525,19 @@ const char *
  * value is NULL.
  */
 const char *
-(*box_tuple_next)(box_tuple_iterator_t *it);
+(*_box_tuple_next)(box_tuple_iterator_t *it);
 
 box_tuple_t *
-(*box_tuple_update)(const box_tuple_t *tuple, const char *expr, const
-                 char *expr_end);
+(*_box_tuple_update)(const box_tuple_t *tuple, const char *expr, const
+                     char *expr_end);
 
 box_tuple_t *
-(*box_tuple_upsert)(const box_tuple_t *tuple, const char *expr, const
-                 char *expr_end);
+(*_box_tuple_upsert)(const box_tuple_t *tuple, const char *expr, const
+                     char *expr_end);
 
 char *
-(*box_tuple_extract_key)(const box_tuple_t *tuple, uint32_t space_id,
-                      uint32_t index_id, uint32_t *key_size);
+(*_box_tuple_extract_key)(const box_tuple_t *tuple, uint32_t space_id,
+                          uint32_t index_id, uint32_t *key_size);
 
 /** \endcond public */
 /** \cond public */
@@ -598,7 +598,7 @@ typedef struct box_function_ctx box_function_ctx_t;
  * \retval 0 otherwise
  */
 int
-(*box_return_tuple)(box_function_ctx_t *ctx, box_tuple_t *tuple);
+(*_box_return_tuple)(box_function_ctx_t *ctx, box_tuple_t *tuple);
 
 /**
  * Find space id by name.
@@ -611,7 +611,7 @@ int
  * \sa box_index_id_by_name
  */
 uint32_t
-(*box_space_id_by_name)(const char *name, uint32_t len);
+(*_box_space_id_by_name)(const char *name, uint32_t len);
 
 /**
  * Find index id by name.
@@ -625,7 +625,7 @@ uint32_t
  * \sa box_space_id_by_name
  */
 uint32_t
-(*box_index_id_by_name)(uint32_t space_id, const char *name, uint32_t len);
+(*_box_index_id_by_name)(uint32_t space_id, const char *name, uint32_t len);
 
 /**
  * Execute an INSERT request.
@@ -639,8 +639,8 @@ uint32_t
  * \sa \code box.space[space_id]:insert(tuple) \endcode
  */
 int
-(*box_insert)(uint32_t space_id, const char *tuple, const char *tuple_end,
-           box_tuple_t **result);
+(*_box_insert)(uint32_t space_id, const char *tuple, const char *tuple_end,
+               box_tuple_t **result);
 
 /**
  * Execute an REPLACE request.
@@ -654,8 +654,8 @@ int
  * \sa \code box.space[space_id]:replace(tuple) \endcode
  */
 int
-(*box_replace)(uint32_t space_id, const char *tuple, const char *tuple_end,
-            box_tuple_t **result);
+(*_box_replace)(uint32_t space_id, const char *tuple, const char *tuple_end,
+                box_tuple_t **result);
 
 /**
  * Execute an DELETE request.
@@ -670,8 +670,8 @@ int
  * \sa \code box.space[space_id].index[index_id]:delete(key) \endcode
  */
 int
-(*box_delete)(uint32_t space_id, uint32_t index_id, const char *key,
-           const char *key_end, box_tuple_t **result);
+(*_box_delete)(uint32_t space_id, uint32_t index_id, const char *key,
+               const char *key_end, box_tuple_t **result);
 
 /**
  * Execute an UPDATE request.
@@ -692,9 +692,9 @@ int
  * \sa box_upsert()
  */
 int
-(*box_update)(uint32_t space_id, uint32_t index_id, const char *key,
-           const char *key_end, const char *ops, const char *ops_end,
-           int index_base, box_tuple_t **result);
+(*_box_update)(uint32_t space_id, uint32_t index_id, const char *key,
+               const char *key_end, const char *ops, const char *ops_end,
+               int index_base, box_tuple_t **result);
 
 /**
  * Execute an UPSERT request.
@@ -715,9 +715,9 @@ int
  * \sa box_update()
  */
 int
-(*box_upsert)(uint32_t space_id, uint32_t index_id, const char *tuple,
-           const char *tuple_end, const char *ops, const char *ops_end,
-           int index_base, box_tuple_t **result);
+(*_box_upsert)(uint32_t space_id, uint32_t index_id, const char *tuple,
+               const char *tuple_end, const char *ops, const char *ops_end,
+               int index_base, box_tuple_t **result);
 
 /**
  * Truncate space.
@@ -725,7 +725,7 @@ int
  * \param space_id space identifier
  */
 int
-(*box_truncate)(uint32_t space_id);
+(*_box_truncate)(uint32_t space_id);
 
 /** \endcond public */
 /** \cond public */
@@ -786,8 +786,8 @@ enum iterator_type {
  * \sa box_iterator_free()
  */
 box_iterator_t *
-(*box_index_iterator)(uint32_t space_id, uint32_t index_id, int type,
-                   const char *key, const char *key_end);
+(*_box_index_iterator)(uint32_t space_id, uint32_t index_id, int type,
+                       const char *key, const char *key_end);
 /**
  * Retrive the next item from the \a iterator.
  *
@@ -797,7 +797,7 @@ box_iterator_t *
  * \retval 0 on success. The end of data is not an error.
  */
 int
-(*box_iterator_next)(box_iterator_t *iterator, box_tuple_t **result);
+(*_box_iterator_next)(box_iterator_t *iterator, box_tuple_t **result);
 
 /**
  * Destroy and deallocate iterator.
@@ -805,7 +805,7 @@ int
  * \param iterator an interator returned by box_index_iterator()
  */
 void
-(*box_iterator_free)(box_iterator_t *iterator);
+(*_box_iterator_free)(box_iterator_t *iterator);
 
 /** \endcond public */
 /** \cond public */
@@ -819,7 +819,7 @@ void
  * \retval >= 0 otherwise
  */
 ssize_t
-(*box_index_len)(uint32_t space_id, uint32_t index_id);
+(*_box_index_len)(uint32_t space_id, uint32_t index_id);
 
 /**
  * Return the number of bytes used in memory by the index.
@@ -830,7 +830,7 @@ ssize_t
  * \retval >= 0 otherwise
  */
 ssize_t
-(*box_index_bsize)(uint32_t space_id, uint32_t index_id);
+(*_box_index_bsize)(uint32_t space_id, uint32_t index_id);
 
 /**
  * Return a random tuple from the index (useful for statistical analysis).
@@ -844,8 +844,8 @@ ssize_t
  * \sa \code box.space[space_id].index[index_id]:random(rnd) \endcode
  */
 int
-(*box_index_random)(uint32_t space_id, uint32_t index_id, uint32_t rnd,
-                 box_tuple_t **result);
+(*_box_index_random)(uint32_t space_id, uint32_t index_id, uint32_t rnd,
+                     box_tuple_t **result);
 
 /**
  * Get a tuple from index by the key.
@@ -864,8 +864,8 @@ int
  * \sa \code box.space[space_id].index[index_id]:get(key) \endcode
  */
 int
-(*box_index_get)(uint32_t space_id, uint32_t index_id, const char *key,
-              const char *key_end, box_tuple_t **result);
+(*_box_index_get)(uint32_t space_id, uint32_t index_id, const char *key,
+                  const char *key_end, box_tuple_t **result);
 
 /**
  * Return a first (minimal) tuple matched the provided key.
@@ -882,8 +882,8 @@ int
  * \sa \code box.space[space_id].index[index_id]:min(key) \endcode
  */
 int
-(*box_index_min)(uint32_t space_id, uint32_t index_id, const char *key,
-              const char *key_end, box_tuple_t **result);
+(*_box_index_min)(uint32_t space_id, uint32_t index_id, const char *key,
+                  const char *key_end, box_tuple_t **result);
 
 /**
  * Return a last (maximal) tuple matched the provided key.
@@ -900,8 +900,8 @@ int
  * \sa \code box.space[space_id].index[index_id]:max(key) \endcode
  */
 int
-(*box_index_max)(uint32_t space_id, uint32_t index_id, const char *key,
-              const char *key_end, box_tuple_t **result);
+(*_box_index_max)(uint32_t space_id, uint32_t index_id, const char *key,
+                  const char *key_end, box_tuple_t **result);
 
 /**
  * Count the number of tuple matched the provided key.
@@ -919,8 +919,8 @@ int
  *     { iterator = type }) \endcode
  */
 ssize_t
-(*box_index_count)(uint32_t space_id, uint32_t index_id, int type,
-                const char *key, const char *key_end);
+(*_box_index_count)(uint32_t space_id, uint32_t index_id, int type,
+                    const char *key, const char *key_end);
 
 /** \endcond public */
 /** \cond public */
@@ -937,7 +937,7 @@ typedef struct error box_error_t;
  * \return not-null string
  */
 const char *
-(*box_error_type)(const box_error_t *error);
+(*_box_error_type)(const box_error_t *error);
 
 /**
  * Return IPROTO error code
@@ -945,7 +945,7 @@ const char *
  * \return enum box_error_code
  */
 uint32_t
-(*box_error_code)(const box_error_t *error);
+(*_box_error_code)(const box_error_t *error);
 
 /**
  * Return the error message
@@ -953,7 +953,7 @@ uint32_t
  * \return not-null string
  */
 const char *
-(*box_error_message)(const box_error_t *error);
+(*_box_error_message)(const box_error_t *error);
 
 /**
  * Get the information about the last API call error.
@@ -977,13 +977,13 @@ const char *
  * \return last error.
  */
 box_error_t *
-(*box_error_last)(void);
+(*_box_error_last)(void);
 
 /**
  * Clear the last error.
  */
 void
-(*box_error_clear)(void);
+(*_box_error_clear)(void);
 
 /**
  * Set the last error.
@@ -996,8 +996,8 @@ void
  * \sa enum box_error_code
  */
 int
-(*box_error_set)(const char *file, unsigned line, uint32_t code,
-              const char *format, ...);
+(*_box_error_set)(const char *file, unsigned line, uint32_t code,
+                  const char *format, ...);
 
 /** \endcond public */
 /** \cond public */
@@ -1012,14 +1012,14 @@ typedef struct box_latch box_latch_t;
  * \returns latch
  */
 box_latch_t*
-(*box_latch_new)(void);
+(*_box_latch_new)(void);
 
 /**
  * Destroy and free the latch.
  * \param latch latch
  */
 void
-(*box_latch_delete)(box_latch_t *latch);
+(*_box_latch_delete)(box_latch_t *latch);
 
 /**
  * Lock a latch. Waits indefinitely until the current fiber can gain access to
@@ -1028,7 +1028,7 @@ void
  * \param latch a latch
  */
 void
-(*box_latch_lock)(box_latch_t *latch);
+(*_box_latch_lock)(box_latch_t *latch);
 
 /**
  * Try to lock a latch. Return immediately if the latch is locked.
@@ -1037,7 +1037,7 @@ void
  * \retval 1 - the latch is locked.
  */
 int
-(*box_latch_trylock)(box_latch_t *latch);
+(*_box_latch_trylock)(box_latch_t *latch);
 
 /**
  * Unlock a latch. The fiber calling this function must
@@ -1046,20 +1046,20 @@ int
  * \param latch a ltach
  */
 void
-(*box_latch_unlock)(box_latch_t *latch);
+(*_box_latch_unlock)(box_latch_t *latch);
 
 /** \endcond public */
 /** \cond public */
 
-double (*clock_realtime)(void);
-double (*clock_monotonic)(void);
-double (*clock_process)(void);
-double (*clock_thread)(void);
+double (*_clock_realtime)(void);
+double (*_clock_monotonic)(void);
+double (*_clock_process)(void);
+double (*_clock_thread)(void);
 
-uint64_t (*clock_realtime64)(void);
-uint64_t (*clock_monotonic64)(void);
-uint64_t (*clock_process64)(void);
-uint64_t (*clock_thread64)(void);
+uint64_t (*_clock_realtime64)(void);
+uint64_t (*_clock_monotonic64)(void);
+uint64_t (*_clock_process64)(void);
+uint64_t (*_clock_thread64)(void);
 
 /** \endcond public */
 enum box_error_code { ER_UNKNOWN, ER_ILLEGAL_PARAMS, ER_MEMORY_ISSUE, ER_TUPLE_FOUND, ER_TUPLE_NOT_FOUND, ER_UNSUPPORTED, ER_NONMASTER, ER_READONLY, ER_INJECTION, ER_CREATE_SPACE, ER_SPACE_EXISTS, ER_DROP_SPACE, ER_ALTER_SPACE, ER_INDEX_TYPE, ER_MODIFY_INDEX, ER_LAST_DROP, ER_TUPLE_FORMAT_LIMIT, ER_DROP_PRIMARY_KEY, ER_KEY_PART_TYPE, ER_EXACT_MATCH, ER_INVALID_MSGPACK, ER_PROC_RET, ER_TUPLE_NOT_ARRAY, ER_FIELD_TYPE, ER_FIELD_TYPE_MISMATCH, ER_SPLICE, ER_UPDATE_ARG_TYPE, ER_TUPLE_IS_TOO_LONG, ER_UNKNOWN_UPDATE_OP, ER_UPDATE_FIELD, ER_FIBER_STACK, ER_KEY_PART_COUNT, ER_PROC_LUA, ER_NO_SUCH_PROC, ER_NO_SUCH_TRIGGER, ER_NO_SUCH_INDEX, ER_NO_SUCH_SPACE, ER_NO_SUCH_FIELD, ER_EXACT_FIELD_COUNT, ER_INDEX_FIELD_COUNT, ER_WAL_IO, ER_MORE_THAN_ONE_TUPLE, ER_ACCESS_DENIED, ER_CREATE_USER, ER_DROP_USER, ER_NO_SUCH_USER, ER_USER_EXISTS, ER_PASSWORD_MISMATCH, ER_UNKNOWN_REQUEST_TYPE, ER_UNKNOWN_SCHEMA_OBJECT, ER_CREATE_FUNCTION, ER_NO_SUCH_FUNCTION, ER_FUNCTION_EXISTS, ER_FUNCTION_ACCESS_DENIED, ER_FUNCTION_MAX, ER_SPACE_ACCESS_DENIED, ER_USER_MAX, ER_NO_SUCH_ENGINE, ER_RELOAD_CFG, ER_CFG, ER_VINYL, ER_LOCAL_SERVER_IS_NOT_ACTIVE, ER_UNKNOWN_SERVER, ER_CLUSTER_ID_MISMATCH, ER_INVALID_UUID, ER_CLUSTER_ID_IS_RO, ER_SERVER_ID_MISMATCH, ER_SERVER_ID_IS_RESERVED, ER_INVALID_ORDER, ER_MISSING_REQUEST_FIELD, ER_IDENTIFIER, ER_DROP_FUNCTION, ER_ITERATOR_TYPE, ER_REPLICA_MAX, ER_INVALID_XLOG, ER_INVALID_XLOG_NAME, ER_INVALID_XLOG_ORDER, ER_NO_CONNECTION, ER_TIMEOUT, ER_ACTIVE_TRANSACTION, ER_NO_ACTIVE_TRANSACTION, ER_CROSS_ENGINE_TRANSACTION, ER_NO_SUCH_ROLE, ER_ROLE_EXISTS, ER_CREATE_ROLE, ER_INDEX_EXISTS, ER_TUPLE_REF_OVERFLOW, ER_ROLE_LOOP, ER_GRANT, ER_PRIV_GRANTED, ER_ROLE_GRANTED, ER_PRIV_NOT_GRANTED, ER_ROLE_NOT_GRANTED, ER_MISSING_SNAPSHOT, ER_CANT_UPDATE_PRIMARY_KEY, ER_UPDATE_INTEGER_OVERFLOW, ER_GUEST_USER_PASSWORD, ER_TRANSACTION_CONFLICT, ER_UNSUPPORTED_ROLE_PRIV, ER_LOAD_FUNCTION, ER_FUNCTION_LANGUAGE, ER_RTREE_RECT, ER_PROC_C, ER_UNKNOWN_RTREE_INDEX_DISTANCE_TYPE, ER_PROTOCOL, ER_UPSERT_UNIQUE_SECONDARY_KEY, ER_WRONG_INDEX_RECORD, ER_WRONG_INDEX_PARTS, ER_WRONG_INDEX_OPTIONS, ER_WRONG_SCHEMA_VERSION, ER_SLAB_ALLOC_MAX, ER_WRONG_SPACE_OPTIONS, ER_UNSUPPORTED_INDEX_FEATURE, ER_VIEW_IS_RO, ER_SERVER_UUID_MISMATCH, ER_SYSTEM, ER_LOADING, ER_CONNECTION_TO_SELF, ER_KEY_PART_IS_TOO_LONG, ER_COMPRESSION, ER_SNAPSHOT_IN_PROGRESS, ER_SUB_STMT_MAX, ER_COMMIT_IN_SUB_STMT, ER_ROLLBACK_IN_SUB_STMT, ER_DECOMPRESSION, ER_INVALID_XLOG_TYPE, ER_INVALID_RUN_ID, ER_ALREADY_RUNNING, box_error_code_MAX };

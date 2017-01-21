@@ -8,7 +8,7 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-#include <module.h>
+#include "module.h"
 
 void fiber_wrapper(void* ctx, void (*closure)(void*));
 int box_error_set_wrapper(const char* file, unsigned line, uint32_t code, const char* message);

@@ -22,17 +22,17 @@ public func fiber(_ closure: @escaping (Void) -> Void) {
 
 @inline(__always)
 public func yield() {
-    fiber_reschedule()
+    _fiber_reschedule()
 }
 
 @inline(__always)
 public func sleep(until deadline: Date) {
-    fiber_sleep(deadline.timeIntervalSince(Date()))
+    _fiber_sleep(deadline.timeIntervalSince(Date()))
 }
 
 @inline(__always)
 public func now() -> Date {
-    return Date(timeIntervalSince1970: fiber_time())
+    return Date(timeIntervalSince1970: _fiber_time())
 }
 
 public func transaction(_ closure: (Void) throws -> Box.Transaction.Action) throws {

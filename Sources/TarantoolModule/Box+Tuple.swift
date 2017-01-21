@@ -14,7 +14,7 @@ import MessagePack
 
 extension Box {
     static func unpackTuple(_ tuple: OpaquePointer) throws -> Tuple {
-        let size = box_tuple_bsize(tuple)
+        let size = _box_tuple_bsize(tuple)
         guard size > 0 else {
             throw TarantoolError.invalidTuple(message: "tuple size: \(size)")
         }
@@ -22,7 +22,7 @@ extension Box {
         defer { packed.deallocate(capacity: size) }
         // copying internal tuple buffer
         let written = packed.withMemoryRebound(to: CChar.self, capacity: size) { pointer in
-            return box_tuple_to_buf(tuple, pointer, size)
+            return _box_tuple_to_buf(tuple, pointer, size)
         }
 
         let unpacked = try MessagePack.deserialize(bytes: UnsafeBufferPointer(start: packed, count: written))
@@ -35,7 +35,7 @@ extension Box {
 
     public static func returnTuple(_ bytes: [UInt8], to context: OpaquePointer) -> Int32 {
         let pointer = UnsafeRawPointer(bytes).assumingMemoryBound(to: Int8.self)
-        let tuple = box_tuple_new(box_tuple_format_default(), pointer, pointer+bytes.count)
-        return box_return_tuple(context, tuple)
+        let tuple = _box_tuple_new(_box_tuple_format_default(), pointer, pointer+bytes.count)
+        return _box_return_tuple(context, tuple)
     }
 }

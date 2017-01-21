@@ -17,19 +17,19 @@ extension Box {
         }
 
         fileprivate static func begin() throws {
-            guard box_txn_begin() == 0 else {
+            guard _box_txn_begin() == 0 else {
                 throw BoxError()
             }
         }
 
         fileprivate static func commit() throws {
-            guard box_txn_commit() == 0 else {
+            guard _box_txn_commit() == 0 else {
                 throw BoxError()
             }
         }
 
         fileprivate static func rollback() throws {
-            guard box_txn_rollback() == 0 else {
+            guard _box_txn_rollback() == 0 else {
                 throw BoxError()
             }
         }

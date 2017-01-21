@@ -15,7 +15,7 @@ import Foundation
 public struct Box {
     static func count(spaceId: UInt32, indexId: UInt32, iterator: Iterator, keys: [UInt8]) throws -> Int {
         let pKeys = try copyToInternalMemory(keys)
-        let count = box_index_count(spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeys+keys.count)
+        let count = _box_index_count(spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeys+keys.count)
         guard count >= 0 else {
             throw BoxError()
         }
@@ -24,16 +24,16 @@ public struct Box {
 
     static func select(spaceId: UInt32, indexId: UInt32, iterator: Iterator, keys: [UInt8]) throws -> [Tuple] {
         let pointer = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        guard let iterator = box_index_iterator(spaceId, indexId, Int32(iterator.rawValue), pointer, pointer+keys.count) else {
+        guard let iterator = _box_index_iterator(spaceId, indexId, Int32(iterator.rawValue), pointer, pointer+keys.count) else {
             throw BoxError()
         }
-        defer { box_iterator_free(iterator) }
+        defer { _box_iterator_free(iterator) }
 
         var rows: [Tuple] = []
 
         var result: OpaquePointer?
         while true {
-            guard box_iterator_next(iterator, &result) == 0 else {
+            guard _box_iterator_next(iterator, &result) == 0 else {
                 throw BoxError()
             }
             guard let tuple = result else {
@@ -48,7 +48,7 @@ public struct Box {
     static func get(spaceId: UInt32, indexId: UInt32, keys: [UInt8]) throws -> Tuple? {
         var result: OpaquePointer?
         let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        guard box_index_get(spaceId, indexId, pKeys, pKeys+keys.count, &result) == 0 else {
+        guard _box_index_get(spaceId, indexId, pKeys, pKeys+keys.count, &result) == 0 else {
             throw BoxError()
         }
         guard let tuple = result else {
@@ -59,14 +59,14 @@ public struct Box {
 
     static func insert(spaceId: UInt32, tuple: [UInt8]) throws {
         let pointer = try copyToInternalMemory(tuple)
-        guard box_insert(spaceId, pointer, pointer+tuple.count, nil) == 0 else {
+        guard _box_insert(spaceId, pointer, pointer+tuple.count, nil) == 0 else {
             throw BoxError()
         }
     }
 
     static func replace(spaceId: UInt32, tuple: [UInt8]) throws {
         let pointer = try copyToInternalMemory(tuple)
-        guard box_replace(spaceId, pointer, pointer+tuple.count, nil) == 0 else {
+        guard _box_replace(spaceId, pointer, pointer+tuple.count, nil) == 0 else {
             throw BoxError()
         }
     }
@@ -74,7 +74,7 @@ public struct Box {
     static func update(spaceId: UInt32, indexId: UInt32, keys: [UInt8], ops: [UInt8]) throws {
         let pKeys = try copyToInternalMemory(keys)
         let pOps = try copyToInternalMemory(ops)
-        guard box_update(spaceId, indexId, pKeys, pKeys+keys.count, pOps, pOps+ops.count, 0, nil) == 0 else {
+        guard _box_update(spaceId, indexId, pKeys, pKeys+keys.count, pOps, pOps+ops.count, 0, nil) == 0 else {
             throw BoxError()
         }
     }
@@ -82,14 +82,14 @@ public struct Box {
     static func upsert(spaceId: UInt32, indexId: UInt32, tuple: [UInt8], ops: [UInt8]) throws {
         let pTuple = try copyToInternalMemory(tuple)
         let pOps = try copyToInternalMemory(ops)
-        guard box_update(spaceId, indexId, pTuple, pTuple+tuple.count, pOps, pOps+ops.count, 0, nil) == 0 else {
+        guard _box_update(spaceId, indexId, pTuple, pTuple+tuple.count, pOps, pOps+ops.count, 0, nil) == 0 else {
             throw BoxError()
         }
     }
 
     static func delete(spaceId: UInt32, indexId: UInt32, keys: [UInt8]) throws{
         let pointer = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        guard box_delete(spaceId, indexId, pointer, pointer+keys.count, nil) == 0 else {
+        guard _box_delete(spaceId, indexId, pointer, pointer+keys.count, nil) == 0 else {
             throw BoxError()
         }
     }

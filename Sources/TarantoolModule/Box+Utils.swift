@@ -14,7 +14,7 @@ import MessagePack
 extension Box {
     static func getSpaceIdByName(_ name: [UInt8]) throws -> UInt32 {
         let name = unsafeBitCast(name, to: [CChar].self)
-        let id = box_space_id_by_name(name, UInt32(name.count))
+        let id = _box_space_id_by_name(name, UInt32(name.count))
         if id == UInt32(Int32.max) {
             throw TarantoolError.spaceNotFound
         }
@@ -23,7 +23,7 @@ extension Box {
 
     static func getIndexIdByName(_ name: [UInt8], spaceId: UInt32) throws -> UInt32 {
         let name = unsafeBitCast(name, to: [CChar].self)
-        let id = box_index_id_by_name(spaceId, name, UInt32(name.count))
+        let id = _box_index_id_by_name(spaceId, name, UInt32(name.count))
         if id == UInt32(Int32.max) {
             throw TarantoolError.indexNotFound
         }
@@ -33,7 +33,7 @@ extension Box {
     // will be deallocated after transaction finished.
     // every insert, update, etc is a single statement transaction.
     static func copyToInternalMemory(_ bytes: [UInt8]) throws -> UnsafePointer<CChar> {
-        guard let buffer = box_txn_alloc(bytes.count) else {
+        guard let buffer = _box_txn_alloc(bytes.count) else {
             throw TarantoolError.notEnoughMemory
         }
         memcpy(buffer, bytes, bytes.count)

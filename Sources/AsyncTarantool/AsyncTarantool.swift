@@ -44,11 +44,11 @@ public struct TarantoolAwaiter: IOAwaiter {
     public func wait(for descriptor: Int32, event: IOEvent) throws {
         switch event {
         case .read:
-            guard COIOEvent.read == coio_wait(descriptor, COIOEvent.read, Timeout.infinity) else {
+            guard COIOEvent.read == _coio_wait(descriptor, COIOEvent.read, Timeout.infinity) else {
                 throw TarantoolAwaiterTimeout()
             }
         case .write:
-            guard COIOEvent.write == coio_wait(descriptor, COIOEvent.write, Timeout.infinity) else {
+            guard COIOEvent.write == _coio_wait(descriptor, COIOEvent.write, Timeout.infinity) else {
                 throw TarantoolAwaiterTimeout()
             }
         }

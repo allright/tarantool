@@ -15,13 +15,13 @@ public struct BoxError: Error {
     public let message: String
 
     init(){
-        guard let errorPointer = box_error_last() else {
+        guard let errorPointer = _box_error_last() else {
             self.code = .unknown
             self.message = "success"
             return
         }
-        let errorCode = box_error_code(errorPointer)
-        let errorMessage = box_error_message(errorPointer)
+        let errorCode = _box_error_code(errorPointer)
+        let errorMessage = _box_error_message(errorPointer)
 
         self.code = Code(rawValue: errorCode) ?? .unknown
         self.message = errorMessage != nil ? String(cString: errorMessage!) : "nil"
