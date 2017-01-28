@@ -19,12 +19,13 @@ let package = Package(
         Target(name: "TarantoolModuleTest", dependencies: ["TarantoolModule"])
     ],
     products: [
+        .Library(name: "CTarantool", type: .static, targets: ["CTarantool"]),
         .Library(name: "TarantoolModuleTest", type: .dynamic, targets: ["TarantoolModuleTest"])
     ],
     dependencies: [
         .Package(url: "https://github.com/tris-foundation/async.git", majorVersion: 0),
         .Package(url: "https://github.com/tris-foundation/socket.git", majorVersion: 0),
         .Package(url: "https://github.com/tris-foundation/messagepack.git", majorVersion: 0),
-        .Package(url: "https://github.com/tris-foundation/cryptoswift.git", majorVersion: 0),
+        .Package(url: "https://github.com/tris-foundation/cryptoswift.git", majorVersion: 0)
     ]
 )
