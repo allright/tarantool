@@ -8,6 +8,7 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Platform
 import Foundation
 
 private struct Module {
@@ -60,12 +61,9 @@ internal class TarantoolProcess {
     let port: UInt16
     let scriptBody: String
 
-    static var tempFolders = 0
-
     var temp: URL = {
-        TarantoolProcess.tempFolders += 1
         return URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent("TarantoolTemp\(TarantoolProcess.tempFolders)")
+            .appendingPathComponent("TarantoolTemp\(arc4random())")
     }()
 
     var lock: URL {
@@ -115,6 +113,10 @@ internal class TarantoolProcess {
         process.launchPath = "/usr/bin/tarantool"
     #endif
         process.arguments = [config.path]
+
+        guard FileManager.default.fileExists(atPath: process.launchPath!) else {
+            throw TarantoolProcessError(message: "\(process.launchPath!) doesn't exist")
+        }
 
         let outputPipe = Pipe()
         process.standardOutput = outputPipe
