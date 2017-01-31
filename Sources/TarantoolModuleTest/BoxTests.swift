@@ -8,8 +8,8 @@ public func testBox(context: BoxContext) -> BoxResult {
         guard sysview.count >= 12 else {
             throw TarantoolError.invalidSchema
         }
-        return context.returnTuple(.map(["success": true]))
+        return Box.returnTuple(.map(["success": true]), to: context)
     } catch {
-        return BoxError.returnError(code: .procC, message: String(describing: error))
+        return Box.returnError(code: .procC, message: String(describing: error))
     }
 }

@@ -26,10 +26,6 @@ public struct BoxError: Error {
         self.code = Code(rawValue: errorCode) ?? .unknown
         self.message = errorMessage != nil ? String(cString: errorMessage!) : "nil"
     }
-
-    public static func returnError(code: Code, message: String, file: String = #file, line: Int = #line) -> BoxResult {
-        return box_error_set_wrapper(file, UInt32(line), code.rawValue, message)
-    }
 }
 
 extension BoxError: CustomStringConvertible {
