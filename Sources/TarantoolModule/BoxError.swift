@@ -14,17 +14,27 @@ public struct BoxError: Error {
     public let code: Code
     public let message: String
 
-    init(){
-        guard let errorPointer = _box_error_last() else {
+    public init(code: Code, message: String) {
+        self.code = code
+        self.message = message
+    }
+
+    init() {
+        guard let error = _box_error_last() else {
             self.code = .unknown
             self.message = "success"
             return
         }
-        let errorCode = _box_error_code(errorPointer)
-        let errorMessage = _box_error_message(errorPointer)
 
-        self.code = Code(rawValue: errorCode) ?? .unknown
-        self.message = errorMessage != nil ? String(cString: errorMessage!) : "nil"
+        guard let code = Code(rawValue: _box_error_code(error)),
+            let message = _box_error_message(error) else {
+                self.code = .unknown
+                self.message = "error"
+                return
+        }
+
+        self.code = code
+        self.message = String(cString: message)
     }
 }
 
