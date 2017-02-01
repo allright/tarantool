@@ -13,12 +13,12 @@ import Foundation
 @testable import TarantoolConnector
 
 class TarantoolConnectorTests: XCTestCase {
-    var tarantool: TarantoolProcess?
-
+    var tarantool: TarantoolProcess!
+    var iproto: IProtoConnection!
     override func setUp() {
         do {
-            tarantool = try TarantoolProcess()
-            try tarantool?.launch()
+            tarantool = try TarantoolProcess().launch()
+            iproto = try IProtoConnection(host: "127.0.0.1")
         } catch {
             XCTFail(String(describing: error))
             return
@@ -26,14 +26,49 @@ class TarantoolConnectorTests: XCTestCase {
     }
 
     override func tearDown() {
-        let status = tarantool?.terminate()
+        let status = tarantool.terminate()
         XCTAssertEqual(status, 0)
     }
 
-    func testTarantoolConnector() {
+    func testPing() {
         do {
-            let iproto = try IProtoConnection(host: "127.0.0.1")
+            try iproto.ping()
+        } catch {
+            XCTFail(String(describing: error))
+        }
+    }
+
+    func testAuth() {
+        do {
             try iproto.auth(username: "tester", password: "tester")
+        } catch {
+            XCTFail(String(describing: error))
+        }
+    }
+
+    func testCall() {
+        do {
+            let result = try iproto.call("hello")
+            guard let first = result.first,
+                let answer = String(first) else {
+                    XCTFail()
+                    return
+            }
+            XCTAssertEqual(answer, "hey there!")
+        } catch {
+            XCTFail(String(describing: error))
+        }
+    }
+
+    func testEval() {
+        do {
+            let result = try iproto.eval("return 'he'..'l'..'lo'")
+            guard let first = result.first,
+                let answer = String(first) else {
+                    XCTFail()
+                    return
+            }
+            XCTAssertEqual(answer, "hello")
         } catch {
             XCTFail(String(describing: error))
         }
@@ -42,7 +77,10 @@ class TarantoolConnectorTests: XCTestCase {
     
     static var allTests : [(String, (TarantoolConnectorTests) -> () throws -> Void)] {
         return [
-            ("testTarantoolConnector", testTarantoolConnector),
+            ("testPing", testPing),
+            ("testAuth", testAuth),
+            ("testCall", testCall),
+            ("testEval", testEval),
         ]
     }
 }

@@ -15,7 +15,7 @@ import TarantoolConnector
 class TarantoolModuleTests: XCTestCase {
 
     var port: UInt16 = 3302
-    var tarantool: TarantoolProcess?
+    var tarantool: TarantoolProcess!
 
     var functions = [
         "testBox"
@@ -24,7 +24,7 @@ class TarantoolModuleTests: XCTestCase {
     override func setUp() {
         do {
             tarantool = try TarantoolProcess(loadingModule: "TarantoolModuleTest", createFunctions: functions, port: port)
-            try tarantool?.launch()
+            try tarantool.launch()
         } catch {
             XCTFail(String(describing: error))
             return
