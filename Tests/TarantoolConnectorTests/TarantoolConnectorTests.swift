@@ -83,14 +83,24 @@ class TarantoolConnectorTests: XCTestCase {
             XCTFail(String(describing: error))
         }
     }
-
     
+    func testRequest() {
+        do {
+            let result = try iproto.request(code: .ping)
+            XCTAssertEqual(result, [])
+        } catch {
+            XCTFail(String(describing: error))
+        }
+    }
+
+
     static var allTests : [(String, (TarantoolConnectorTests) -> () throws -> Void)] {
         return [
             ("testPing", testPing),
             ("testEval", testEval),
             ("testCall", testCall),
             ("testAuth", testAuth),
+            ("testRequest", testRequest),
         ]
     }
 }
