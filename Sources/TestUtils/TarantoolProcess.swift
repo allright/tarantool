@@ -11,52 +11,11 @@
 import Platform
 import Foundation
 
-private struct Module {
-    let name: String
-    init(_ name: String) {
-        self.name = name
-    }
-
-    var path: String? {
-        return xcodeModuleUrl ?? swiftPMModuleUrl
-    }
-
-    private var xcodeModuleUrl: String? {
-        guard let xcodeBuildDir = ProcessInfo.processInfo.environment["__XPC_DYLD_FRAMEWORK_PATH"],
-            !xcodeBuildDir.contains(":") else {
-                return nil
-        }
-        return URL(fileURLWithPath: xcodeBuildDir)
-            .appendingPathComponent("\(name).framework")
-            .appendingPathComponent(name)
-            .path
-    }
-
-    private var swiftPMModuleUrl: String? {
-    #if os(macOS)
-        let xctest = CommandLine.arguments[1]
-    #else
-        let xctest = CommandLine.arguments[0]
-    #endif
-        guard var url = URL(string: xctest) else {
-            return nil
-        }
-        url.deleteLastPathComponent()
-        url.appendPathComponent("lib\(name)")
-    #if os(macOS)
-        url.appendPathExtension("dylib")
-    #else
-        url.appendPathExtension("so")
-    #endif
-        return url.path
-    }
-}
-
-private struct TarantoolProcessError: Error {
+struct TarantoolProcessError: Error {
     let message: String
 }
 
-internal class TarantoolProcess {
+class TarantoolProcess {
     let process = Process()
     let port: UInt16
     let scriptBody: String
@@ -69,16 +28,20 @@ internal class TarantoolProcess {
     var lock: URL {
         return temp.appendingPathComponent("lock")
     }
+    
+    var isRunning: Bool {
+        return process.isRunning
+    }
 
     init(port: UInt16 = 3301) throws {
         self.port = port
         self.scriptBody = "box.schema.user.create('tester', {password='tester'})\n" +
-        "box.schema.user.grant('tester', 'read,write,eval,execute', 'universe')\n" +
-        "box.schema.user.grant('guest', 'read,write,eval,execute', 'universe')\n" +
-        "box.schema.func.create('hello')\n" +
-        "function hello()\n" +
-        "  return 'hey there!'\n" +
-        "end\n"
+            "box.schema.user.grant('tester', 'read,write,eval,execute', 'universe')\n" +
+            "box.schema.user.grant('guest', 'read,write,eval,execute', 'universe')\n" +
+            "box.schema.func.create('hello')\n" +
+            "function hello()\n" +
+            "  return 'hey there!'\n" +
+            "end\n"
     }
 
     init(loadingModule name: String, createFunctions: [String] = [], port: UInt16 = 3301) throws {
@@ -123,11 +86,11 @@ internal class TarantoolProcess {
         guard FileManager.default.fileExists(atPath: process.launchPath!) else {
             throw TarantoolProcessError(message: "\(process.launchPath!) doesn't exist")
         }
-        
+
         let outputPipe = Pipe()
         process.standardOutput = outputPipe
         process.launch()
-        sleep(1)
+        usleep(500000)
         guard process.isRunning else {
             let data = outputPipe.fileHandleForReading.availableData
             guard let output = String(data: data, encoding: .utf8) else {

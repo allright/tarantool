@@ -9,10 +9,12 @@
  */
 
 import XCTest
+@testable import TestUtilsTests
 @testable import TarantoolModuleTests
 @testable import TarantoolConnectorTests
 
 XCTMain([
+     testCase(TestUtilsTests.allTests),
      testCase(TarantoolModuleTests.allTests),
      testCase(TarantoolConnectorTests.allTests),
 ])

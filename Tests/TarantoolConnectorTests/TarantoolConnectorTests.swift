@@ -10,6 +10,7 @@
 
 import XCTest
 import Foundation
+@testable import TestUtils
 @testable import TarantoolConnector
 
 class TarantoolConnectorTests: XCTestCase {
