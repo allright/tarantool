@@ -18,7 +18,7 @@ public struct IProtoDataSource: DataSource {
         self.connection = connection
     }
 
-    public func count(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple) throws -> Int {
+    public func count(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple = []) throws -> Int {
         let result = try connection.eval("return box.space[\(spaceId)].index[\(indexId)]:count()")
         guard let first = result.first, let count = Int(first) else {
             throw TarantoolError.invalidTuple(message: "expected integer, received: \(result)")
@@ -26,7 +26,7 @@ public struct IProtoDataSource: DataSource {
         return count
     }
 
-    public func select(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple, offset: Int = 0, limit: Int = 1000) throws -> [Tuple] {
+    public func select(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple = [], offset: Int = 0, limit: Int = 1000) throws -> [Tuple] {
         let result = try connection.request(code: .select, keys: [
             .spaceId:  .int(spaceId),
             .indexId:  .int(indexId),
@@ -46,7 +46,7 @@ public struct IProtoDataSource: DataSource {
         return rows
     }
 
-    public func get(spaceId: Int, indexId: Int, keys: Tuple) throws -> Tuple? {
+    public func get(spaceId: Int, indexId: Int = 0, keys: Tuple) throws -> Tuple? {
         let result = try connection.request(code: .select, keys: [
             .spaceId:  .int(spaceId),
             .indexId:  .int(indexId),
@@ -62,14 +62,14 @@ public struct IProtoDataSource: DataSource {
     public func insert(spaceId: Int, tuple: Tuple) throws {
         _ = try connection.request(code: .insert, keys: [
             .spaceId: .int(spaceId),
-            .tuple: .array(tuple)]
+            .tuple:   .array(tuple)]
         )
     }
 
     public func replace(spaceId: Int, tuple: Tuple) throws {
         _ = try connection.request(code: .replace, keys: [
             .spaceId: .int(spaceId),
-            .tuple: .array(tuple)]
+            .tuple:   .array(tuple)]
         )
     }
 
@@ -77,7 +77,7 @@ public struct IProtoDataSource: DataSource {
         _ = try connection.request(code: .delete, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
-            .key: .array(keys)]
+            .key:     .array(keys)]
         )
     }
 
@@ -86,7 +86,7 @@ public struct IProtoDataSource: DataSource {
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
             .key:     .array(keys),
-            .ops:     .array(ops)]
+            .tuple:   .array(ops)]
         )
     }
 
