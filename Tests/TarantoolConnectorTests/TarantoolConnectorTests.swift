@@ -18,7 +18,9 @@ class TarantoolConnectorTests: XCTestCase {
     var iproto: IProtoConnection!
     override func setUp() {
         do {
-            tarantool = try TarantoolProcess().launch()
+            tarantool = try TarantoolProcess(with:
+                "box.schema.user.grant('guest', 'read,write,execute', 'universe')")
+            try tarantool.launch()
             iproto = try IProtoConnection(host: "127.0.0.1")
         } catch {
             XCTFail(String(describing: error))
@@ -38,29 +40,7 @@ class TarantoolConnectorTests: XCTestCase {
             XCTFail(String(describing: error))
         }
     }
-
-    func testAuth() {
-        do {
-            try iproto.auth(username: "tester", password: "tester")
-        } catch {
-            XCTFail(String(describing: error))
-        }
-    }
-
-    func testCall() {
-        do {
-            let result = try iproto.call("hello")
-            guard let first = result.first,
-                let answer = String(first) else {
-                    XCTFail()
-                    return
-            }
-            XCTAssertEqual(answer, "hey there!")
-        } catch {
-            XCTFail(String(describing: error))
-        }
-    }
-
+    
     func testEval() {
         do {
             let result = try iproto.eval("return 'he'..'l'..'lo'")
@@ -75,13 +55,42 @@ class TarantoolConnectorTests: XCTestCase {
         }
     }
 
+    func testAuth() {
+        do {
+            _ = try iproto.eval(
+                "box.schema.user.create('tester', {password='tester'})")
+            try iproto.auth(username: "tester", password: "tester")
+        } catch {
+            XCTFail(String(describing: error))
+        }
+    }
+
+    func testCall() {
+        do {
+            _ = try iproto.eval(
+                "box.schema.func.create('hello')\n" +
+                "function hello()\n" +
+                "  return 'hey there!'\n" +
+                "end\n")
+            let result = try iproto.call("hello")
+            guard let first = result.first,
+                let answer = String(first) else {
+                    XCTFail()
+                    return
+            }
+            XCTAssertEqual(answer, "hey there!")
+        } catch {
+            XCTFail(String(describing: error))
+        }
+    }
+
     
     static var allTests : [(String, (TarantoolConnectorTests) -> () throws -> Void)] {
         return [
             ("testPing", testPing),
-            ("testAuth", testAuth),
-            ("testCall", testCall),
             ("testEval", testEval),
+            ("testCall", testCall),
+            ("testAuth", testAuth),
         ]
     }
 }

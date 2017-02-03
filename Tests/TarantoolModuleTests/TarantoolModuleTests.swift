@@ -24,7 +24,21 @@ class TarantoolModuleTests: XCTestCase {
 
     override func setUp() {
         do {
-            tarantool = try TarantoolProcess(loadingModule: "TarantoolModuleTest", createFunctions: functions, port: port)
+            guard let module = Module("TarantoolModuleTest").path else {
+                XCTFail("can't find swift module")
+                return
+            }
+            
+            let script =
+                "package.cpath = '\(module);'..package.cpath\n" +
+                "local ffi = require('ffi')\n" +
+                "local lib = ffi.load('\(module)')\n" +
+                "ffi.cdef[[void tarantool_module_init();]]\n" +
+                "lib.tarantool_module_init()\n" +
+                "box.schema.user.grant('guest', 'read,write,eval,execute', 'universe')\n" +
+                functions.reduce("") { $0 + "box.schema.func.create('\($1)', {language = 'C'})\n" }
+            
+            tarantool = try TarantoolProcess(with: script, listen: port)
             try tarantool.launch()
         } catch {
             XCTFail(String(describing: error))

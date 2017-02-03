@@ -33,35 +33,13 @@ class TarantoolProcess {
         return process.isRunning
     }
 
-    init(port: UInt16 = 3301) throws {
+    init(with script: String = "", listen port: UInt16 = 3301) throws {
         self.port = port
-        self.scriptBody = "box.schema.user.create('tester', {password='tester'})\n" +
-            "box.schema.user.grant('tester', 'read,write,eval,execute', 'universe')\n" +
-            "box.schema.user.grant('guest', 'read,write,eval,execute', 'universe')\n" +
-            "box.schema.func.create('hello')\n" +
-            "function hello()\n" +
-            "  return 'hey there!'\n" +
-            "end\n"
+        self.scriptBody = script
+        
     }
 
-    init(loadingModule name: String, createFunctions: [String] = [], port: UInt16 = 3301) throws {
-        self.port = port
-
-        guard let module = Module(name).path else {
-            throw TarantoolProcessError(message: "can't find swift module")
-        }
-
-        self.scriptBody = "package.cpath = '\(module);'..package.cpath\n" +
-            "local ffi = require('ffi')\n" +
-            "local lib = ffi.load('\(module)')\n" +
-            "ffi.cdef[[void tarantool_module_init();]]\n" +
-            "lib.tarantool_module_init()\n" +
-            "box.schema.user.grant('guest', 'read,write,eval,execute', 'universe')\n" +
-            createFunctions.reduce("") { $0 + "box.schema.func.create('\($1)', {language = 'C'})\n" }
-    }
-
-    @discardableResult
-    func launch() throws  -> TarantoolProcess {
+    func launch() throws {
         let config = temp.appendingPathComponent("init.lua")
         let script = "box.cfg{listen=\(port),snap_dir='\(temp.path)',wal_dir='\(temp.path)',vinyl_dir='\(temp.path)',slab_alloc_arena=0.1}\n" +
             "\(scriptBody)\n" +
@@ -98,7 +76,6 @@ class TarantoolProcess {
             }
             throw TarantoolProcessError(message: output)
         }
-        return self
     }
 
     func terminate() -> Int {
