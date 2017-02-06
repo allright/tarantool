@@ -12,11 +12,11 @@ import Foundation
 
 public struct Space {
     public let id: Int
-    public let source: DataSource
+    private let source: DataSource
 
     public init(id: Int, source: DataSource) {
-        self.source = source
         self.id = id
+        self.source = source
     }
 
     public func count(_ iterator: Iterator = .all, keys: Tuple = [], indexId: Int = 0) throws -> Int {

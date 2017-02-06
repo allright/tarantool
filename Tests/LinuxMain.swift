@@ -20,4 +20,5 @@ XCTMain([
      testCase(IProtoDataSourceTests.allTests),
      testCase(IProtoIteratorTests.allTests),
      testCase(SchemaTests.allTests),
+     testCase(SpaceTests.allTests),
 ])

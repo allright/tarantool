@@ -144,7 +144,6 @@ class SpaceTests: XCTestCase {
                 return
             }
             XCTAssertEqual(updateResult, [4, "quux", 50])
-
         } catch {
             XCTFail(String(describing: error))
         }

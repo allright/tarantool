@@ -36,7 +36,6 @@ class TarantoolProcess {
     init(with script: String = "", listen port: UInt16 = 3301) throws {
         self.port = port
         self.scriptBody = script
-        
     }
 
     func launch() throws {
