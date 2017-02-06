@@ -15,9 +15,9 @@ import Foundation
 
 class IProtoDataSourceTests: XCTestCase {
     var tarantool: TarantoolProcess!
-    var iproto: IProtoConnection!
     var iprotoSource: IProtoDataSource!
     var testId = 0
+    
     override func setUp() {
         do {
             tarantool = try TarantoolProcess(with:
@@ -29,7 +29,8 @@ class IProtoDataSourceTests: XCTestCase {
                 "test:replace({3, 'baz'})"
             )
             try tarantool.launch()
-            iproto = try IProtoConnection(host: "127.0.0.1")
+            
+            let iproto = try IProtoConnection(host: "127.0.0.1")
             iprotoSource = IProtoDataSource(connection: iproto)
 
             guard let first = try iproto.eval("return box.space.test.id").first,
@@ -155,7 +156,6 @@ class IProtoDataSourceTests: XCTestCase {
                     return
             }
             XCTAssertEqual(updateResult, [4, "quux", 50])
-
         } catch {
             XCTFail(String(describing: error))
         }

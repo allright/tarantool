@@ -15,17 +15,17 @@ import Foundation
 
 class SchemaTests: XCTestCase {
     var tarantool: TarantoolProcess!
-    var iproto: IProtoConnection!
     var iprotoSource: IProtoDataSource!
+
     override func setUp() {
         do {
             tarantool = try TarantoolProcess(with:
                 "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
                 "box.schema.space.create('space1')\n" +
                 "box.schema.space.create('space2')")
-
             try tarantool.launch()
-            iproto = try IProtoConnection(host: "127.0.0.1")
+
+            let iproto = try IProtoConnection(host: "127.0.0.1")
             iprotoSource = IProtoDataSource(connection: iproto)
         } catch {
             XCTFail(String(describing: error))

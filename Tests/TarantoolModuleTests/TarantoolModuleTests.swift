@@ -14,7 +14,6 @@ import TarantoolConnector
 @testable import TarantoolModuleTest
 
 class TarantoolModuleTests: XCTestCase {
-
     var port: UInt16 = 3302
     var tarantool: TarantoolProcess!
 
@@ -47,7 +46,7 @@ class TarantoolModuleTests: XCTestCase {
     }
 
     override func tearDown() {
-        let status = tarantool?.terminate()
+        let status = tarantool.terminate()
         XCTAssertEqual(status, 0)
     }
 

@@ -15,7 +15,6 @@ import Foundation
 
 class IProtoIteratorTests: XCTestCase {
     var tarantool: TarantoolProcess!
-    var iproto: IProtoConnection!
     var iprotoSource: IProtoDataSource!
     var testSpaceId = 0
     override func setUp() {
@@ -28,7 +27,8 @@ class IProtoIteratorTests: XCTestCase {
                 "test:replace({2, 'bar'})\n" +
                 "test:replace({3, 'baz'})")
             try tarantool.launch()
-            iproto = try IProtoConnection(host: "127.0.0.1")
+            
+            let iproto = try IProtoConnection(host: "127.0.0.1")
             iprotoSource = IProtoDataSource(connection: iproto)
 
             guard let first = try iproto.eval("return box.space.test.id").first,

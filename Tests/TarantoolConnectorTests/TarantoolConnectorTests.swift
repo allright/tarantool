@@ -21,6 +21,7 @@ class TarantoolConnectorTests: XCTestCase {
             tarantool = try TarantoolProcess(with:
                 "box.schema.user.grant('guest', 'read,write,execute', 'universe')")
             try tarantool.launch()
+
             iproto = try IProtoConnection(host: "127.0.0.1")
         } catch {
             XCTFail(String(describing: error))

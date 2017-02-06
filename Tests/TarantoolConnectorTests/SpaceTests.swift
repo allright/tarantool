@@ -26,8 +26,8 @@ class SpaceTests: XCTestCase {
                 "test:replace({1, 'foo'})\n" +
                 "test:replace({2, 'bar'})\n" +
                 "test:replace({3, 'baz'})")
-
             try tarantool.launch()
+
             let iproto = try IProtoConnection(host: "127.0.0.1")
             let space = IProtoDataSource(connection: iproto)
             let schema = try Schema(space)
