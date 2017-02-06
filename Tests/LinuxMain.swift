@@ -17,4 +17,7 @@ XCTMain([
      testCase(TestUtilsTests.allTests),
      testCase(TarantoolModuleTests.allTests),
      testCase(TarantoolConnectorTests.allTests),
+     testCase(IProtoDataSourceTests.allTests),
+     testCase(IProtoIteratorTests.allTests),
+     testCase(SchemaTests.allTests),
 ])
