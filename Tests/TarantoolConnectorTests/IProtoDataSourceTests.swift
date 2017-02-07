@@ -17,7 +17,7 @@ class IProtoDataSourceTests: XCTestCase {
     var tarantool: TarantoolProcess!
     var iprotoSource: IProtoDataSource!
     var testId = 0
-    
+
     override func setUp() {
         do {
             tarantool = try TarantoolProcess(with:

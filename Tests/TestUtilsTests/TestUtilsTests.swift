@@ -27,7 +27,7 @@ class TestUtilsTests: XCTestCase {
             XCTFail(String(describing: error))
         }
     }
-    
+
     func testTempFolder() {
         do {
             let tarantool = try TarantoolProcess()
@@ -39,7 +39,7 @@ class TestUtilsTests: XCTestCase {
             XCTFail(String(describing: error))
         }
     }
-    
+
     func testModulePath() {
         guard let path = Module("TarantoolModuleTest").path else {
             XCTFail()

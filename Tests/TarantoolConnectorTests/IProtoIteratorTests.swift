@@ -17,6 +17,7 @@ class IProtoIteratorTests: XCTestCase {
     var tarantool: TarantoolProcess!
     var iprotoSource: IProtoDataSource!
     var testSpaceId = 0
+
     override func setUp() {
         do {
             tarantool = try TarantoolProcess(with:

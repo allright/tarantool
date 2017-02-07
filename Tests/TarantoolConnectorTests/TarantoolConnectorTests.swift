@@ -41,7 +41,7 @@ class TarantoolConnectorTests: XCTestCase {
             XCTFail(String(describing: error))
         }
     }
-    
+
     func testEval() {
         do {
             let result = try iproto.eval("return 'he'..'l'..'lo'")
@@ -84,7 +84,7 @@ class TarantoolConnectorTests: XCTestCase {
             XCTFail(String(describing: error))
         }
     }
-    
+
     func testRequest() {
         do {
             let result = try iproto.request(code: .ping)
