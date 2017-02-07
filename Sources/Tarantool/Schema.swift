@@ -8,18 +8,17 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-let _space: Int = 280
-let _vspace: Int = 281
+fileprivate let _vspace: Int = 281
 
 public struct Schema {
     public let spaces: [String: Space]
     public init(_ source: DataSource) throws {
-        let tuples = try source.select(spaceId: _vspace, indexId: 0, iterator: .all, keys: [], offset: 0, limit: Int.max)
+        let sysview = Space(id: _vspace, source: source)
+        let tuples = try sysview.select(.all)
 
         var spaces: [String: Space] = [:]
         for tuple in tuples {
-            guard
-                let id = Int(tuple[0]),
+            guard let id = Int(tuple[0]),
                 let name = String(tuple[2]) else {
                     throw TarantoolError.invalidSchema
             }

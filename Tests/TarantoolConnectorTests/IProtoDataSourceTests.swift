@@ -26,8 +26,7 @@ class IProtoDataSourceTests: XCTestCase {
                 "test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})\n" +
                 "test:replace({1, 'foo'})\n" +
                 "test:replace({2, 'bar'})\n" +
-                "test:replace({3, 'baz'})"
-            )
+                "test:replace({3, 'baz'})")
             try tarantool.launch()
             
             let iproto = try IProtoConnection(host: "127.0.0.1")

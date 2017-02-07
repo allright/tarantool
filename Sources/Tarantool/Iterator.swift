@@ -8,9 +8,9 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-/***********************************************
- * Description taken from Tarantool source code
- ***********************************************/
+/****************************************************
+ * Description was taken from Tarantool source code *
+ ****************************************************/
 
 /*
  * Controls how to iterate over tuples in an index.

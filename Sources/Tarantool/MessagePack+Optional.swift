@@ -14,7 +14,7 @@ extension Sequence where Iterator.Element == MessagePack {
     public init?(_ optional: MessagePack?) {
         guard case let .some(some) = optional,
             let value = Self(some) else {
-            return nil
+                return nil
         }
 
         self = value
@@ -25,7 +25,7 @@ extension Sequence where Iterator.Element == (key: MessagePack, value: MessagePa
     public init?(_ optional: MessagePack?) {
         guard case let .some(some) = optional,
             let value = Self(some) else {
-            return nil
+                return nil
         }
 
         self = value

@@ -27,7 +27,7 @@ class TarantoolModuleTests: XCTestCase {
                 XCTFail("can't find swift module")
                 return
             }
-            
+
             let script =
                 "package.cpath = '\(module);'..package.cpath\n" +
                 "local ffi = require('ffi')\n" +
