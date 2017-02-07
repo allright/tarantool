@@ -13,10 +13,6 @@ import MessagePack
 public typealias Tuple = [MessagePack]
 public typealias Map = [MessagePack : MessagePack]
 
-public protocol SchemaProtocol {
-    var spaces: [String : Space] { get }
-}
-
 public protocol DataSource {
     func count(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple) throws -> Int
     func select(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple, offset: Int, limit: Int) throws -> [Tuple]
