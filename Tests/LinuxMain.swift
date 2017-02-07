@@ -16,10 +16,10 @@ import XCTest
 XCTMain([
      testCase(TestUtilsTests.allTests),
      testCase(TarantoolModuleTests.allTests),
-     testCase(TarantoolConnectorTests.allTests),
+     testCase(IProtoConnectionTests.allTests),
      testCase(IProtoDataSourceTests.allTests),
      testCase(IProtoIteratorTests.allTests),
-     testCase(SchemaTests.allTests),
-     testCase(SpaceTests.allTests),
+     testCase(IProtoSchemaTests.allTests),
+     testCase(IProtoSpaceTests.allTests),
      testCase(CHAPSHA1Tests.allTests),
 ])

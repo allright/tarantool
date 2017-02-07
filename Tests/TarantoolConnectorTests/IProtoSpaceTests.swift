@@ -13,7 +13,7 @@ import Foundation
 @testable import TestUtils
 @testable import TarantoolConnector
 
-class SpaceTests: XCTestCase {
+class IProtoSpaceTests: XCTestCase {
     var tarantool: TarantoolProcess!
     var space: Space!
 
@@ -150,7 +150,7 @@ class SpaceTests: XCTestCase {
     }
 
 
-    static var allTests : [(String, (SpaceTests) -> () throws -> Void)] {
+    static var allTests : [(String, (IProtoSpaceTests) -> () throws -> Void)] {
         return [
             ("testCount", testCount),
             ("testSelect", testSelect),

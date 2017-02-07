@@ -13,7 +13,7 @@ import Foundation
 @testable import TestUtils
 @testable import TarantoolConnector
 
-class SchemaTests: XCTestCase {
+class IProtoSchemaTests: XCTestCase {
     var tarantool: TarantoolProcess!
     var iprotoSource: IProtoDataSource!
 
@@ -53,7 +53,7 @@ class SchemaTests: XCTestCase {
     }
 
 
-    static var allTests : [(String, (SchemaTests) -> () throws -> Void)] {
+    static var allTests : [(String, (IProtoSchemaTests) -> () throws -> Void)] {
         return [
             ("testSchema", testSchema),
         ]
