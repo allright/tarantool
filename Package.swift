@@ -26,5 +26,4 @@ let package = Package(
     ]
 )
 
-products.append(Product(name: "CTarantool", type: .Library(.Static), modules: "CTarantool"))
 products.append(Product(name: "TarantoolModuleTest", type: .Library(.Dynamic), modules: "TarantoolModuleTest"))

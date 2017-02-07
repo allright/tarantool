@@ -13,7 +13,7 @@ import Foundation
 @testable import TestUtils
 @testable import TarantoolConnector
 
-class TarantoolConnectorTests: XCTestCase {
+class IProtoConnectionTests: XCTestCase {
     var tarantool: TarantoolProcess!
     var iproto: IProtoConnection!
     override func setUp() {
@@ -95,7 +95,7 @@ class TarantoolConnectorTests: XCTestCase {
     }
 
 
-    static var allTests : [(String, (TarantoolConnectorTests) -> () throws -> Void)] {
+    static var allTests : [(String, (IProtoConnectionTests) -> () throws -> Void)] {
         return [
             ("testPing", testPing),
             ("testEval", testEval),
