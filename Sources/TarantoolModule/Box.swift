@@ -82,7 +82,7 @@ public struct Box {
     static func upsert(spaceId: UInt32, indexId: UInt32, tuple: [UInt8], ops: [UInt8]) throws {
         let pTuple = try copyToInternalMemory(tuple)
         let pOps = try copyToInternalMemory(ops)
-        guard _box_update(spaceId, indexId, pTuple, pTuple+tuple.count, pOps, pOps+ops.count, 0, nil) == 0 else {
+        guard _box_upsert(spaceId, indexId, pTuple, pTuple+tuple.count, pOps, pOps+ops.count, 0, nil) == 0 else {
             throw BoxError()
         }
     }

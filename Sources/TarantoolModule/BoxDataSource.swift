@@ -16,12 +16,12 @@ import MessagePack
 public struct BoxDataSource: DataSource {
     public init() {}
 
-    public func count(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple) throws -> Int {
+    public func count(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple = []) throws -> Int {
         let keys = MessagePack.serialize(.array(keys))
         return try Box.count(spaceId: UInt32(spaceId), indexId: UInt32(indexId), iterator: iterator, keys: keys)
     }
 
-    public func select(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple, offset: Int, limit: Int) throws -> [Tuple] {
+    public func select(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple = [], offset: Int = 0, limit: Int = 1000) throws -> [Tuple] {
         let keys = MessagePack.serialize(.array(keys))
         return try Box.select(spaceId: UInt32(spaceId), indexId: UInt32(indexId), iterator: iterator, keys: keys)
     }
@@ -46,13 +46,13 @@ public struct BoxDataSource: DataSource {
         try Box.delete(spaceId: UInt32(spaceId), indexId: UInt32(indexId), keys: keys)
     }
 
-    public func update(spaceId: Int, indexId: Int, keys: Tuple, ops: Tuple) throws {
+    public func update(spaceId: Int, indexId: Int = 0, keys: Tuple, ops: Tuple) throws {
         let keys = MessagePack.serialize(.array(keys))
         let ops = MessagePack.serialize(.array(ops))
         try Box.update(spaceId: UInt32(spaceId), indexId: UInt32(indexId), keys: keys, ops: ops)
     }
 
-    public func upsert(spaceId: Int, indexId: Int, tuple: Tuple, ops: Tuple) throws {
+    public func upsert(spaceId: Int, indexId: Int = 0, tuple: Tuple, ops: Tuple) throws {
         let tuple = MessagePack.serialize(.array(tuple))
         let ops = MessagePack.serialize(.array(ops))
         try Box.upsert(spaceId: UInt32(spaceId), indexId: UInt32(indexId), tuple: tuple, ops: ops)
