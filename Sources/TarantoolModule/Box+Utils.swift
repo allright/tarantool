@@ -12,10 +12,12 @@ import CTarantool
 import MessagePack
 
 extension Box {
+    fileprivate static let invalid = UInt32(Int32.max)
+
     static func getSpaceIdByName(_ name: [UInt8]) throws -> UInt32 {
         let name = unsafeBitCast(name, to: [CChar].self)
         let id = _box_space_id_by_name(name, UInt32(name.count))
-        if id == UInt32(Int32.max) {
+        if id == invalid {
             throw TarantoolError.spaceNotFound
         }
         return id
@@ -24,7 +26,7 @@ extension Box {
     static func getIndexIdByName(_ name: [UInt8], spaceId: UInt32) throws -> UInt32 {
         let name = unsafeBitCast(name, to: [CChar].self)
         let id = _box_index_id_by_name(spaceId, name, UInt32(name.count))
-        if id == UInt32(Int32.max) {
+        if id == invalid {
             throw TarantoolError.indexNotFound
         }
         return id

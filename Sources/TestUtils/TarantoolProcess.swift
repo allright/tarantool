@@ -28,7 +28,7 @@ class TarantoolProcess {
     var lock: URL {
         return temp.appendingPathComponent("lock")
     }
-    
+
     var isRunning: Bool {
         return process.isRunning
     }

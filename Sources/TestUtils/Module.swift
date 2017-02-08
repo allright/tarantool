@@ -15,11 +15,11 @@ struct Module {
     init(_ name: String) {
         self.name = name
     }
-    
+
     var path: String? {
         return xcodeModuleUrl ?? swiftPMModuleUrl
     }
-    
+
     private var xcodeModuleUrl: String? {
         guard let xcodeBuildDir =
             ProcessInfo.processInfo.environment["__XPC_DYLD_FRAMEWORK_PATH"],
@@ -31,23 +31,23 @@ struct Module {
             .appendingPathComponent(name)
             .path
     }
-    
+
     private var swiftPMModuleUrl: String? {
-        #if os(macOS)
-            let xctest = CommandLine.arguments[1]
-        #else
-            let xctest = CommandLine.arguments[0]
-        #endif
+    #if os(macOS)
+        let xctest = CommandLine.arguments[1]
+    #else
+        let xctest = CommandLine.arguments[0]
+    #endif
         guard var url = URL(string: xctest) else {
             return nil
         }
         url.deleteLastPathComponent()
         url.appendPathComponent("lib\(name)")
-        #if os(macOS)
-            url.appendPathExtension("dylib")
-        #else
-            url.appendPathExtension("so")
-        #endif
+    #if os(macOS)
+        url.appendPathExtension("dylib")
+    #else
+        url.appendPathExtension("so")
+    #endif
         return url.path
     }
 }

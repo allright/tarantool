@@ -34,7 +34,7 @@ class TarantoolModuleTests: XCTestCase {
                 "local lib = ffi.load('\(module)')\n" +
                 "ffi.cdef[[void tarantool_module_init();]]\n" +
                 "lib.tarantool_module_init()\n" +
-                "box.schema.user.grant('guest', 'read,write,eval,execute', 'universe')\n" +
+                "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
                 functions.reduce("") { $0 + "box.schema.func.create('\($1)', {language = 'C'})\n" }
             
             tarantool = try TarantoolProcess(with: script, listen: port)
@@ -54,8 +54,9 @@ class TarantoolModuleTests: XCTestCase {
         do {
             let iproto = try IProtoConnection(host: "127.0.0.1", port: port)
             let result = try iproto.call("testBox")
-            guard let first = Tuple(result.first)?.first, let tuple = [MessagePack : MessagePack](first) else {
-                throw TarantoolError.invalidTuple(message: "unexpected result")
+            guard let first = Tuple(result.first)?.first,
+                let tuple = [MessagePack : MessagePack](first) else {
+                    throw TarantoolError.invalidTuple(message: "unexpected result")
             }
             XCTAssertEqual(tuple["success"], true)
         } catch {

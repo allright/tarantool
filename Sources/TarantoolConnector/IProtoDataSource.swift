@@ -33,8 +33,7 @@ public struct IProtoDataSource: DataSource {
             .limit:    .int(limit),
             .offset:   .int(offset),
             .iterator: .int(iterator.rawValue),
-            .key:      .array(keys)]
-        )
+            .key:      .array(keys)])
 
         var rows: [Tuple] = []
         for tuple in Tuple(result) {
@@ -53,8 +52,7 @@ public struct IProtoDataSource: DataSource {
             .limit:    .int(1),
             .offset:   .int(0),
             .iterator: .int(Iterator.eq.rawValue),
-            .key:      .array(keys)]
-        )
+            .key:      .array(keys)])
 
         return Tuple(Tuple(result).first)
     }
@@ -62,23 +60,20 @@ public struct IProtoDataSource: DataSource {
     public func insert(spaceId: Int, tuple: Tuple) throws {
         _ = try connection.request(code: .insert, keys: [
             .spaceId: .int(spaceId),
-            .tuple:   .array(tuple)]
-        )
+            .tuple:   .array(tuple)])
     }
 
     public func replace(spaceId: Int, tuple: Tuple) throws {
         _ = try connection.request(code: .replace, keys: [
             .spaceId: .int(spaceId),
-            .tuple:   .array(tuple)]
-        )
+            .tuple:   .array(tuple)])
     }
 
     public func delete(spaceId: Int, indexId: Int = 0, keys: Tuple) throws {
         _ = try connection.request(code: .delete, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
-            .key:     .array(keys)]
-        )
+            .key:     .array(keys)])
     }
 
     public func update(spaceId: Int, indexId: Int = 0, keys: Tuple, ops: Tuple) throws {
@@ -86,8 +81,7 @@ public struct IProtoDataSource: DataSource {
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
             .key:     .array(keys),
-            .tuple:   .array(ops)]
-        )
+            .tuple:   .array(ops)])
     }
 
     public func upsert(spaceId: Int, indexId: Int = 0, tuple: Tuple, ops: Tuple) throws {
@@ -95,7 +89,6 @@ public struct IProtoDataSource: DataSource {
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
             .tuple:   .array(tuple),
-            .ops:     .array(ops)]
-        )
+            .ops:     .array(ops)])
     }
 }
