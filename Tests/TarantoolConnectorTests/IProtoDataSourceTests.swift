@@ -15,7 +15,7 @@ import Foundation
 
 class IProtoDataSourceTests: XCTestCase {
     var tarantool: TarantoolProcess!
-    var iprotoSource: IProtoDataSource!
+    var source: IProtoDataSource!
     var testId = 0
 
     override func setUp() {
@@ -30,7 +30,7 @@ class IProtoDataSourceTests: XCTestCase {
             try tarantool.launch()
             
             let iproto = try IProtoConnection(host: "127.0.0.1")
-            iprotoSource = IProtoDataSource(connection: iproto)
+            source = IProtoDataSource(connection: iproto)
 
             guard let first = try iproto.eval("return box.space.test.id").first,
                 let testId = Int(first) else {
@@ -51,7 +51,7 @@ class IProtoDataSourceTests: XCTestCase {
 
     func testCount() {
         do {
-            let result = try iprotoSource.count(spaceId: testId, iterator: .all)
+            let result = try source.count(spaceId: testId, iterator: .all)
             XCTAssertEqual(result, 3)
         } catch {
             XCTFail(String(describing: error))
@@ -60,7 +60,7 @@ class IProtoDataSourceTests: XCTestCase {
 
     func testSelect() {
         do {
-            let result = try iprotoSource.select(spaceId: testId, iterator: .all)
+            let result = try source.select(spaceId: testId, iterator: .all)
             XCTAssertEqual(result.count, 3)
             if result.count == 3 {
                 XCTAssertEqual(result[0], Tuple([1, "foo"]))
@@ -75,7 +75,7 @@ class IProtoDataSourceTests: XCTestCase {
     func testGet() {
         do {
             guard let result =
-                try iprotoSource.get(spaceId: testId, keys: [3]) else {
+                try source.get(spaceId: testId, keys: [3]) else {
                     XCTFail()
                     return
             }
@@ -87,9 +87,9 @@ class IProtoDataSourceTests: XCTestCase {
 
     func testInsert() {
         do {
-            try iprotoSource.insert(spaceId: testId, tuple: [4, "quux"])
+            try source.insert(spaceId: testId, tuple: [4, "quux"])
             guard let result =
-                try iprotoSource.get(spaceId: testId, keys: [4]) else {
+                try source.get(spaceId: testId, keys: [4]) else {
                     XCTFail()
                     return
             }
@@ -101,9 +101,9 @@ class IProtoDataSourceTests: XCTestCase {
 
     func testReplace() {
         do {
-            try iprotoSource.replace(spaceId: testId, tuple: [3, "zab"])
+            try source.replace(spaceId: testId, tuple: [3, "zab"])
             guard let result =
-                try iprotoSource.get(spaceId: testId, keys: [3]) else {
+                try source.get(spaceId: testId, keys: [3]) else {
                     XCTFail()
                     return
             }
@@ -115,8 +115,8 @@ class IProtoDataSourceTests: XCTestCase {
 
     func testDelete() {
         do {
-            try iprotoSource.delete(spaceId: testId, keys: [3])
-            XCTAssertNil(try iprotoSource.get(spaceId: testId, keys: [3]))
+            try source.delete(spaceId: testId, keys: [3])
+            XCTAssertNil(try source.get(spaceId: testId, keys: [3]))
         } catch {
             XCTFail(String(describing: error))
         }
@@ -124,9 +124,9 @@ class IProtoDataSourceTests: XCTestCase {
 
     func testUpdate() {
         do {
-            try iprotoSource.update(spaceId: testId, keys: [3], ops: [["=", 1, "zab"]])
+            try source.update(spaceId: testId, keys: [3], ops: [["=", 1, "zab"]])
             guard let result =
-                try iprotoSource.get(spaceId: testId, keys: [3]) else {
+                try source.get(spaceId: testId, keys: [3]) else {
                     XCTFail()
                     return
             }
@@ -138,19 +138,19 @@ class IProtoDataSourceTests: XCTestCase {
 
     func testUpsert() {
         do {
-            XCTAssertNil(try iprotoSource.get(spaceId: testId, keys: [4]))
+            XCTAssertNil(try source.get(spaceId: testId, keys: [4]))
 
-            try iprotoSource.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
+            try source.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
             guard let insertResult =
-                try iprotoSource.get(spaceId: testId, keys: [4]) else {
+                try source.get(spaceId: testId, keys: [4]) else {
                     XCTFail()
                     return
             }
             XCTAssertEqual(insertResult, [4, "quux", 42])
 
-            try iprotoSource.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
+            try source.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
             guard let updateResult =
-                try iprotoSource.get(spaceId: testId, keys: [4]) else {
+                try source.get(spaceId: testId, keys: [4]) else {
                     XCTFail()
                     return
             }
