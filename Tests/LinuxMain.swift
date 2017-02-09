@@ -16,6 +16,7 @@ import XCTest
 XCTMain([
      testCase(TestUtilsTests.allTests),
      testCase(BoxDataSourceTests.allTests),
+     testCase(BoxSpaceTests.allTests),
      testCase(IProtoConnectionTests.allTests),
      testCase(IProtoDataSourceTests.allTests),
      testCase(IProtoIteratorTests.allTests),
