@@ -15,7 +15,7 @@ import Foundation
 
 class IProtoIteratorTests: XCTestCase {
     var tarantool: TarantoolProcess!
-    var iprotoSource: IProtoDataSource!
+    var source: IProtoDataSource!
     var testSpaceId = 0
 
     override func setUp() {
@@ -30,7 +30,7 @@ class IProtoIteratorTests: XCTestCase {
             try tarantool.launch()
             
             let iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
-            iprotoSource = IProtoDataSource(connection: iproto)
+            source = IProtoDataSource(connection: iproto)
 
             guard let first = try iproto.eval("return box.space.test.id").first,
                 let testSpaceId = Int(first) else {
@@ -51,7 +51,7 @@ class IProtoIteratorTests: XCTestCase {
 
     func testSelectAll() {
         do {
-            let result = try iprotoSource.select(spaceId: testSpaceId, iterator: .all, keys: [])
+            let result = try source.select(spaceId: testSpaceId, iterator: .all, keys: [])
             XCTAssertEqual(result.count, 3)
             if result.count == 3 {
                 XCTAssertEqual(result[0], Tuple([1, "foo"]))
@@ -65,7 +65,7 @@ class IProtoIteratorTests: XCTestCase {
 
     func testSelectEQ() {
         do {
-            let result = try iprotoSource.select(spaceId: testSpaceId, iterator: .eq, keys: [2])
+            let result = try source.select(spaceId: testSpaceId, iterator: .eq, keys: [2])
             XCTAssertEqual(result.count, 1)
             if let tuple = result.first {
                 XCTAssertEqual(tuple, Tuple([2, "bar"]))
@@ -77,7 +77,7 @@ class IProtoIteratorTests: XCTestCase {
 
     func testSelectGT() {
         do {
-            let result = try iprotoSource.select(spaceId: testSpaceId, iterator: .gt, keys: [2])
+            let result = try source.select(spaceId: testSpaceId, iterator: .gt, keys: [2])
             XCTAssertEqual(result.count, 1)
             if let tuple = result.first {
                 XCTAssertEqual(tuple, Tuple([3, "baz"]))
@@ -89,7 +89,7 @@ class IProtoIteratorTests: XCTestCase {
 
     func testSelectGE() {
         do {
-            let result = try iprotoSource.select(spaceId: testSpaceId, iterator: .ge, keys: [2])
+            let result = try source.select(spaceId: testSpaceId, iterator: .ge, keys: [2])
             XCTAssertEqual(result.count, 2)
             if result.count == 2 {
                 XCTAssertEqual(result[0], Tuple([2, "bar"]))
@@ -102,7 +102,7 @@ class IProtoIteratorTests: XCTestCase {
 
     func testSelectLT() {
         do {
-            let result = try iprotoSource.select(spaceId: testSpaceId, iterator: .lt, keys: [2])
+            let result = try source.select(spaceId: testSpaceId, iterator: .lt, keys: [2])
             XCTAssertEqual(result.count, 1)
             if result.count == 1 {
                 XCTAssertEqual(result[0], Tuple([1, "foo"]))
@@ -114,7 +114,7 @@ class IProtoIteratorTests: XCTestCase {
 
     func testSelectLE() {
         do {
-            let result = try iprotoSource.select(spaceId: testSpaceId, iterator: .le, keys: [2])
+            let result = try source.select(spaceId: testSpaceId, iterator: .le, keys: [2])
             XCTAssertEqual(result.count, 2)
             if result.count == 2 {
                 XCTAssertEqual(result[0], Tuple([2, "bar"]))

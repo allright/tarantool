@@ -15,7 +15,7 @@ import Foundation
 
 class IProtoSchemaTests: XCTestCase {
     var tarantool: TarantoolProcess!
-    var iprotoSource: IProtoDataSource!
+    var source: IProtoDataSource!
 
     override func setUp() {
         do {
@@ -26,7 +26,7 @@ class IProtoSchemaTests: XCTestCase {
             try tarantool.launch()
 
             let iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
-            iprotoSource = IProtoDataSource(connection: iproto)
+            source = IProtoDataSource(connection: iproto)
         } catch {
             XCTFail(String(describing: error))
             return
@@ -40,7 +40,7 @@ class IProtoSchemaTests: XCTestCase {
 
     func testSchema() {
         do {
-            let schema = try Schema(iprotoSource)
+            let schema = try Schema(source)
 
             let space1 = schema.spaces["space1"]
             XCTAssertNotNil(space1)

@@ -16,6 +16,7 @@ import Foundation
 class IProtoConnectionTests: XCTestCase {
     var tarantool: TarantoolProcess!
     var iproto: IProtoConnection!
+    
     override func setUp() {
         do {
             tarantool = try TarantoolProcess(with:
