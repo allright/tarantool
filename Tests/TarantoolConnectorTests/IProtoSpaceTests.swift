@@ -28,7 +28,7 @@ class IProtoSpaceTests: XCTestCase {
                 "test:replace({3, 'baz'})")
             try tarantool.launch()
 
-            let iproto = try IProtoConnection(host: "127.0.0.1")
+            let iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
             let space = IProtoDataSource(connection: iproto)
             let schema = try Schema(space)
 

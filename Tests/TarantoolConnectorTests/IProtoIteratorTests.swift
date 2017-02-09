@@ -29,7 +29,7 @@ class IProtoIteratorTests: XCTestCase {
                 "test:replace({3, 'baz'})")
             try tarantool.launch()
             
-            let iproto = try IProtoConnection(host: "127.0.0.1")
+            let iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
             iprotoSource = IProtoDataSource(connection: iproto)
 
             guard let first = try iproto.eval("return box.space.test.id").first,

@@ -14,7 +14,6 @@ import TarantoolConnector
 @testable import TarantoolModuleTest
 
 class BoxDataSourceTests: XCTestCase {
-    var port: UInt16 = 3302
     var tarantool: TarantoolProcess!
     var iproto: IProtoConnection!
 
@@ -52,10 +51,10 @@ class BoxDataSourceTests: XCTestCase {
 
                 functions.reduce("") { $0 + "box.schema.func.create('\($1)', {language = 'C'})\n" }
             
-            tarantool = try TarantoolProcess(with: script, listen: port)
+            tarantool = try TarantoolProcess(with: script)
             try tarantool.launch()
 
-            iproto = try IProtoConnection(host: "127.0.0.1", port: port)
+            iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
         } catch {
             XCTFail(String(describing: error))
             return

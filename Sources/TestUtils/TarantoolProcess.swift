@@ -10,15 +10,15 @@
 
 import Platform
 import Foundation
+import Socket
 
-struct TarantoolProcessError: Error {
-    let message: String
-}
+extension String: Error {}
 
 class TarantoolProcess {
     let process = Process()
+    fileprivate let syncPort: UInt16
     let port: UInt16
-    let scriptBody: String
+    let script: String
 
     var temp: URL = {
         return URL(fileURLWithPath: NSTemporaryDirectory())
@@ -33,17 +33,26 @@ class TarantoolProcess {
         return process.isRunning
     }
 
-    init(with script: String = "", listen port: UInt16 = 3301) throws {
-        self.port = port
-        self.scriptBody = script
+    init(with script: String = "") throws {
+        self.syncPort = UInt16(arc4random_uniform(50_000)) + 1_500
+        self.port = UInt16(arc4random_uniform(50_000)) + 1_500
+        self.script = script
     }
 
     func launch() throws {
         let config = temp.appendingPathComponent("init.lua")
-        let script = "box.cfg{listen=\(port),snap_dir='\(temp.path)',wal_dir='\(temp.path)',vinyl_dir='\(temp.path)',slab_alloc_arena=0.1}\n" +
-            "\(scriptBody)\n" +
+        let script = "box.cfg{ " +
+            "  listen=\(port)," +
+            "  log_level=1,snap_dir='\(temp.path)'," +
+            "  wal_dir='\(temp.path)'," +
+            "  vinyl_dir='\(temp.path)'," +
+            "  slab_alloc_arena=0.1" +
+            "}\n" +
+            "\(self.script)\n" +
             "local fiber = require('fiber')\n" +
             "local fio = require('fio')\n" +
+            "local net = require('net.box')\n" +
+            "net.connect('127.0.0.1:\(syncPort)')" +
             "while fio.stat('\(lock.path)') do\n" +
             "  fiber.sleep(0.1)\n" +
             "end\n" +
@@ -61,20 +70,25 @@ class TarantoolProcess {
         process.arguments = [config.path]
 
         guard FileManager.default.fileExists(atPath: process.launchPath!) else {
-            throw TarantoolProcessError(message: "\(process.launchPath!) doesn't exist")
+            throw "\(process.launchPath!) doesn't exist"
         }
 
         let outputPipe = Pipe()
         process.standardOutput = outputPipe
+        process.standardInput = Pipe()
         process.launch()
-        usleep(500000)
+
+        try waitForConnect()
+
         guard process.isRunning else {
-            let data = outputPipe.fileHandleForReading.availableData
-            guard let output = String(data: data, encoding: .utf8) else {
-                throw TarantoolProcessError(message: "can't launch tarantool")
-            }
-            throw TarantoolProcessError(message: output)
+            throw "can't launch tarantool"
         }
+    }
+
+    func waitForConnect() throws {
+        let socket = try Socket()
+        try socket.listen(at: "127.0.0.1", port: syncPort)
+        _ = try socket.accept()
     }
 
     func terminate() -> Int {

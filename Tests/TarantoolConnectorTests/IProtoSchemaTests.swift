@@ -25,7 +25,7 @@ class IProtoSchemaTests: XCTestCase {
                 "box.schema.space.create('space2')")
             try tarantool.launch()
 
-            let iproto = try IProtoConnection(host: "127.0.0.1")
+            let iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
             iprotoSource = IProtoDataSource(connection: iproto)
         } catch {
             XCTFail(String(describing: error))
