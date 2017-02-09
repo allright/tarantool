@@ -8,9 +8,9 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Socket
 import Platform
 import Foundation
-import Socket
 
 extension String: Error {}
 
@@ -34,8 +34,8 @@ class TarantoolProcess {
     }
 
     init(with script: String = "") throws {
-        self.syncPort = UInt16(arc4random_uniform(50_000)) + 1_500
-        self.port = UInt16(arc4random_uniform(50_000)) + 1_500
+        self.syncPort = UInt16(arc4random_uniform(64_000)) + 1_500
+        self.port = UInt16(arc4random_uniform(64_000)) + 1_500
         self.script = script
     }
 
@@ -43,7 +43,8 @@ class TarantoolProcess {
         let config = temp.appendingPathComponent("init.lua")
         let script = "box.cfg{ " +
             "  listen=\(port)," +
-            "  log_level=1,snap_dir='\(temp.path)'," +
+            "  log_level=1," +
+            "  snap_dir='\(temp.path)'," +
             "  wal_dir='\(temp.path)'," +
             "  vinyl_dir='\(temp.path)'," +
             "  slab_alloc_arena=0.1" +

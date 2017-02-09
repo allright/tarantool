@@ -14,7 +14,7 @@ import TarantoolModule
 
 public struct TarantoolLoop: AsyncLoop {
     public func run() {
-        // fallback to tarantool built-in evloop
+        // fallback to tarantool's built-in event loop
     }
 }
 
@@ -25,9 +25,7 @@ public struct AsyncTarantool: Async {
     public var awaiter: IOAwaiter? = TarantoolAwaiter()
 }
 
-public struct TarantoolAwaiterTimeout: Error {
-
-}
+public struct TarantoolAwaiterTimeout: Error {}
 
 public struct TarantoolAwaiter: IOAwaiter {
     public init() {}
