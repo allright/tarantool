@@ -19,14 +19,14 @@ class BoxDataSourceTests: XCTestCase {
     var iproto: IProtoConnection!
 
     var functions = [
-        "testCount",
-        "testSelect",
-        "testGet",
-        "testInsert",
-        "testReplace",
-        "testDelete",
-        "testUpdate",
-        "testUpsert"
+        "BoxDataSourceTests_testCount",
+        "BoxDataSourceTests_testSelect",
+        "BoxDataSourceTests_testGet",
+        "BoxDataSourceTests_testInsert",
+        "BoxDataSourceTests_testReplace",
+        "BoxDataSourceTests_testDelete",
+        "BoxDataSourceTests_testUpdate",
+        "BoxDataSourceTests_testUpsert"
     ]
 
     override func setUp() {
@@ -69,7 +69,7 @@ class BoxDataSourceTests: XCTestCase {
 
     func testCount() {
         do {
-            _ = try iproto.call("testCount")
+            _ = try iproto.call("BoxDataSourceTests_testCount")
         } catch {
             XCTFail(String(describing: error))
         }
@@ -77,7 +77,7 @@ class BoxDataSourceTests: XCTestCase {
 
     func testSelect() {
         do {
-            _ = try iproto.call("testSelect")
+            _ = try iproto.call("BoxDataSourceTests_testSelect")
         } catch {
             XCTFail(String(describing: error))
         }
@@ -85,7 +85,7 @@ class BoxDataSourceTests: XCTestCase {
 
     func testGet() {
         do {
-            _ = try iproto.call("testGet")
+            _ = try iproto.call("BoxDataSourceTests_testGet")
         } catch {
             XCTFail(String(describing: error))
         }
@@ -93,7 +93,7 @@ class BoxDataSourceTests: XCTestCase {
 
     func testInsert() {
         do {
-            _ = try iproto.call("testInsert")
+            _ = try iproto.call("BoxDataSourceTests_testInsert")
         } catch {
             XCTFail(String(describing: error))
         }
@@ -101,7 +101,7 @@ class BoxDataSourceTests: XCTestCase {
 
     func testReplace() {
         do {
-            _ = try iproto.call("testReplace")
+            _ = try iproto.call("BoxDataSourceTests_testReplace")
         } catch {
             XCTFail(String(describing: error))
         }
@@ -109,7 +109,7 @@ class BoxDataSourceTests: XCTestCase {
 
     func testDelete() {
         do {
-            _ = try iproto.call("testDelete")
+            _ = try iproto.call("BoxDataSourceTests_testDelete")
         } catch {
             XCTFail(String(describing: error))
         }
@@ -117,7 +117,7 @@ class BoxDataSourceTests: XCTestCase {
 
     func testUpdate() {
         do {
-            _ = try iproto.call("testUpdate")
+            _ = try iproto.call("BoxDataSourceTests_testUpdate")
         } catch {
             XCTFail(String(describing: error))
         }
@@ -125,7 +125,7 @@ class BoxDataSourceTests: XCTestCase {
 
     func testUpsert() {
         do {
-            _ = try iproto.call("testUpsert")
+            _ = try iproto.call("BoxDataSourceTests_testUpsert")
         } catch {
             XCTFail(String(describing: error))
         }

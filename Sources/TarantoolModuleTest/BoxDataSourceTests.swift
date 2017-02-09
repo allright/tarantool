@@ -11,169 +11,166 @@
 import MessagePack
 @testable import TarantoolModule
 
-extension String: Error {}
-
-var testId: Int {
-    guard let id = try? Box.getSpaceIdByName([UInt8]("test".utf8)) else {
-        return 0
-    }
-    return Int(id)
-}
-
-var source: BoxDataSource {
-    return BoxDataSource()
-}
-
-func testCount() throws {
-    let result = try source.count(spaceId: testId, iterator: .all)
-    guard result == 3 else {
-        throw "3 is not equal to \(result)"
-    }
-}
-
-func testSelect() throws {
-    let result = try source.select(spaceId: testId, iterator: .all)
-    guard result.count == 3 else {
-        throw "3 is not equal to \(result)"
-    }
-}
-
-func testGet() throws {
-    let result = try source.get(spaceId: testId, keys: [3])
-    guard let tuple = result, tuple == [3, "baz"] else {
-        throw "\(String(describing: result)) is not equal to [3, 'baz']"
-    }
-}
-
-func testInsert() throws {
-    try source.insert(spaceId: testId, tuple: [4, "quux"])
-    let result = try source.get(spaceId: testId, keys: [4])
-    guard let tuple = result, tuple == [4, "quux"] else {
-        throw "\(String(describing: result))  is not equal to [4, 'quux']"
-    }
-}
-
-func testReplace() throws {
-    try source.replace(spaceId: testId, tuple: [3, "zab"])
-    let result = try source.get(spaceId: testId, keys: [3])
-    guard let tuple = result, tuple == [3, "zab"] else {
-        throw "\(String(describing: result))  is not equal to [3, 'zab']"
-    }
-}
-
-func testDelete() throws {
-    try source.delete(spaceId: testId, keys: [3])
-    let result = try source.get(spaceId: testId, keys: [3])
-    guard result == nil else {
-        throw "\(String(describing: result)) is not nil"
-    }
-}
-
-func testUpdate() throws {
-    try source.update(spaceId: testId, keys: [3], ops: [["=", 1, "zab"]])
-    let result = try source.get(spaceId: testId, keys: [3])
-    guard let tuple = result, tuple == [3, "zab"] else {
-        throw "\(String(describing: result)) is not equal to [3, 'zab']"
-    }
-}
-
-func testUpsert() throws {
-    let expectedNil = try source.get(spaceId: testId, keys: [4])
-    guard expectedNil == nil else {
-        throw "\(String(describing: expectedNil)) is not nil"
+struct BoxDataSourceTests {
+    fileprivate static var testId: Int {
+        return Int(try! Box.getSpaceIdByName([UInt8]("test".utf8)))
     }
 
-    try source.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
-    let insert = try source.get(spaceId: testId, keys: [4])
-
-    guard let insertResult = insert, insertResult == [4, "quux", 42] else {
-        throw "\(String(describing: insert)) is not equal to [4, 'quux', 42]"
+    fileprivate static var source: BoxDataSource {
+        return BoxDataSource()
     }
 
-    try source.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
-    let update = try source.get(spaceId: testId, keys: [4])
+    static func testCount() throws {
+        let result = try source.count(spaceId: testId, iterator: .all)
+        guard result == 3 else {
+            throw "3 is not equal to \(result)"
+        }
+    }
 
-    guard let updateResult = update, updateResult == [4, "quux", 50] else {
-        throw "\(String(describing: update)) is not equal to [4, 'quux', 50]"
+    static func testSelect() throws {
+        let result = try source.select(spaceId: testId, iterator: .all)
+        guard result.count == 3 else {
+            throw "3 is not equal to \(result)"
+        }
+    }
+
+    static func testGet() throws {
+        let result = try source.get(spaceId: testId, keys: [3])
+        guard let tuple = result, tuple == [3, "baz"] else {
+            throw "\(String(describing: result)) is not equal to [3, 'baz']"
+        }
+    }
+
+    static func testInsert() throws {
+        try source.insert(spaceId: testId, tuple: [4, "quux"])
+        let result = try source.get(spaceId: testId, keys: [4])
+        guard let tuple = result, tuple == [4, "quux"] else {
+            throw "\(String(describing: result))  is not equal to [4, 'quux']"
+        }
+    }
+
+    static func testReplace() throws {
+        try source.replace(spaceId: testId, tuple: [3, "zab"])
+        let result = try source.get(spaceId: testId, keys: [3])
+        guard let tuple = result, tuple == [3, "zab"] else {
+            throw "\(String(describing: result))  is not equal to [3, 'zab']"
+        }
+    }
+
+    static func testDelete() throws {
+        try source.delete(spaceId: testId, keys: [3])
+        let result = try source.get(spaceId: testId, keys: [3])
+        guard result == nil else {
+            throw "\(String(describing: result)) is not nil"
+        }
+    }
+
+    static func testUpdate() throws {
+        try source.update(spaceId: testId, keys: [3], ops: [["=", 1, "zab"]])
+        let result = try source.get(spaceId: testId, keys: [3])
+        guard let tuple = result, tuple == [3, "zab"] else {
+            throw "\(String(describing: result)) is not equal to [3, 'zab']"
+        }
+    }
+
+    static func testUpsert() throws {
+        let expectedNil = try source.get(spaceId: testId, keys: [4])
+        guard expectedNil == nil else {
+            throw "\(String(describing: expectedNil)) is not nil"
+        }
+
+        try source.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
+        let insert = try source.get(spaceId: testId, keys: [4])
+
+        guard let insertResult = insert, insertResult == [4, "quux", 42] else {
+            throw "\(String(describing: insert)) is not equal to [4, 'quux', 42]"
+        }
+
+        try source.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
+        let update = try source.get(spaceId: testId, keys: [4])
+
+        guard let updateResult = update, updateResult == [4, "quux", 50] else {
+            throw "\(String(describing: update)) is not equal to [4, 'quux', 50]"
+        }
     }
 }
 
 // C API Wrappers
 
-@_silgen_name("testCount")
-public func testCountShim(context: BoxContext) -> BoxResult {
+@_silgen_name("BoxDataSourceTests_testCount")
+public func BoxDataSourceTests_testCount(context: BoxContext) -> BoxResult {
     do {
-        try testCount()
+        try BoxDataSourceTests.testCount()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }
 }
 
-@_silgen_name("testSelect")
-public func testSelectShim(context: BoxContext) -> BoxResult {
+@_silgen_name("BoxDataSourceTests_testSelect")
+public func BoxDataSourceTests_testSelect(context: BoxContext) -> BoxResult {
     do {
-        try testSelect()
+        try BoxDataSourceTests.testSelect()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }
 }
 
-@_silgen_name("testGet")
-public func testGetShim(context: BoxContext) -> BoxResult {
+@_silgen_name("BoxDataSourceTests_testGet")
+public func BoxDataSourceTests_testGet(context: BoxContext) -> BoxResult {
     do {
-        try testGet()
+        try BoxDataSourceTests.testGet()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }
 }
 
-@_silgen_name("testInsert")
-public func testInsertShim(context: BoxContext) -> BoxResult {
+@_silgen_name("BoxDataSourceTests_testInsert")
+public func BoxDataSourceTests_testInsert(context: BoxContext) -> BoxResult {
     do {
-        try testInsert()
+        try BoxDataSourceTests.testInsert()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }
 }
 
-@_silgen_name("testReplace")
-public func testReplaceShim(context: BoxContext) -> BoxResult {
+@_silgen_name("BoxDataSourceTests_testReplace")
+public func BoxDataSourceTests_testReplace(context: BoxContext) -> BoxResult {
     do {
-        try testReplace()
+        try BoxDataSourceTests.testReplace()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }
 }
 
-@_silgen_name("testDelete")
-public func testDeleteShim(context: BoxContext) -> BoxResult {
+@_silgen_name("BoxDataSourceTests_testDelete")
+public func BoxDataSourceTests_testDelete(context: BoxContext) -> BoxResult {
     do {
-        try testDelete()
+        try BoxDataSourceTests.testDelete()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }
 }
 
-@_silgen_name("testUpdate")
-public func testUpdateShim(context: BoxContext) -> BoxResult {
+@_silgen_name("BoxDataSourceTests_testUpdate")
+public func BoxDataSourceTests_testUpdate(context: BoxContext) -> BoxResult {
     do {
-        try testUpdate()
+        try BoxDataSourceTests.testUpdate()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }
 }
 
-@_silgen_name("testUpsert")
-public func testUpsertShim(context: BoxContext) -> BoxResult {
+@_silgen_name("BoxDataSourceTests_testUpsert")
+public func BoxDataSourceTests_testUpsert(context: BoxContext) -> BoxResult {
     do {
-        try testUpsert()
+        try BoxDataSourceTests.testUpsert()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
