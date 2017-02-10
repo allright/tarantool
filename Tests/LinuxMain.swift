@@ -18,6 +18,7 @@ XCTMain([
     testCase(BoxDataSourceTests.allTests),
     testCase(BoxSpaceTests.allTests),
     testCase(BoxTupleTests.allTests),
+    testCase(BoxTransactionTests.allTests),
     testCase(IProtoConnectionTests.allTests),
     testCase(IProtoDataSourceTests.allTests),
     testCase(IProtoIteratorTests.allTests),

@@ -37,14 +37,14 @@ extension Box {
         fileprivate static func run(_ closure: (Void) throws -> Action) throws {
             try begin()
 
-            guard let action = try? closure() else {
+            do {
+                switch try closure() {
+                case .commit: try commit()
+                case .rollback: try rollback()
+                }
+            } catch {
                 try rollback()
-                return
-            }
-
-            switch action {
-            case .commit: try commit()
-            case .rollback: try rollback()
+                throw error
             }
         }
     }
