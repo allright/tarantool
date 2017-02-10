@@ -14,20 +14,37 @@ import MessagePack
 
 extension Box {
     static func unpackTuple(_ tuple: OpaquePointer) throws -> Tuple {
-        let size = _box_tuple_bsize(tuple)
-        guard size > 0 else {
-            throw TarantoolError.invalidTuple(message: "tuple size: \(size)")
-        }
-        let packed = UnsafeMutablePointer<UInt8>.allocate(capacity: size)
-        defer { packed.deallocate(capacity: size) }
-        // copying internal tuple buffer
-        let written = packed.withMemoryRebound(to: CChar.self, capacity: size) { pointer in
-            return _box_tuple_to_buf(tuple, pointer, size)
+        let tupleSize = _box_tuple_bsize(tuple)
+        guard tupleSize > 0 else {
+            throw TarantoolError.invalidTuple(message: "tuple size: \(tupleSize)")
         }
 
-        let unpacked = try MessagePack.deserialize(bytes: UnsafeBufferPointer(start: packed, count: written))
-        guard let tuple = Tuple(unpacked) else {
-            throw TarantoolError.invalidTuple(message: "array result was expected")
+        guard let iterator = _box_tuple_iterator(tuple) else {
+            throw TarantoolError.invalidTuple(message: "can't create iterator")
+        }
+        defer {
+            _box_tuple_iterator_free(iterator)
+        }
+
+        var tuple = Tuple()
+        guard let first = _box_tuple_next(iterator) else {
+            return tuple
+        }
+
+        var fieldSize = tupleSize
+        let tupleEnd = first + fieldSize
+
+        try first.withMemoryRebound(to: UInt8.self, capacity: fieldSize) { pointer in
+            let field = try MessagePack.deserialize(bytes: pointer, count: fieldSize)
+            tuple.append(field)
+        }
+
+        while let next = _box_tuple_next(iterator) {
+            fieldSize = tupleEnd - next
+            try next.withMemoryRebound(to: UInt8.self, capacity: fieldSize) { pointer in
+                let field = try MessagePack.deserialize(bytes: pointer, count: fieldSize)
+                tuple.append(field)
+            }
         }
 
         return tuple
