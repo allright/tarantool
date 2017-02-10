@@ -14,13 +14,14 @@ import XCTest
 @testable import TarantoolConnectorTests
 
 XCTMain([
-     testCase(TestUtilsTests.allTests),
-     testCase(BoxDataSourceTests.allTests),
-     testCase(BoxSpaceTests.allTests),
-     testCase(IProtoConnectionTests.allTests),
-     testCase(IProtoDataSourceTests.allTests),
-     testCase(IProtoIteratorTests.allTests),
-     testCase(IProtoSchemaTests.allTests),
-     testCase(IProtoSpaceTests.allTests),
-     testCase(CHAPSHA1Tests.allTests),
+    testCase(TestUtilsTests.allTests),
+    testCase(BoxDataSourceTests.allTests),
+    testCase(BoxSpaceTests.allTests),
+    testCase(BoxTupleTests.allTests),
+    testCase(IProtoConnectionTests.allTests),
+    testCase(IProtoDataSourceTests.allTests),
+    testCase(IProtoIteratorTests.allTests),
+    testCase(IProtoSchemaTests.allTests),
+    testCase(IProtoSpaceTests.allTests),
+    testCase(CHAPSHA1Tests.allTests),
 ])
