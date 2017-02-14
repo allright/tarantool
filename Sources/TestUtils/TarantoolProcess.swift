@@ -88,7 +88,8 @@ class TarantoolProcess {
 
     func waitForConnect() throws {
         let socket = try Socket()
-        try socket.listen(at: "127.0.0.1", port: syncPort)
+            .bind(to: "127.0.0.1", port: syncPort)
+            .listen()
         _ = try socket.accept()
     }
 

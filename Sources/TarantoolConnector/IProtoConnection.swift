@@ -25,7 +25,7 @@ public class IProtoConnection {
         try socket.connect(to: host, port: port)
 
         welcome = Welcome()
-        guard try socket.read(to: &welcome.buffer) == welcome.buffer.count else {
+        guard try socket.receive(to: &welcome.buffer) == welcome.buffer.count else {
             throw IProtoError.invalidWelcome(reason: .invalidSize)
         }
 
@@ -83,14 +83,14 @@ public class IProtoConnection {
         // body + header size
         let size = try HeaderLength(packet.count).bytes
 
-        _ = try socket.write(bytes: size + packet)
+        _ = try socket.send(bytes: size + packet)
     }
 
     private func receive() throws -> (header: MessagePack, body: MessagePack) {
         let length = try readPacketLength()
 
         var buffer = [UInt8](repeating: 0, count: length)
-        guard try socket.read(to: &buffer) == length else {
+        guard try socket.receive(to: &buffer) == length else {
             throw IProtoError.invalidPacket(reason: .invalidSize)
         }
 
@@ -104,7 +104,7 @@ public class IProtoConnection {
     private func readPacketLength() throws -> Int {
         // always packed as 32bit integer CE XX XX XX XX
         var lengthBuffer = [UInt8](repeating: 0, count: 5)
-        guard try socket.read(to: &lengthBuffer) == 5 else {
+        guard try socket.receive(to: &lengthBuffer) == 5 else {
             throw IProtoError.invalidPacket(reason: .invalidSize)
         }
         return try HeaderLength(bytes: lengthBuffer).length
