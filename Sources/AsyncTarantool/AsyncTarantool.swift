@@ -10,11 +10,19 @@
 
 import Async
 import CTarantool
+import Foundation
 import TarantoolModule
 
 public struct TarantoolLoop: AsyncLoop {
     public func run() {
         // fallback to tarantool's built-in event loop
+    }
+
+    public func run(until date: Date) {
+        fiber {
+            sleep(until: date)
+            exit(0)
+        }
     }
 }
 
