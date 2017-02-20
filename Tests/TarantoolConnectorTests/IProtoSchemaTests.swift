@@ -8,12 +8,12 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import XCTest
+import Test
 import Foundation
 @testable import TestUtils
 @testable import TarantoolConnector
 
-class IProtoSchemaTests: XCTestCase {
+class IProtoSchemaTests: TestCase {
     var tarantool: TarantoolProcess!
     var source: IProtoDataSource!
 
@@ -28,14 +28,14 @@ class IProtoSchemaTests: XCTestCase {
             let iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
             source = IProtoDataSource(connection: iproto)
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
             return
         }
     }
 
     override func tearDown() {
         let status = tarantool.terminate()
-        XCTAssertEqual(status, 0)
+        assertEqual(status, 0)
     }
 
     func testSchema() {
@@ -43,12 +43,12 @@ class IProtoSchemaTests: XCTestCase {
             let schema = try Schema(source)
 
             let space1 = schema.spaces["space1"]
-            XCTAssertNotNil(space1)
+            assertNotNil(space1)
 
             let space2 = schema.spaces["space2"]
-            XCTAssertNotNil(space2)
+            assertNotNil(space2)
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 

@@ -8,12 +8,12 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import XCTest
+import Test
 import Foundation
 @testable import TestUtils
 @testable import TarantoolConnector
 
-class IProtoConnectionTests: XCTestCase {
+class IProtoConnectionTests: TestCase {
     var tarantool: TarantoolProcess!
     var iproto: IProtoConnection!
     
@@ -25,21 +25,21 @@ class IProtoConnectionTests: XCTestCase {
 
             iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
             return
         }
     }
 
     override func tearDown() {
         let status = tarantool.terminate()
-        XCTAssertEqual(status, 0)
+        assertEqual(status, 0)
     }
 
     func testPing() {
         do {
             try iproto.ping()
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -48,12 +48,12 @@ class IProtoConnectionTests: XCTestCase {
             let result = try iproto.eval("return 'he'..'l'..'lo'")
             guard let first = result.first,
                 let answer = String(first) else {
-                    XCTFail()
+                    fail()
                     return
             }
-            XCTAssertEqual(answer, "hello")
+            assertEqual(answer, "hello")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -63,7 +63,7 @@ class IProtoConnectionTests: XCTestCase {
                 "box.schema.user.create('tester', {password='tester'})")
             try iproto.auth(username: "tester", password: "tester")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -77,21 +77,21 @@ class IProtoConnectionTests: XCTestCase {
             let result = try iproto.call("hello")
             guard let first = result.first,
                 let answer = String(first) else {
-                    XCTFail()
+                    fail()
                     return
             }
-            XCTAssertEqual(answer, "hey there!")
+            assertEqual(answer, "hey there!")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testRequest() {
         do {
             let result = try iproto.request(code: .ping)
-            XCTAssertEqual(result, [])
+            assertEqual(result, [])
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 

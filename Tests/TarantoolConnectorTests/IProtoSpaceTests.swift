@@ -8,12 +8,12 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import XCTest
+import Test
 import Foundation
 @testable import TestUtils
 @testable import TarantoolConnector
 
-class IProtoSpaceTests: XCTestCase {
+class IProtoSpaceTests: TestCase {
     var tarantool: TarantoolProcess!
     var space: Space!
 
@@ -34,48 +34,48 @@ class IProtoSpaceTests: XCTestCase {
 
             self.space = schema.spaces["test"]
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
             return
         }
     }
 
     override func tearDown() {
         let status = tarantool.terminate()
-        XCTAssertEqual(status, 0)
+        assertEqual(status, 0)
     }
 
     func testCount() {
         do {
             let result = try space.count(.all)
-            XCTAssertEqual(result, 3)
+            assertEqual(result, 3)
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testSelect() {
         do {
             let result = try space.select(.all)
-            XCTAssertEqual(result.count, 3)
+            assertEqual(result.count, 3)
             if result.count == 3 {
-                XCTAssertEqual(result[0], Tuple([1, "foo"]))
-                XCTAssertEqual(result[1], Tuple([2, "bar"]))
-                XCTAssertEqual(result[2], Tuple([3, "baz"]))
+                assertEqual(result[0], Tuple([1, "foo"]))
+                assertEqual(result[1], Tuple([2, "bar"]))
+                assertEqual(result[2], Tuple([3, "baz"]))
             }
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testGet() {
         do {
             guard let result = try space.get([3]) else {
-                XCTFail()
+                fail()
                 return
             }
-            XCTAssertEqual(result, [3, "baz"])
+            assertEqual(result, [3, "baz"])
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -83,12 +83,12 @@ class IProtoSpaceTests: XCTestCase {
         do {
             try space.insert([4, "quux"])
             guard let result = try space.get([4]) else {
-                XCTFail()
+                fail()
                 return
             }
-            XCTAssertEqual(result, [4, "quux"])
+            assertEqual(result, [4, "quux"])
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -96,21 +96,21 @@ class IProtoSpaceTests: XCTestCase {
         do {
             try space.replace([3, "zab"])
             guard let result = try space.get([3]) else {
-                XCTFail()
+                fail()
                 return
             }
-            XCTAssertEqual(result, [3, "zab"])
+            assertEqual(result, [3, "zab"])
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testDelete() {
         do {
             try space.delete([3])
-            XCTAssertNil(try space.get([3]))
+            assertNil(try space.get([3]))
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -118,34 +118,34 @@ class IProtoSpaceTests: XCTestCase {
         do {
             try space.update([3], ops: [["=", 1, "zab"]])
             guard let result = try space.get([3]) else {
-                XCTFail()
+                fail()
                 return
             }
-            XCTAssertEqual(result, [3, "zab"])
+            assertEqual(result, [3, "zab"])
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testUpsert() {
         do {
-            XCTAssertNil(try space.get([4]))
+            assertNil(try space.get([4]))
 
             try space.upsert([4, "quux", 42], ops: [["+", 2, 8]])
             guard let insertResult = try space.get([4]) else {
-                XCTFail()
+                fail()
                 return
             }
-            XCTAssertEqual(insertResult, [4, "quux", 42])
+            assertEqual(insertResult, [4, "quux", 42])
 
             try space.upsert([4, "quux", 42], ops: [["+", 2, 8]])
             guard let updateResult = try space.get([4]) else {
-                XCTFail()
+                fail()
                 return
             }
-            XCTAssertEqual(updateResult, [4, "quux", 50])
+            assertEqual(updateResult, [4, "quux", 50])
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 

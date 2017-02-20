@@ -8,16 +8,16 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import XCTest
+import Test
 import TarantoolConnector
 @testable import TestUtils
 @testable import TarantoolModuleTest
 
-class BoxTransactionTests: XCTestCase {
+class BoxTransactionTests: TestCase {
     var tarantool: TarantoolProcess!
     var iproto: IProtoConnection!
 
-    var functions = [
+    let functions: ContiguousArray<String> = [
         "BoxTransactionTests_testTransactionCommit",
         "BoxTransactionTests_testTransactionRollback",
     ]
@@ -25,7 +25,7 @@ class BoxTransactionTests: XCTestCase {
     override func setUp() {
         do {
             guard let module = Module("TarantoolModuleTest").path else {
-                XCTFail("can't find swift module")
+                fail("can't find swift module")
                 return
             }
 
@@ -47,21 +47,21 @@ class BoxTransactionTests: XCTestCase {
 
             iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
             return
         }
     }
 
     override func tearDown() {
         let status = tarantool.terminate()
-        XCTAssertEqual(status, 0)
+        assertEqual(status, 0)
     }
 
     func testTransactionCommit() {
         do {
             _ = try iproto.call("BoxTransactionTests_testTransactionCommit")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -69,7 +69,7 @@ class BoxTransactionTests: XCTestCase {
         do {
             _ = try iproto.call("BoxTransactionTests_testTransactionRollback")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 

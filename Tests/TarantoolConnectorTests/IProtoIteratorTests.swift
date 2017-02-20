@@ -8,12 +8,12 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import XCTest
+import Test
 import Foundation
 @testable import TestUtils
 @testable import TarantoolConnector
 
-class IProtoIteratorTests: XCTestCase {
+class IProtoIteratorTests: TestCase {
     var tarantool: TarantoolProcess!
     var source: IProtoDataSource!
     var testSpaceId = 0
@@ -28,100 +28,100 @@ class IProtoIteratorTests: XCTestCase {
                 "test:replace({2, 'bar'})\n" +
                 "test:replace({3, 'baz'})")
             try tarantool.launch()
-            
+
             let iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
             source = IProtoDataSource(connection: iproto)
 
             guard let first = try iproto.eval("return box.space.test.id").first,
                 let testSpaceId = Int(first) else {
-                    XCTFail()
+                    fail()
                     return
             }
             self.testSpaceId = testSpaceId
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
             return
         }
     }
 
     override func tearDown() {
         let status = tarantool.terminate()
-        XCTAssertEqual(status, 0)
+        assertEqual(status, 0)
     }
 
     func testSelectAll() {
         do {
             let result = try source.select(spaceId: testSpaceId, iterator: .all, keys: [])
-            XCTAssertEqual(result.count, 3)
+            assertEqual(result.count, 3)
             if result.count == 3 {
-                XCTAssertEqual(result[0], Tuple([1, "foo"]))
-                XCTAssertEqual(result[1], Tuple([2, "bar"]))
-                XCTAssertEqual(result[2], Tuple([3, "baz"]))
+                assertEqual(result[0], Tuple([1, "foo"]))
+                assertEqual(result[1], Tuple([2, "bar"]))
+                assertEqual(result[2], Tuple([3, "baz"]))
             }
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testSelectEQ() {
         do {
             let result = try source.select(spaceId: testSpaceId, iterator: .eq, keys: [2])
-            XCTAssertEqual(result.count, 1)
+            assertEqual(result.count, 1)
             if let tuple = result.first {
-                XCTAssertEqual(tuple, Tuple([2, "bar"]))
+                assertEqual(tuple, Tuple([2, "bar"]))
             }
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testSelectGT() {
         do {
             let result = try source.select(spaceId: testSpaceId, iterator: .gt, keys: [2])
-            XCTAssertEqual(result.count, 1)
+            assertEqual(result.count, 1)
             if let tuple = result.first {
-                XCTAssertEqual(tuple, Tuple([3, "baz"]))
+                assertEqual(tuple, Tuple([3, "baz"]))
             }
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testSelectGE() {
         do {
             let result = try source.select(spaceId: testSpaceId, iterator: .ge, keys: [2])
-            XCTAssertEqual(result.count, 2)
+            assertEqual(result.count, 2)
             if result.count == 2 {
-                XCTAssertEqual(result[0], Tuple([2, "bar"]))
-                XCTAssertEqual(result[1], Tuple([3, "baz"]))
+                assertEqual(result[0], Tuple([2, "bar"]))
+                assertEqual(result[1], Tuple([3, "baz"]))
             }
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testSelectLT() {
         do {
             let result = try source.select(spaceId: testSpaceId, iterator: .lt, keys: [2])
-            XCTAssertEqual(result.count, 1)
+            assertEqual(result.count, 1)
             if result.count == 1 {
-                XCTAssertEqual(result[0], Tuple([1, "foo"]))
+                assertEqual(result[0], Tuple([1, "foo"]))
             }
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testSelectLE() {
         do {
             let result = try source.select(spaceId: testSpaceId, iterator: .le, keys: [2])
-            XCTAssertEqual(result.count, 2)
+            assertEqual(result.count, 2)
             if result.count == 2 {
-                XCTAssertEqual(result[0], Tuple([2, "bar"]))
-                XCTAssertEqual(result[1], Tuple([1, "foo"]))
+                assertEqual(result[0], Tuple([2, "bar"]))
+                assertEqual(result[1], Tuple([1, "foo"]))
             }
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 

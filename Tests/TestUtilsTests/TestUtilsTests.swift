@@ -8,44 +8,45 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import XCTest
+import Test
+import class Foundation.FileManager
 @testable import TestUtils
 
-class TestUtilsTests: XCTestCase {
+class TestUtilsTests: TestCase {
     func testTarantoolProcess() {
         do {
             let tarantool = try TarantoolProcess()
-            XCTAssertEqual(tarantool.isRunning, false)
+            assertEqual(tarantool.isRunning, false)
             
             try tarantool.launch()
-            XCTAssertEqual(tarantool.isRunning, true)
+            assertEqual(tarantool.isRunning, true)
             
             let exitCode = tarantool.terminate()
-            XCTAssertEqual(tarantool.isRunning, false)
-            XCTAssertEqual(exitCode, 0)
+            assertEqual(tarantool.isRunning, false)
+            assertEqual(exitCode, 0)
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testTempFolder() {
         do {
             let tarantool = try TarantoolProcess()
-            XCTAssertEqual(tarantool.temp, tarantool.temp)
+            assertEqual(tarantool.temp, tarantool.temp)
             
             let tarantool2 = try TarantoolProcess()
-            XCTAssertNotEqual(tarantool.temp, tarantool2.temp)
+            assertNotEqual(tarantool.temp, tarantool2.temp)
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
     func testModulePath() {
         guard let path = Module("TarantoolModuleTest").path else {
-            XCTFail()
+            fail()
             return
         }
-        XCTAssertTrue(FileManager.default.fileExists(atPath: path))
+        assertTrue(FileManager.default.fileExists(atPath: path))
     }
 
 

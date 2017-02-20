@@ -8,11 +8,11 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import XCTest
+import Test
 import Foundation
 @testable import TarantoolConnector
 
-class CHAPSHA1Tests: XCTestCase {
+class CHAPSHA1Tests: TestCase {
     func testCHAPSHA1() {
         let data: [UInt8] = [0x74, 0x65, 0x73, 0x74, 0x65, 0x72]
 
@@ -26,7 +26,7 @@ class CHAPSHA1Tests: XCTestCase {
                                  0x3a, 0xa7, 0x2a, 0xfc]
 
         let result = data.chapSha1(salt: salt)
-        XCTAssertEqual(expected, result)
+        assertEqual(expected, result)
     }
 
 

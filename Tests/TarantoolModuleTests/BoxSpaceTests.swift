@@ -8,16 +8,16 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import XCTest
+import Test
 import TarantoolConnector
 @testable import TestUtils
 @testable import TarantoolModuleTest
 
-class BoxSpaceTests: XCTestCase {
+class BoxSpaceTests: TestCase {
     var tarantool: TarantoolProcess!
     var iproto: IProtoConnection!
 
-    var functions = [
+    let functions: ContiguousArray<String> = [
         "BoxSpaceTests_testCount",
         "BoxSpaceTests_testSelect",
         "BoxSpaceTests_testGet",
@@ -31,7 +31,7 @@ class BoxSpaceTests: XCTestCase {
     override func setUp() {
         do {
             guard let module = Module("TarantoolModuleTest").path else {
-                XCTFail("can't find swift module")
+                fail("can't find swift module")
                 return
             }
 
@@ -56,21 +56,21 @@ class BoxSpaceTests: XCTestCase {
 
             iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
             return
         }
     }
 
     override func tearDown() {
         let status = tarantool.terminate()
-        XCTAssertEqual(status, 0)
+        assertEqual(status, 0)
     }
 
     func testCount() {
         do {
             _ = try iproto.call("BoxSpaceTests_testCount")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -78,7 +78,7 @@ class BoxSpaceTests: XCTestCase {
         do {
             _ = try iproto.call("BoxSpaceTests_testSelect")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -86,7 +86,7 @@ class BoxSpaceTests: XCTestCase {
         do {
             _ = try iproto.call("BoxSpaceTests_testGet")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -94,7 +94,7 @@ class BoxSpaceTests: XCTestCase {
         do {
             _ = try iproto.call("BoxSpaceTests_testInsert")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -102,7 +102,7 @@ class BoxSpaceTests: XCTestCase {
         do {
             _ = try iproto.call("BoxSpaceTests_testReplace")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -110,7 +110,7 @@ class BoxSpaceTests: XCTestCase {
         do {
             _ = try iproto.call("BoxSpaceTests_testDelete")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -118,7 +118,7 @@ class BoxSpaceTests: XCTestCase {
         do {
             _ = try iproto.call("BoxSpaceTests_testUpdate")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
@@ -126,7 +126,7 @@ class BoxSpaceTests: XCTestCase {
         do {
             _ = try iproto.call("BoxSpaceTests_testUpsert")
         } catch {
-            XCTFail(String(describing: error))
+            fail(String(describing: error))
         }
     }
 
