@@ -8,7 +8,6 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import Test
 import class Foundation.FileManager
 @testable import TestUtils
 

@@ -19,7 +19,6 @@ let package = Package(
         Target(name: "TarantoolModuleTest", dependencies: ["TarantoolModule"])
     ],
     dependencies: [
-        .Package(url: "https://github.com/tris-foundation/test.git", majorVersion: 0),
         .Package(url: "https://github.com/tris-foundation/async.git", majorVersion: 0),
         .Package(url: "https://github.com/tris-foundation/socket.git", majorVersion: 0),
         .Package(url: "https://github.com/tris-foundation/messagepack.git", majorVersion: 0),
