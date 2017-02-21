@@ -75,10 +75,10 @@ public class IProtoConnection {
             body[key.rawValue] = value
         }
 
-        var serializer = MPSerializer()
-        serializer.pack(header)
-        serializer.pack(body)
-        let packet = serializer.bytes
+        var encoder = Encoder()
+        encoder.encode(header)
+        encoder.encode(body)
+        let packet = encoder.bytes
 
         // body + header size
         let size = try HeaderLength(packet.count).bytes
@@ -94,9 +94,9 @@ public class IProtoConnection {
             throw IProtoError.invalidPacket(reason: .invalidSize)
         }
 
-        var deserializer = MPDeserializer(bytes: buffer)
-        let header = try deserializer.unpack() as MessagePack
-        let body = try deserializer.unpack() as MessagePack
+        var decoder = Decoder(bytes: buffer)
+        let header = try decoder.decode() as MessagePack
+        let body = try decoder.decode() as MessagePack
 
         return (header, body)
     }

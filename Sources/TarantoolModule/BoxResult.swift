@@ -22,7 +22,7 @@ extension Box {
     }
 
     public static func returnTuple(_ object: MessagePack, to context: BoxContext) -> Int32 {
-        return returnTuple(MessagePack.serialize(object), to: context)
+        return returnTuple(MessagePack.encode(object), to: context)
     }
 
     public static func returnError(code: BoxError.Code, message: String, file: String = #file, line: Int = #line) -> BoxResult {

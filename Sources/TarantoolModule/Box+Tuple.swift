@@ -35,14 +35,14 @@ extension Box {
         let tupleEnd = first + fieldSize
 
         try first.withMemoryRebound(to: UInt8.self, capacity: fieldSize) { pointer in
-            let field = try MessagePack.deserialize(bytes: pointer, count: fieldSize)
+            let field = try MessagePack.decode(bytes: pointer, count: fieldSize)
             tuple.append(field)
         }
 
         while let next = _box_tuple_next(iterator) {
             fieldSize = tupleEnd - next
             try next.withMemoryRebound(to: UInt8.self, capacity: fieldSize) { pointer in
-                let field = try MessagePack.deserialize(bytes: pointer, count: fieldSize)
+                let field = try MessagePack.decode(bytes: pointer, count: fieldSize)
                 tuple.append(field)
             }
         }
