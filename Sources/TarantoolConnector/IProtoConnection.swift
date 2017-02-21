@@ -112,38 +112,34 @@ public class IProtoConnection {
 
     public func request(code: Code, keys: Keys = [:], sync: MessagePack? = nil, schemaId: MessagePack? = nil) throws -> Tuple {
         try send(code: code, keys: keys, sync: sync, schemaId: schemaId)
-        let (header, body) = try receive()
+        let (encodedHeader, encodedBody) = try receive()
 
-        //check header
-        guard let packedErrorCode = Map(header)?.first?.value,
-            let errorCode = Int(packedErrorCode) else {
-            throw IProtoError.invalidPacket(reason: .invalidHeader)
-        }
-        guard errorCode < 0x8000 else {
-            //error packed as [0x31 : MP_STRING]
-            guard let errorMessage = body.map?[Key.error.rawValue], let description = String(errorMessage) else {
-                throw IProtoError.badRequest(code: errorCode, message: "nil")
-            }
-            throw IProtoError.badRequest(code: errorCode, message: description)
+        guard let header = Map(encodedHeader), header.count == 3,
+            let code = Int(header[0]) else {
+                throw IProtoError.invalidPacket(reason: .invalidHeader)
         }
 
-        guard let response = Map(body) else {
-            throw IProtoError.invalidPacket(reason: .invalidBody)
+        guard let body = Map(encodedBody) else {
+            throw IProtoError.invalidPacket(reason: .invalidBodyHeader)
         }
 
-        //empty body e.g. ping response
-        guard response.count != 0 else {
+        guard code < 0x8000 else {
+            // error packed as [0x31 : MP_STRING]
+            let message = String(body[Key.error.rawValue]) ?? "unknown"
+            throw IProtoError.badRequest(code: code, message: message)
+        }
+
+        // empty body e.g. ping response
+        guard body.count > 0 else {
             return []
         }
 
-        //body packed as [0x30 : MP_OBJECT]
-        guard let data = response[Key.data.rawValue], let tuple = Tuple(data) else {
-            guard let error = response[Key.error.rawValue], let description = String(error) else {
-                throw IProtoError.invalidPacket(reason: .invalidBody)
-            }
-            throw IProtoError.badRequest(code: 0x31, message: description)
+        // response packed as [0x30 : MP_OBJECT]
+        guard let response = Tuple(body[Key.data.rawValue]) else {
+            throw IProtoError.invalidPacket(reason: .invalidBody)
         }
-        return tuple
+
+        return response
     }
 }
 
@@ -152,12 +148,18 @@ extension IProtoConnection {
         _ = try request(code: .ping)
     }
 
-    public func call(_ function: String, arguments tuple: Tuple = []) throws -> Tuple {
-        return try request(code: .call, keys: [.functionName: .string(function), .tuple: .array(tuple)])
+    public func call(_ function: String, arguments: Tuple = []) throws -> Tuple {
+        return try request(
+            code: .call,
+            keys: [.functionName: .string(function), .tuple: .array(arguments)]
+        )
     }
 
-    public func eval(_ expression: String, arguments tuple: Tuple = []) throws -> Tuple {
-        return try request(code: .eval, keys: [.expression: .string(expression), .tuple: .array(tuple)])
+    public func eval(_ expression: String, arguments: Tuple = []) throws -> Tuple {
+        return try request(
+            code: .eval,
+            keys: [.expression: .string(expression), .tuple: .array(arguments)]
+        )
     }
 
     public func auth(username: String, password: String) throws {
