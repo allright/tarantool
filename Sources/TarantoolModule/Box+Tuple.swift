@@ -22,23 +22,21 @@ extension Box {
         guard let iterator = _box_tuple_iterator(tuple) else {
             throw TarantoolError.invalidTuple(message: "can't create iterator")
         }
-        defer {
-            _box_tuple_iterator_free(iterator)
-        }
+        defer { _box_tuple_iterator_free(iterator) }
 
         var tuple = Tuple()
+
         guard let first = _box_tuple_next(iterator) else {
             return tuple
         }
 
-        var fieldSize = tupleSize
-        let tupleEnd = first + fieldSize
-
-        try first.withMemoryRebound(to: UInt8.self, capacity: fieldSize) { pointer in
-            let field = try MessagePack.decode(bytes: pointer, count: fieldSize)
+        let tupleEnd = first + tupleSize
+        try first.withMemoryRebound(to: UInt8.self, capacity: tupleSize) { pointer in
+            let field = try MessagePack.decode(bytes: pointer, count: tupleSize)
             tuple.append(field)
         }
 
+        var fieldSize = tupleSize
         while let next = _box_tuple_next(iterator) {
             fieldSize = tupleEnd - next
             try next.withMemoryRebound(to: UInt8.self, capacity: fieldSize) { pointer in
