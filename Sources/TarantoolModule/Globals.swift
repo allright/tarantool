@@ -27,7 +27,7 @@ public func yield() {
 
 @inline(__always)
 public func sleep(until deadline: Date) {
-    _fiber_sleep(deadline.timeIntervalSince(Date()))
+    _fiber_sleep(deadline.timeIntervalSinceNow)
 }
 
 @inline(__always)
