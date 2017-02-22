@@ -94,7 +94,7 @@ public class IProtoConnection {
             throw IProtoError.invalidPacket(reason: .invalidSize)
         }
 
-        var decoder = Decoder(bytes: buffer)
+        var decoder = Decoder(bytes: buffer, count: buffer.count)
         let header = try decoder.decode() as MessagePack
         let body = try decoder.decode() as MessagePack
 
