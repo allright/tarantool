@@ -1,9 +1,19 @@
 # Tarantool
 
-This package consists of two modules for [Tarantool](https://tarantool.org) database
+A few words about [Tarantool](https://tarantool.org): Tarantool is a NoSQL database with in-memory and disk-based storage engines.
 
-1. TarantoolConnector is iproto tcp connector for communicating with remote tarantool instance.
-2. TarantoolModule is an interface to internal tarantool C API for writing tarantool stored procedures in swift.
+Key features:
+* Fast as hell
+* ACID transactions
+* Secondary indices
+* Onboard Lua scripting
+* Asynchronous master-slave and master-master replication
+
+#### This package includes two modules:
+1. TarantoolConnector: allows you to communicate with remote tarantool instance.
+2. TarantoolModule: allows you to write server logic (stored procedures) in swift.
+
+Follow the examples link below to see how to use it all together.
 
 ## Package.swift
 
@@ -29,16 +39,20 @@ guard let test = schema.spaces["test"] else {
     exit(0)
 }
 
-print(try test.select(.eq, keys: [3]))
-// [[3, "baz"]]
+// prints: [[3, "baz"]]
+let equal = try test.select(.eq, keys: [3])
+equal.forEach { print($0) }
 
-print(try test.select(.all))
 // first run: [[1, "foo"], [2, "bar"], [3, "baz"]]
-// next runs: [[42, "Answer to ... and Everything"], [1, "foo"], ...]
+// second run: [[42, "Answer to the Ultimate Question of Life, The Universe, and Everything"], [1, "foo"], ...]
+let all = try test.select(.all)
+all.forEach { print($0) }
 
+// prints: [42, "Answer to the Ultimate Question of Life, The Universe, and Everything"]
 try test.replace([42, "Answer to the Ultimate Question of Life, The Universe, and Everything"])
-print(try test.select(.eq, keys: [42]))
-// [42, "Answer to the Ultimate Question of Life, The Universe, and Everything"]
+if let answer = try test.get([42]) {
+    print(answer)
+}
 ```
 
 ### Tarantool Module
@@ -66,7 +80,7 @@ func getFoo() throws -> MessagePack {
     guard let result = try space.get(["foo"]) else {
         throw BoxError(code: .tupleNotFound, message: "foo not found")
     }
-    return .array(result)
+    return .array(result.rawValue)
 }
 
 func getCount(args: [MessagePack]) throws -> MessagePack {
