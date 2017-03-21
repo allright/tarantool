@@ -9,6 +9,7 @@
  */
 
 import Foundation
+import MessagePack
 import Tarantool
 
 public struct IProtoDataSource: DataSource {
@@ -18,15 +19,31 @@ public struct IProtoDataSource: DataSource {
         self.connection = connection
     }
 
-    public func count(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple = []) throws -> Int {
-        let result = try connection.eval("return box.space[\(spaceId)].index[\(indexId)]:count()")
-        guard let first = result.first, let count = Int(first) else {
-            throw TarantoolError.invalidTuple(message: "expected integer, received: \(result)")
+    public func count(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ iterator: Iterator,
+        _ keys: [MessagePack]
+    ) throws -> Int {
+        let result = try connection.eval(
+            "return box.space[\(spaceId)].index[\(indexId)]:count()")
+
+        guard let count = Int(result.first) else {
+            throw TarantoolError.invalidTuple(
+                message: "expected integer, received: \(result)")
         }
+
         return count
     }
 
-    public func select(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple = [], offset: Int = 0, limit: Int = 1000) throws -> [Tuple] {
+    public func select(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ iterator: Iterator,
+        _ keys: [MessagePack],
+        _ offset: Int,
+        _ limit: Int
+    ) throws -> AnySequence<IProtoTuple> {
         let result = try connection.request(code: .select, keys: [
             .spaceId:  .int(spaceId),
             .indexId:  .int(indexId),
@@ -35,17 +52,23 @@ public struct IProtoDataSource: DataSource {
             .iterator: .int(iterator.rawValue),
             .key:      .array(keys)])
 
-        var rows: [Tuple] = []
-        for tuple in Tuple(result) {
-            guard let row = Tuple(tuple) else {
-                throw TarantoolError.invalidTuple(message: "expected array, received: \(tuple)")
+        var tuples: [IProtoTuple] = []
+        for row in [MessagePack](result) {
+            guard let items = [MessagePack](row) else {
+                throw TarantoolError.invalidTuple(
+                    message: "expected array, received: \(row)")
             }
-            rows.append(row)
+            tuples.append(IProtoTuple(rawValue: items))
         }
-        return rows
+
+        // TODO: read and parse from socket lazily
+
+        return AnySequence { tuples.makeIterator() }
     }
 
-    public func get(spaceId: Int, indexId: Int = 0, keys: Tuple) throws -> Tuple? {
+    public func get(
+        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
+    ) throws -> IProtoTuple? {
         let result = try connection.request(code: .select, keys: [
             .spaceId:  .int(spaceId),
             .indexId:  .int(indexId),
@@ -54,29 +77,40 @@ public struct IProtoDataSource: DataSource {
             .iterator: .int(Iterator.eq.rawValue),
             .key:      .array(keys)])
 
-        return Tuple(Tuple(result).first)
+        guard let tuple = [MessagePack]([MessagePack](result).first) else {
+            return nil
+        }
+
+        return IProtoTuple(rawValue: tuple)
     }
 
-    public func insert(spaceId: Int, tuple: Tuple) throws {
+    public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         _ = try connection.request(code: .insert, keys: [
             .spaceId: .int(spaceId),
             .tuple:   .array(tuple)])
     }
 
-    public func replace(spaceId: Int, tuple: Tuple) throws {
+    public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         _ = try connection.request(code: .replace, keys: [
             .spaceId: .int(spaceId),
             .tuple:   .array(tuple)])
     }
 
-    public func delete(spaceId: Int, indexId: Int = 0, keys: Tuple) throws {
+    public func delete(
+        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
+    ) throws {
         _ = try connection.request(code: .delete, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
             .key:     .array(keys)])
     }
 
-    public func update(spaceId: Int, indexId: Int = 0, keys: Tuple, ops: Tuple) throws {
+    public func update(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ keys: [MessagePack],
+        _ ops: [MessagePack]
+    ) throws {
         _ = try connection.request(code: .update, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
@@ -84,7 +118,12 @@ public struct IProtoDataSource: DataSource {
             .tuple:   .array(ops)])
     }
 
-    public func upsert(spaceId: Int, indexId: Int = 0, tuple: Tuple, ops: Tuple) throws {
+    public func upsert(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ tuple: [MessagePack],
+        _ ops: [MessagePack]
+    ) throws {
         _ = try connection.request(code: .upsert, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),

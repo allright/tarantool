@@ -44,10 +44,10 @@ class TarantoolProcess {
         let script = "box.cfg{ " +
             "  listen=\(port)," +
             "  log_level=1," +
-            "  snap_dir='\(temp.path)'," +
+            "  memtx_dir='\(temp.path)'," +
             "  wal_dir='\(temp.path)'," +
             "  vinyl_dir='\(temp.path)'," +
-            "  slab_alloc_arena=0.1" +
+            "  memtx_memory=100000000" +
             "}\n" +
             "\(self.script)\n" +
             "local fiber = require('fiber')\n" +

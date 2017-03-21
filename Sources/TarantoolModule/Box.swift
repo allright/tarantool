@@ -13,84 +13,117 @@ import MessagePack
 import Foundation
 
 public struct Box {
-    static func count(spaceId: UInt32, indexId: UInt32, iterator: Iterator, keys: [UInt8]) throws -> Int {
-        let pKeys = try copyToInternalMemory(keys)
-        let count = _box_index_count(spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeys+keys.count)
+    static func count(
+        _ spaceId: UInt32,
+        _ indexId: UInt32,
+        _ iterator: Iterator,
+        _ keys: [UInt8]
+    ) throws -> Int {
+        let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
+        let pKeysEnd = pKeys + keys.count
+        let count = _box_index_count(
+            spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd)
         guard count >= 0 else {
             throw BoxError()
         }
         return count
     }
 
-    static func select(spaceId: UInt32, indexId: UInt32, iterator: Iterator, keys: [UInt8]) throws -> [Tuple] {
-        let pointer = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        guard let iterator = _box_index_iterator(spaceId, indexId, Int32(iterator.rawValue), pointer, pointer+keys.count) else {
-            throw BoxError()
-        }
-        defer { _box_iterator_free(iterator) }
-
-        var rows: [Tuple] = []
-
-        var result: OpaquePointer?
-        while true {
-            guard _box_iterator_next(iterator, &result) == 0 else {
+    static func select(
+        _ spaceId: UInt32,
+        _ indexId: UInt32,
+        _ iterator: Iterator,
+        _ keys: [UInt8]
+    ) throws -> AnySequence<BoxTuple> {
+        let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
+        let pKeysEnd = pKeys + keys.count
+        guard let iterator = _box_index_iterator(
+            spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd) else {
                 throw BoxError()
-            }
-            guard let tuple = result else {
-                break
-            }
-            rows.append(try unpackTuple(tuple))
         }
-
-        return rows
+        return AnySequence { BoxIterator(iterator) }
     }
 
-    static func get(spaceId: UInt32, indexId: UInt32, keys: [UInt8]) throws -> Tuple? {
+    static func get(
+        _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
+    ) throws -> BoxTuple? {
         var result: OpaquePointer?
         let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        guard _box_index_get(spaceId, indexId, pKeys, pKeys+keys.count, &result) == 0 else {
-            throw BoxError()
+        guard _box_index_get(
+            spaceId, indexId, pKeys, pKeys+keys.count, &result) == 0 else {
+                throw BoxError()
         }
         guard let tuple = result else {
             return nil
         }
-        return try unpackTuple(tuple)
+        return BoxTuple(tuple)
     }
 
-    static func insert(spaceId: UInt32, tuple: [UInt8]) throws {
+    static func insert(_ spaceId: UInt32, _ tuple: [UInt8]) throws {
         let pointer = try copyToInternalMemory(tuple)
-        guard _box_insert(spaceId, pointer, pointer+tuple.count, nil) == 0 else {
-            throw BoxError()
+        guard _box_insert(
+            spaceId, pointer, pointer+tuple.count, nil) == 0 else {
+                throw BoxError()
         }
     }
 
-    static func replace(spaceId: UInt32, tuple: [UInt8]) throws {
+    static func replace(_ spaceId: UInt32, _ tuple: [UInt8]) throws {
         let pointer = try copyToInternalMemory(tuple)
-        guard _box_replace(spaceId, pointer, pointer+tuple.count, nil) == 0 else {
-            throw BoxError()
+        guard _box_replace(
+            spaceId, pointer, pointer+tuple.count, nil) == 0 else {
+                throw BoxError()
         }
     }
 
-    static func update(spaceId: UInt32, indexId: UInt32, keys: [UInt8], ops: [UInt8]) throws {
+    static func update(
+        _ spaceId: UInt32,
+        _ indexId: UInt32,
+        _ keys: [UInt8],
+        _ ops: [UInt8]
+    ) throws {
         let pKeys = try copyToInternalMemory(keys)
         let pOps = try copyToInternalMemory(ops)
-        guard _box_update(spaceId, indexId, pKeys, pKeys+keys.count, pOps, pOps+ops.count, 0, nil) == 0 else {
-            throw BoxError()
+        guard _box_update(
+            spaceId,
+            indexId,
+            pKeys,
+            pKeys+keys.count,
+            pOps,
+            pOps+ops.count,
+            0,
+            nil) == 0 else {
+                throw BoxError()
         }
     }
 
-    static func upsert(spaceId: UInt32, indexId: UInt32, tuple: [UInt8], ops: [UInt8]) throws {
+    static func upsert(
+        _ spaceId: UInt32,
+        _ indexId: UInt32,
+        _ tuple: [UInt8],
+        _ ops: [UInt8]
+    ) throws {
         let pTuple = try copyToInternalMemory(tuple)
         let pOps = try copyToInternalMemory(ops)
-        guard _box_upsert(spaceId, indexId, pTuple, pTuple+tuple.count, pOps, pOps+ops.count, 0, nil) == 0 else {
-            throw BoxError()
+        guard _box_upsert(
+            spaceId,
+            indexId,
+            pTuple,
+            pTuple+tuple.count,
+            pOps,
+            pOps+ops.count,
+            0,
+            nil) == 0 else {
+                throw BoxError()
         }
     }
 
-    static func delete(spaceId: UInt32, indexId: UInt32, keys: [UInt8]) throws{
+    static func delete(
+        _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
+    ) throws{
         let pointer = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        guard _box_delete(spaceId, indexId, pointer, pointer+keys.count, nil) == 0 else {
-            throw BoxError()
+        guard _box_delete(
+            spaceId, indexId, pointer, pointer+keys.count, nil) == 0 else {
+                throw BoxError()
         }
     }
 }

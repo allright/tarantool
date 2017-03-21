@@ -10,16 +10,48 @@
 
 import MessagePack
 
-public typealias Tuple = [MessagePack]
-public typealias Map = [MessagePack : MessagePack]
-
 public protocol DataSource {
-    func count(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple) throws -> Int
-    func select(spaceId: Int, indexId: Int, iterator: Iterator, keys: Tuple, offset: Int, limit: Int) throws -> [Tuple]
-    func get(spaceId: Int, indexId: Int, keys: Tuple) throws -> Tuple?
-    func insert(spaceId: Int, tuple: Tuple) throws
-    func replace(spaceId: Int, tuple: Tuple) throws
-    func delete(spaceId: Int, indexId: Int, keys: Tuple) throws
-    func update(spaceId: Int, indexId: Int, keys: Tuple, ops: Tuple) throws
-    func upsert(spaceId: Int, indexId: Int, tuple: Tuple, ops: Tuple) throws
+    associatedtype Row: Tuple
+
+    func count(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ iterator: Iterator,
+        _ keys: [MessagePack]
+    ) throws -> Int
+
+    func select(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ iterator: Iterator,
+        _ keys: [MessagePack],
+        _ offset: Int,
+        _ limit: Int
+    ) throws -> AnySequence<Row>
+
+    func get(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ keys: [MessagePack]
+    ) throws -> Row?
+
+    func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws
+
+    func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws
+
+    func delete(_ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]) throws
+
+    func update(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ keys: [MessagePack],
+        _ ops: [MessagePack]
+    ) throws
+
+    func upsert(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ tuple: [MessagePack],
+        _ ops: [MessagePack]
+    ) throws
 }

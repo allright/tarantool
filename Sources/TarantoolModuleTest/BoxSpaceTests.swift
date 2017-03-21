@@ -9,14 +9,14 @@
  */
 
 import MessagePack
-@testable import TarantoolModule
+import TarantoolModule
 
 struct BoxSpaceTests {
     fileprivate static var testId: Int {
-        return Int(try! Box.getSpaceIdByName([UInt8]("test".utf8)))
+        return try! Schema(BoxDataSource()).spaces["test"]!.id
     }
 
-    fileprivate static var space: Space {
+    fileprivate static var space: Space<BoxDataSource> {
         return Space(id: testId, source: BoxDataSource())
     }
 
@@ -28,15 +28,17 @@ struct BoxSpaceTests {
     }
 
     static func testSelect() throws {
+        let expected: [[MessagePack]] = [[1, "foo"], [2, "bar"], [3, "baz"]]
         let result = try space.select(.all)
-        guard result.count == 3 else {
-            throw "3 is not equal to \(result)"
+        let converted = [[MessagePack]](result)
+        guard converted == expected else {
+            throw "\(converted) is not equal to \(expected)"
         }
     }
 
     static func testGet() throws {
         let result = try space.get([3])
-        guard let tuple = result, tuple == [3, "baz"] else {
+        guard let tuple = result, tuple.rawValue == [3, "baz"] else {
             throw "\(String(describing: result)) is not equal to [3, 'baz']"
         }
     }
@@ -44,7 +46,7 @@ struct BoxSpaceTests {
     static func testInsert() throws {
         try space.insert([4, "quux"])
         let result = try space.get([4])
-        guard let tuple = result, tuple == [4, "quux"] else {
+        guard let tuple = result, tuple.rawValue == [4, "quux"] else {
             throw "\(String(describing: result))  is not equal to [4, 'quux']"
         }
     }
@@ -52,7 +54,7 @@ struct BoxSpaceTests {
     static func testReplace() throws {
         try space.replace([3, "zab"])
         let result = try space.get([3])
-        guard let tuple = result, tuple == [3, "zab"] else {
+        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
             throw "\(String(describing: result))  is not equal to [3, 'zab']"
         }
     }
@@ -68,7 +70,7 @@ struct BoxSpaceTests {
     static func testUpdate() throws {
         try space.update([3], ops: [["=", 1, "zab"]])
         let result = try space.get([3])
-        guard let tuple = result, tuple == [3, "zab"] else {
+        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
             throw "\(String(describing: result)) is not equal to [3, 'zab']"
         }
     }
@@ -82,14 +84,14 @@ struct BoxSpaceTests {
         try space.upsert([4, "quux", 42], ops: [["+", 2, 8]])
         let insert = try space.get([4])
 
-        guard let insertResult = insert, insertResult == [4, "quux", 42] else {
+        guard let insertResult = insert, insertResult.rawValue == [4, "quux", 42] else {
             throw "\(String(describing: insert)) is not equal to [4, 'quux', 42]"
         }
 
         try space.upsert([4, "quux", 42], ops: [["+", 2, 8]])
         let update = try space.get([4])
 
-        guard let updateResult = update, updateResult == [4, "quux", 50] else {
+        guard let updateResult = update, updateResult.rawValue == [4, "quux", 50] else {
             throw "\(String(describing: update)) is not equal to [4, 'quux', 50]"
         }
     }

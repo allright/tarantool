@@ -20,12 +20,15 @@ public class IProtoConnection {
     let socket: Socket
     let welcome: Welcome
 
-    public init(host: String, port: UInt16 = 3301, awaiter: IOAwaiter? = nil) throws {
+    public init(
+        host: String, port: UInt16 = 3301, awaiter: IOAwaiter? = nil
+    ) throws {
         socket = try Socket(awaiter: awaiter)
         try socket.connect(to: host, port: port)
 
         welcome = Welcome()
-        guard try socket.receive(to: &welcome.buffer) == welcome.buffer.count else {
+        let expectedSize = welcome.buffer.count
+        guard try socket.receive(to: &welcome.buffer) == expectedSize else {
             throw IProtoError.invalidWelcome(reason: .invalidSize)
         }
 
@@ -58,7 +61,12 @@ public class IProtoConnection {
     //  +================+================+=====================+
     //                            MP_MAP
 
-    private func send(code: Code, keys: Keys = [:], sync: MessagePack? = nil, schemaId: MessagePack? = nil) throws {
+    private func send(
+        code: Code,
+        keys: Keys = [:],
+        sync: MessagePack? = nil,
+        schemaId: MessagePack? = nil
+    ) throws {
         // header
         var header: Map = [:]
         header[Key.code.rawValue] = code.rawValue
@@ -110,7 +118,12 @@ public class IProtoConnection {
         return try HeaderLength(bytes: lengthBuffer).length
     }
 
-    public func request(code: Code, keys: Keys = [:], sync: MessagePack? = nil, schemaId: MessagePack? = nil) throws -> Tuple {
+    public func request(
+        code: Code,
+        keys: Keys = [:],
+        sync: MessagePack? = nil,
+        schemaId: MessagePack? = nil
+    ) throws -> [MessagePack] {
         try send(code: code, keys: keys, sync: sync, schemaId: schemaId)
         let (encodedHeader, encodedBody) = try receive()
 
@@ -131,11 +144,11 @@ public class IProtoConnection {
 
         // empty body e.g. ping response
         guard body.count > 0 else {
-            return []
+            return [MessagePack]()
         }
 
         // response packed as [0x30 : MP_OBJECT]
-        guard let response = Tuple(body[Key.data.rawValue]) else {
+        guard let response = [MessagePack](body[Key.data.rawValue]) else {
             throw IProtoError.invalidPacket(reason: .invalidBody)
         }
 
@@ -148,14 +161,20 @@ extension IProtoConnection {
         _ = try request(code: .ping)
     }
 
-    public func call(_ function: String, arguments: Tuple = []) throws -> Tuple {
+    public func call(
+        _ function: String,
+        arguments: [MessagePack] = []
+    ) throws -> [MessagePack] {
         return try request(
             code: .call,
             keys: [.functionName: .string(function), .tuple: .array(arguments)]
         )
     }
 
-    public func eval(_ expression: String, arguments: Tuple = []) throws -> Tuple {
+    public func eval(
+        _ expression: String,
+        arguments: [MessagePack] = []
+    ) throws -> [MessagePack] {
         return try request(
             code: .eval,
             keys: [.expression: .string(expression), .tuple: .array(arguments)]

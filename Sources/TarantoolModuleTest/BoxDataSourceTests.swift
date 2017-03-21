@@ -9,11 +9,11 @@
  */
 
 import MessagePack
-@testable import TarantoolModule
+import TarantoolModule
 
 struct BoxDataSourceTests {
     fileprivate static var testId: Int {
-        return Int(try! Box.getSpaceIdByName([UInt8]("test".utf8)))
+        return try! Schema(BoxDataSource()).spaces["test"]!.id
     }
 
     fileprivate static var source: BoxDataSource {
@@ -21,75 +21,77 @@ struct BoxDataSourceTests {
     }
 
     static func testCount() throws {
-        let result = try source.count(spaceId: testId, iterator: .all)
+        let result = try source.count(testId, 0, .all, [])
         guard result == 3 else {
             throw "3 is not equal to \(result)"
         }
     }
 
     static func testSelect() throws {
-        let result = try source.select(spaceId: testId, iterator: .all)
-        guard result.count == 3 else {
-            throw "3 is not equal to \(result)"
+        let expected: [[MessagePack]] = [[1, "foo"], [2, "bar"], [3, "baz"]]
+        let result = try source.select(testId, 0, .all, [], 0, 1000)
+        let converted = [[MessagePack]](result)
+        guard converted == expected else {
+            throw "\(converted) is not equal to \(expected)"
         }
     }
 
     static func testGet() throws {
-        let result = try source.get(spaceId: testId, keys: [3])
-        guard let tuple = result, tuple == [3, "baz"] else {
+        let result = try source.get(testId, 0, [3])
+        guard let tuple = result, tuple.rawValue == [3, "baz"] else {
             throw "\(String(describing: result)) is not equal to [3, 'baz']"
         }
     }
 
     static func testInsert() throws {
-        try source.insert(spaceId: testId, tuple: [4, "quux"])
-        let result = try source.get(spaceId: testId, keys: [4])
-        guard let tuple = result, tuple == [4, "quux"] else {
+        try source.insert(testId, [4, "quux"])
+        let result = try source.get(testId, 0, [4])
+        guard let tuple = result, tuple.rawValue == [4, "quux"] else {
             throw "\(String(describing: result))  is not equal to [4, 'quux']"
         }
     }
 
     static func testReplace() throws {
-        try source.replace(spaceId: testId, tuple: [3, "zab"])
-        let result = try source.get(spaceId: testId, keys: [3])
-        guard let tuple = result, tuple == [3, "zab"] else {
+        try source.replace(testId, [3, "zab"])
+        let result = try source.get(testId, 0, [3])
+        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
             throw "\(String(describing: result))  is not equal to [3, 'zab']"
         }
     }
 
     static func testDelete() throws {
-        try source.delete(spaceId: testId, keys: [3])
-        let result = try source.get(spaceId: testId, keys: [3])
+        try source.delete(testId, 0, [3])
+        let result = try source.get(testId, 0, [3])
         guard result == nil else {
             throw "\(String(describing: result)) is not nil"
         }
     }
 
     static func testUpdate() throws {
-        try source.update(spaceId: testId, keys: [3], ops: [["=", 1, "zab"]])
-        let result = try source.get(spaceId: testId, keys: [3])
-        guard let tuple = result, tuple == [3, "zab"] else {
+        try source.update(testId, 0, [3], [["=", 1, "zab"]])
+        let result = try source.get(testId, 0, [3])
+        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
             throw "\(String(describing: result)) is not equal to [3, 'zab']"
         }
     }
 
     static func testUpsert() throws {
-        let expectedNil = try source.get(spaceId: testId, keys: [4])
+        let expectedNil = try source.get(testId, 0, [4])
         guard expectedNil == nil else {
             throw "\(String(describing: expectedNil)) is not nil"
         }
 
-        try source.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
-        let insert = try source.get(spaceId: testId, keys: [4])
+        try source.upsert(testId, 0, [4, "quux", 42], [["+", 2, 8]])
+        let insert = try source.get(testId, 0, [4])
 
-        guard let insertResult = insert, insertResult == [4, "quux", 42] else {
-            throw "\(String(describing: insert)) is not equal to [4, 'quux', 42]"
+        guard let insertResult = insert, insertResult.rawValue == [4, "quux", 42] else {
+                throw "\(String(describing: insert)) is not equal to [4, 'quux', 42]"
         }
 
-        try source.upsert(spaceId: testId, tuple: [4, "quux", 42], ops: [["+", 2, 8]])
-        let update = try source.get(spaceId: testId, keys: [4])
+        try source.upsert(testId, 0, [4, "quux", 42], [["+", 2, 8]])
+        let update = try source.get(testId, 0, [4])
 
-        guard let updateResult = update, updateResult == [4, "quux", 50] else {
+        guard let updateResult = update, updateResult.rawValue == [4, "quux", 50] else {
             throw "\(String(describing: update)) is not equal to [4, 'quux', 50]"
         }
     }

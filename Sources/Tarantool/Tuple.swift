@@ -8,4 +8,12 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-extension String: Error {}
+import MessagePack
+
+public protocol Tuple: RandomAccessCollection, RawRepresentable {
+    init()
+    var rawValue: [MessagePack] { get }
+    subscript(index: Int) -> MessagePack? { get }
+}
+
+public typealias Map = [MessagePack : MessagePack]

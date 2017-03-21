@@ -36,6 +36,9 @@ struct HeaderLength {
             throw MessagePackError.insufficientData
         }
 
-        self.length = Int(bytes[1]) << 24 | Int(bytes[2]) << 16 | Int(bytes[3]) << 8 | Int(bytes[4])
+        self.length = Int(bytes[1]) << 24
+            | Int(bytes[2]) << 16
+            | Int(bytes[3]) << 8
+            | Int(bytes[4])
     }
 }

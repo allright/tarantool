@@ -23,7 +23,9 @@ extension Box {
         return id
     }
 
-    static func getIndexIdByName(_ name: [UInt8], spaceId: UInt32) throws -> UInt32 {
+    static func getIndexIdByName(
+        _ name: [UInt8], spaceId: UInt32
+    ) throws -> UInt32 {
         let name = unsafeBitCast(name, to: [CChar].self)
         let id = _box_index_id_by_name(spaceId, name, UInt32(name.count))
         if id == invalid {
@@ -34,7 +36,9 @@ extension Box {
 
     // will be deallocated after transaction finished.
     // every insert, update, etc is a single statement transaction.
-    static func copyToInternalMemory(_ bytes: [UInt8]) throws -> UnsafePointer<CChar> {
+    static func copyToInternalMemory(
+        _ bytes: [UInt8]
+    ) throws -> UnsafePointer<CChar> {
         guard let buffer = _box_txn_alloc(bytes.count) else {
             throw TarantoolError.notEnoughMemory
         }

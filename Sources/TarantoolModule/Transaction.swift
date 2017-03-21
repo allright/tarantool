@@ -49,7 +49,9 @@ extension Box {
         }
     }
 
-    public static func transaction(_ closure: (Void) throws -> Box.Transaction.Action) throws {
+    public static func transaction(
+        _ closure: (Void) throws -> Box.Transaction.Action
+    ) throws {
         try Transaction.run(closure)
     }
 }

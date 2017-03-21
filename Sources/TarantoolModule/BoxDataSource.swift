@@ -16,45 +16,72 @@ import MessagePack
 public struct BoxDataSource: DataSource {
     public init() {}
 
-    public func count(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple = []) throws -> Int {
+    public func count(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ iterator: Iterator,
+        _ keys: [MessagePack]
+    ) throws -> Int {
         let keys = MessagePack.encode(.array(keys))
-        return try Box.count(spaceId: UInt32(spaceId), indexId: UInt32(indexId), iterator: iterator, keys: keys)
+        return try Box.count(UInt32(spaceId), UInt32(indexId), iterator, keys)
     }
 
-    public func select(spaceId: Int, indexId: Int = 0, iterator: Iterator, keys: Tuple = [], offset: Int = 0, limit: Int = 1000) throws -> [Tuple] {
+    public func select(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ iterator: Iterator,
+        _ keys: [MessagePack],
+        _ offset: Int,
+        _ limit: Int
+    ) throws -> AnySequence<BoxTuple> {
         let keys = MessagePack.encode(.array(keys))
-        return try Box.select(spaceId: UInt32(spaceId), indexId: UInt32(indexId), iterator: iterator, keys: keys)
+        return try Box.select(
+            numericCast(spaceId), numericCast(indexId), iterator, keys)
     }
 
-    public func get(spaceId: Int, indexId: Int = 0, keys: Tuple) throws -> Tuple? {
+    public func get(
+        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
+    ) throws -> BoxTuple? {
         let keys = MessagePack.encode(.array(keys))
-        return try Box.get(spaceId: UInt32(spaceId), indexId: UInt32(indexId), keys: keys)
+        return try Box.get(UInt32(spaceId), UInt32(indexId), keys)
     }
 
-    public func insert(spaceId: Int, tuple: Tuple) throws {
+    public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         let tuple = MessagePack.encode(.array(tuple))
-        try Box.insert(spaceId: UInt32(spaceId), tuple: tuple)
+        try Box.insert(UInt32(spaceId), tuple)
     }
 
-    public func replace(spaceId: Int, tuple: Tuple) throws {
+    public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         let tuple = MessagePack.encode(.array(tuple))
-        try Box.replace(spaceId: UInt32(spaceId), tuple: tuple)
+        try Box.replace(UInt32(spaceId), tuple)
     }
 
-    public func delete(spaceId: Int, indexId: Int = 0, keys: Tuple) throws {
+    public func delete(
+        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
+    ) throws {
         let keys = MessagePack.encode(.array(keys))
-        try Box.delete(spaceId: UInt32(spaceId), indexId: UInt32(indexId), keys: keys)
+        try Box.delete(UInt32(spaceId), UInt32(indexId), keys)
     }
 
-    public func update(spaceId: Int, indexId: Int = 0, keys: Tuple, ops: Tuple) throws {
+    public func update(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ keys: [MessagePack],
+        _ ops: [MessagePack]
+    ) throws {
         let keys = MessagePack.encode(.array(keys))
         let ops = MessagePack.encode(.array(ops))
-        try Box.update(spaceId: UInt32(spaceId), indexId: UInt32(indexId), keys: keys, ops: ops)
+        try Box.update(UInt32(spaceId), UInt32(indexId), keys, ops)
     }
 
-    public func upsert(spaceId: Int, indexId: Int = 0, tuple: Tuple, ops: Tuple) throws {
+    public func upsert(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ tuple: [MessagePack],
+        _ ops: [MessagePack]
+    ) throws {
         let tuple = MessagePack.encode(.array(tuple))
         let ops = MessagePack.encode(.array(ops))
-        try Box.upsert(spaceId: UInt32(spaceId), indexId: UInt32(indexId), tuple: tuple, ops: ops)
+        try Box.upsert(UInt32(spaceId), UInt32(indexId), tuple, ops)
     }
 }

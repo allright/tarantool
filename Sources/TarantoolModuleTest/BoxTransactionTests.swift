@@ -11,11 +11,11 @@
 import Platform
 import Foundation
 import MessagePack
-@testable import TarantoolModule
+import TarantoolModule
 
 struct BoxTransactionTests {
     fileprivate static var testId: Int = {
-        return Int(try! Box.getSpaceIdByName([UInt8]("test".utf8)))
+        return try! Schema(BoxDataSource()).spaces["test"]!.id
     }()
 
     fileprivate static var space: Space = {

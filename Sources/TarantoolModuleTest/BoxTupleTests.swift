@@ -11,11 +11,11 @@
 import Platform
 import Foundation
 import MessagePack
-@testable import TarantoolModule
+import TarantoolModule
 
 struct BoxTupleTests {
     static func testUnpackTuple() throws {
-        let boxTuple: [UInt8] = [
+        let bytes: [UInt8] = [
             // tuple header
             0x02, 0x00,
             0x13, 0x00,
@@ -34,12 +34,11 @@ struct BoxTupleTests {
             0x65, 0x72, 0x79, 0x74, 0x68, 0x69, 0x6e, 0x67
         ]
 
-        let expected: Tuple = [42, "Answer to the Ultimate Question of Life, The Universe, and Everything"]
-
-        let result = try Box.unpackTuple(OpaquePointer(boxTuple))
-
-        guard result == expected else {
-            throw "\(result) is not equal to \(expected)"
+        let expected: [MessagePack] = [42, "Answer to the Ultimate Question of Life, The Universe, and Everything"]
+        let boxTuple = BoxTuple(OpaquePointer(bytes))
+        let unpacked = boxTuple.rawValue
+        guard unpacked == expected else {
+            throw "\(unpacked) is not equal to \(expected)"
         }
     }
 }

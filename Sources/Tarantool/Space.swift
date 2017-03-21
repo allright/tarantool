@@ -9,46 +9,59 @@
  */
 
 import Foundation
+import MessagePack
 
-public struct Space {
+public struct Space<T: DataSource> {
     public let id: Int
-    private let source: DataSource
+    private let source: T
 
-    public init(id: Int, source: DataSource) {
+    public init(id: Int, source: T) {
         self.id = id
         self.source = source
     }
 
-    public func count(_ iterator: Iterator = .all, keys: Tuple = [], indexId: Int = 0) throws -> Int {
-        return try source.count(spaceId: id, indexId: indexId, iterator: iterator, keys: keys)
+    public func count(
+        _ iterator: Iterator = .all, keys: [MessagePack] = [], indexId: Int = 0
+    ) throws -> Int {
+        return try source.count(id, indexId, iterator, keys)
     }
 
-    public func select(_ iterator: Iterator, keys: Tuple = [], indexId: Int = 0, offset: Int = 0, limit: Int = Int.max) throws -> [Tuple] {
-        return try source.select(spaceId: id, indexId: indexId, iterator: iterator, keys: keys, offset: offset, limit: limit)
+    public func select(
+        _ iterator: Iterator,
+        keys: [MessagePack] = [],
+        indexId: Int = 0,
+        offset: Int = 0,
+        limit: Int = Int.max
+    ) throws -> AnySequence<T.Row> {
+        return try source.select(id, indexId, iterator, keys, offset, limit)
     }
 
-    public func get(_ keys: Tuple, indexId: Int = 0) throws -> Tuple? {
-        return try source.get(spaceId: id, indexId: indexId, keys: keys)
+    public func get(_ keys: [MessagePack], indexId: Int = 0) throws -> T.Row? {
+        return try source.get(id, indexId, keys)
     }
 
-    public func insert(_ tuple: Tuple) throws {
-        try source.insert(spaceId: id, tuple: tuple)
+    public func insert(_ tuple: [MessagePack]) throws {
+        try source.insert(id, tuple)
     }
 
-    public func replace(_ tuple: Tuple) throws {
-        try source.replace(spaceId: id, tuple: tuple)
+    public func replace(_ tuple: [MessagePack]) throws {
+        try source.replace(id, tuple)
     }
 
-    public func delete(_ keys: Tuple, indexId: Int = 0) throws {
-        try source.delete(spaceId: id, indexId: indexId, keys: keys)
+    public func delete(_ keys: [MessagePack], indexId: Int = 0) throws {
+        try source.delete(id, indexId, keys)
     }
 
-    public func update(_ keys: Tuple, ops: Tuple = [], indexId: Int = 0) throws {
-        try source.update(spaceId: id, indexId: indexId, keys: keys, ops: ops)
+    public func update(
+        _ keys: [MessagePack], ops: [MessagePack] = [], indexId: Int = 0
+    ) throws {
+        try source.update(id, indexId, keys, ops)
     }
 
-    public func upsert(_ tuple: Tuple, ops: Tuple = [], indexId: Int = 0) throws {
-        try source.upsert(spaceId: id, indexId: indexId, tuple: tuple, ops: ops)
+    public func upsert(
+        _ tuple: [MessagePack], ops: [MessagePack] = [], indexId: Int = 0
+    ) throws {
+        try source.upsert(id, indexId, tuple, ops)
     }
 }
 

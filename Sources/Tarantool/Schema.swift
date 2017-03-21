@@ -10,13 +10,13 @@
 
 fileprivate let _vspace: Int = 281
 
-public struct Schema {
-    public let spaces: [String: Space]
-    public init(_ source: DataSource) throws {
+public struct Schema<T: DataSource> {
+    public let spaces: [String: Space<T>]
+    public init(_ source: T) throws {
         let sysview = Space(id: _vspace, source: source)
         let tuples = try sysview.select(.all)
 
-        var spaces: [String: Space] = [:]
+        var spaces: [String: Space<T>] = [:]
         for tuple in tuples {
             guard let id = Int(tuple[0]),
                 let name = String(tuple[2]) else {
