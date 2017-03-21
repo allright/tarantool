@@ -10,10 +10,17 @@
 
 import MessagePack
 
-public protocol Tuple: RandomAccessCollection, RawRepresentable {
+public protocol Tuple
+: RandomAccessCollection, RawRepresentable, CustomStringConvertible {
     init()
     var rawValue: [MessagePack] { get }
     subscript(index: Int) -> MessagePack? { get }
+}
+
+extension Tuple {
+    public var description: String {
+        return rawValue.description
+    }
 }
 
 public typealias Map = [MessagePack : MessagePack]
