@@ -12,17 +12,24 @@ import Tarantool
 import CTarantool
 import MessagePack
 
-public struct BoxTuple: Tuple {
-    let pointer: OpaquePointer?
+public final class BoxTuple: Tuple {
+    let pointer: OpaquePointer
 
-    public init() {
-        pointer = nil
+    public convenience init() {
+        self.init(rawValue: [])!
     }
 
     // FIXME: should be internal, but needed for TarantoolModuleTest
     // currently we can't build the module in release mode using @testable
-    public init(_ pointer: OpaquePointer) {
+    public init?(_ pointer: OpaquePointer) {
         self.pointer = pointer
+        guard _box_tuple_ref(pointer) == 0 else {
+            return nil
+        }
+    }
+
+    deinit {
+        _box_tuple_unref(pointer)
     }
 
     var size: Int {
@@ -39,15 +46,12 @@ public struct BoxTuple: Tuple {
 
     @inline(__always)
     func getFieldMaxSize(_ field: UnsafePointer<Int8>) -> Int {
-        guard let pointer = pointer else {
-            return 0
-        }
         return size - (UnsafePointer<Int8>(pointer) - field)
     }
 
     public subscript(index: Int) -> MessagePack? {
         guard let field = _box_tuple_field(pointer, numericCast(index)) else {
-                return nil
+            return nil
         }
         var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
         return try? decoder.decode()
@@ -55,15 +59,17 @@ public struct BoxTuple: Tuple {
 }
 
 extension BoxTuple: RawRepresentable {
-    // FIXME: this will actually leak
-    // TODO: test class BoxTuple performance
-    public init(rawValue: [MessagePack]) {
+    public convenience init?(rawValue: [MessagePack]) {
         var encoder = Encoder()
         encoder.encode(rawValue)
         let bytes = encoder.bytes
         let pointer = UnsafeRawPointer(bytes).assumingMemoryBound(to: Int8.self)
         let format = _box_tuple_format_default()
-        self.pointer = _box_tuple_new(format, pointer, pointer+bytes.count)
+        guard let tuple =
+            _box_tuple_new(format, pointer, pointer+bytes.count) else {
+                return nil
+        }
+        self.init(tuple)
     }
 
     public var rawValue: [MessagePack] {
