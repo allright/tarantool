@@ -113,7 +113,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
-        return try? decoder.decode()
+        return try? decoder.decode(Bool.self)
     }
 
     public subscript(index: Int, as type: Int.Type) -> Int? {
@@ -121,7 +121,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
-        return try? decoder.decode()
+        return try? decoder.decode(Int.self)
     }
 
     public subscript(index: Int, as type: UInt.Type) -> UInt? {
@@ -129,7 +129,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
-        return try? decoder.decode()
+        return try? decoder.decode(UInt.self)
     }
 
     public subscript(index: Int, as type: Float.Type) -> Float? {
@@ -137,7 +137,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
-        return try? decoder.decode()
+        return try? decoder.decode(Float.self)
     }
 
     public subscript(index: Int, as type: Double.Type) -> Double? {
@@ -145,7 +145,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
-        return try? decoder.decode()
+        return try? decoder.decode(Double.self)
     }
 
     public subscript(index: Int, as type: String.Type) -> String? {
@@ -153,6 +153,6 @@ extension BoxTuple {
             return nil
         }
         var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
-        return try? decoder.decode()
+        return try? decoder.decode(String.self)
     }
 }
