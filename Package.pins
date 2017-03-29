@@ -1,0 +1,36 @@
+{
+  "autoPin": true,
+  "pins": [
+    {
+      "package": "Async",
+      "reason": null,
+      "repositoryURL": "https://github.com/tris-foundation/async.git",
+      "version": "0.3.1"
+    },
+    {
+      "package": "CryptoSwift",
+      "reason": null,
+      "repositoryURL": "https://github.com/tris-foundation/cryptoswift.git",
+      "version": "0.3.0"
+    },
+    {
+      "package": "MessagePack",
+      "reason": null,
+      "repositoryURL": "https://github.com/tris-foundation/messagepack.git",
+      "version": "0.3.3"
+    },
+    {
+      "package": "Platform",
+      "reason": null,
+      "repositoryURL": "https://github.com/tris-foundation/platform.git",
+      "version": "0.3.3"
+    },
+    {
+      "package": "Socket",
+      "reason": null,
+      "repositoryURL": "https://github.com/tris-foundation/socket.git",
+      "version": "0.3.3"
+    }
+  ],
+  "version": 1
+}
