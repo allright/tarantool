@@ -44,6 +44,10 @@ public struct Space<T: DataSource> {
         try source.insert(id, tuple)
     }
 
+    public func insert(autoincrementing tuple: [MessagePack]) throws -> Int {
+        return try source.insertAutoincrement(id, tuple)
+    }
+
     public func replace(_ tuple: [MessagePack]) throws {
         try source.replace(id, tuple)
     }

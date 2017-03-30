@@ -35,11 +35,26 @@ public protocol DataSource {
         _ keys: [MessagePack]
     ) throws -> Row?
 
-    func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws
+    func insert(
+        _ spaceId: Int,
+        _ tuple: [MessagePack]
+    ) throws
 
-    func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws
+    func insertAutoincrement(
+        _ spaceId: Int,
+        _ tuple: [MessagePack]
+    ) throws -> Int
 
-    func delete(_ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]) throws
+    func replace(
+        _ spaceId: Int,
+        _ tuple: [MessagePack]
+    ) throws
+
+    func delete(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ keys: [MessagePack]
+    ) throws
 
     func update(
         _ spaceId: Int,

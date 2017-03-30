@@ -51,6 +51,22 @@ public struct BoxDataSource: DataSource {
         try Box.insert(UInt32(spaceId), tuple)
     }
 
+    public func insertAutoincrement(
+        _ spaceId: Int,
+        _ tuple: [MessagePack]
+        ) throws -> Int {
+        var id = 0
+        let emptyKeys = MessagePack.encode(.array([]))
+        if let max = try Box.max(UInt32(spaceId), UInt32(0), emptyKeys) {
+            id = max + 1
+        }
+        var tuple = tuple
+        tuple.insert(.int(id), at: 0)
+        let tupleBytes = MessagePack.encode(.array(tuple))
+        try Box.insert(UInt32(spaceId), tupleBytes)
+        return id
+    }
+
     public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         let tuple = MessagePack.encode(.array(tuple))
         try Box.replace(UInt32(spaceId), tuple)

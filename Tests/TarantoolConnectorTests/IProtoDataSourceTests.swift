@@ -98,6 +98,21 @@ class IProtoDataSourceTests: TestCase {
         }
     }
 
+    func testInsertAutoincrement() {
+        do {
+            let id = try source.insertAutoincrement(testId, ["quux"])
+            assertEqual(id, 4)
+            guard let result =
+                try source.get(testId, 0, [4]) else {
+                    fail()
+                    return
+            }
+            assertEqual(result, IProtoTuple(rawValue: [4, "quux"]))
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
     func testReplace() {
         do {
             try source.replace(testId, [3, "zab"])
@@ -166,6 +181,7 @@ class IProtoDataSourceTests: TestCase {
             ("testSelect", testSelect),
             ("testGet", testGet),
             ("testInsert", testInsert),
+            ("testInsertAutoincrement", testInsertAutoincrement),
             ("testReplace", testReplace),
             ("testDelete", testDelete),
             ("testUpdate", testUpdate),

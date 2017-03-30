@@ -21,6 +21,7 @@ class BoxSpaceTests: TestCase {
         "BoxSpaceTests_testSelect",
         "BoxSpaceTests_testGet",
         "BoxSpaceTests_testInsert",
+        "BoxSpaceTests_testInsertAutoincrement",
         "BoxSpaceTests_testReplace",
         "BoxSpaceTests_testDelete",
         "BoxSpaceTests_testUpdate",
@@ -97,6 +98,14 @@ class BoxSpaceTests: TestCase {
         }
     }
 
+    func testInsertAutoincrement() {
+        do {
+            _ = try iproto.call("BoxSpaceTests_testInsertAutoincrement")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
     func testReplace() {
         do {
             _ = try iproto.call("BoxSpaceTests_testReplace")
@@ -136,6 +145,7 @@ class BoxSpaceTests: TestCase {
             ("BoxSpaceTests_testSelect", testSelect),
             ("BoxSpaceTests_testGet", testGet),
             ("BoxSpaceTests_testInsert", testInsert),
+            ("BoxSpaceTests_testInsertAutoincrement", testInsertAutoincrement),
             ("BoxSpaceTests_testReplace", testReplace),
             ("BoxSpaceTests_testDelete", testDelete),
             ("BoxSpaceTests_testUpdate", testUpdate),

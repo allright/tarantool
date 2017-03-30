@@ -91,6 +91,20 @@ class IProtoSpaceTests: TestCase {
         }
     }
 
+    func testInsertAutoincrement() {
+        do {
+            let id = try space.insert(autoincrementing: ["quux"])
+            assertEqual(id, 4)
+            guard let result = try space.get([4]) else {
+                fail()
+                return
+            }
+            assertEqual(result, IProtoTuple(rawValue: [4, "quux"]))
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
     func testReplace() {
         do {
             try space.replace([3, "zab"])
@@ -155,6 +169,7 @@ class IProtoSpaceTests: TestCase {
             ("testSelect", testSelect),
             ("testGet", testGet),
             ("testInsert", testInsert),
+            ("testInsertAutoincrement", testInsertAutoincrement),
             ("testReplace", testReplace),
             ("testDelete", testDelete),
             ("testUpdate", testUpdate),

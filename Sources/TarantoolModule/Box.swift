@@ -67,6 +67,23 @@ public struct Box {
         }
     }
 
+    static func max(
+        _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
+    ) throws -> Int? {
+        var result: OpaquePointer?
+        let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
+        let pKeysEnd = pKeys + keys.count
+        guard _box_index_max(
+            spaceId, indexId, pKeys, pKeysEnd, &result) == 0 else {
+                throw BoxError()
+        }
+        guard let pointer = result,
+            let tuple = BoxTuple(pointer) else {
+                return nil
+        }
+        return tuple[0, as: Int.self]
+    }
+
     static func replace(_ spaceId: UInt32, _ tuple: [UInt8]) throws {
         let pointer = try copyToInternalMemory(tuple)
         guard _box_replace(

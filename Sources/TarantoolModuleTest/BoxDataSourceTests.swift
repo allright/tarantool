@@ -51,6 +51,17 @@ struct BoxDataSourceTests {
         }
     }
 
+    static func testInsertAutoincrement() throws {
+        let id = try source.insertAutoincrement(testId, ["quux"])
+        guard id == 4 else {
+            throw "\(id)  is not equal to 4"
+        }
+        let result = try source.get(testId, 0, [.int(id)])
+        guard let tuple = result, tuple.rawValue == [4, "quux"] else {
+            throw "\(String(describing: result))  is not equal to [4, 'quux']"
+        }
+    }
+
     static func testReplace() throws {
         try source.replace(testId, [3, "zab"])
         let result = try source.get(testId, 0, [3])
@@ -133,6 +144,18 @@ public func BoxDataSourceTests_testGet(context: BoxContext) -> BoxResult {
 public func BoxDataSourceTests_testInsert(context: BoxContext) -> BoxResult {
     do {
         try BoxDataSourceTests.testInsert()
+        return Box.returnTuple(nil, to: context)
+    } catch {
+        return Box.returnError(code: .procC, message: String(describing: error))
+    }
+}
+
+@_silgen_name("BoxDataSourceTests_testInsertAutoincrement")
+public func BoxDataSourceTests_testInsertAutoincrement(
+    context: BoxContext
+) -> BoxResult {
+    do {
+        try BoxDataSourceTests.testInsertAutoincrement()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
