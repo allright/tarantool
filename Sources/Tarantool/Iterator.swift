@@ -46,6 +46,7 @@ public enum Iterator: Int {
     case bitsAnySet        =  8 /* at least one x's bit is set         */
     case bitsAllNotSet     =  9 /* all bits are not set                */
     case overlaps          = 10 /* key overlaps x                      */
-    case neighbor          = 11 /* typles in distance ascending order from specified point */
+    case neighbor          = 11 /* typles in distance ascending order 
+                                   from specified point                */
     case iteratorTypeMAX
 };

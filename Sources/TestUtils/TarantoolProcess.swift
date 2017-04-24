@@ -59,7 +59,8 @@ class TarantoolProcess {
             "end\n" +
             "os.exit(0)"
 
-        try FileManager.default.createDirectory(at: temp, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(
+            at: temp, withIntermediateDirectories: true)
         _ = FileManager.default.createFile(atPath: lock.path, contents: nil)
         try script.write(to: config, atomically: true, encoding: .utf8)
 
