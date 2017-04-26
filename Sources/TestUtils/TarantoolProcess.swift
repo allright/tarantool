@@ -8,7 +8,7 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import Socket
+import Network
 import Platform
 import Foundation
 
