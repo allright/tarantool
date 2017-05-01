@@ -26,15 +26,11 @@ public class IProtoConnection {
         socket = try Socket(awaiter: awaiter)
         try socket.connect(to: host, port: port)
 
-        welcome = Welcome()
-        let expectedSize = welcome.buffer.count
-        guard try socket.receive(to: &welcome.buffer) == expectedSize else {
+        var buffer = [UInt8](repeating: 0, count: Welcome.packetSize)
+        guard try socket.receive(to: &buffer) == Welcome.packetSize else {
             throw IProtoError.invalidWelcome(reason: .invalidSize)
         }
-
-        guard welcome.isValid else {
-            throw IProtoError.invalidWelcome(reason: .invalidHeader)
-        }
+        welcome = try Welcome(from: buffer)
     }
 
     deinit {

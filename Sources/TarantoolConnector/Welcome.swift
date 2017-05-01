@@ -13,18 +13,20 @@ fileprivate let saltSize = 44
 fileprivate let size = 128
 
 struct Welcome {
-    var buffer = [UInt8](repeating: 0, count: size)
+    var header: String
+    var salt: String
 
-    var header: String {
-        return String(slice: buffer.prefix(upTo: headerSize))
+    static var packetSize: Int {
+        return size
     }
 
-    var salt: String {
-        return String(slice: buffer[headerSize..<headerSize+saltSize])
-    }
+    init(from bytes: [UInt8]) throws {
+        self.header = String(slice: bytes.prefix(upTo: headerSize))
+        self.salt = String(slice: bytes[headerSize..<headerSize+saltSize])
 
-    var isValid: Bool {
-        return header.hasPrefix("Tarantool")
+        guard header.hasPrefix("Tarantool") else {
+            throw IProtoError.invalidWelcome(reason: .invalidHeader)
+        }
     }
 }
 
