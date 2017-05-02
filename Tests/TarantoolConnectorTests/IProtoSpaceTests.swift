@@ -129,7 +129,7 @@ class IProtoSpaceTests: TestCase {
 
     func testUpdate() {
         do {
-            try space.update([3], ops: [["=", 1, "zab"]])
+            try space.update([3], operations: [["=", 1, "zab"]])
             guard let result = try space.get([3]) else {
                 fail()
                 return
@@ -144,14 +144,14 @@ class IProtoSpaceTests: TestCase {
         do {
             assertNil(try space.get([4]))
 
-            try space.upsert([4, "quux", 42], ops: [["+", 2, 8]])
+            try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
             guard let insertResult = try space.get([4]) else {
                 fail()
                 return
             }
             assertEqual(insertResult, IProtoTuple(rawValue: [4, "quux", 42]))
 
-            try space.upsert([4, "quux", 42], ops: [["+", 2, 8]])
+            try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
             guard let updateResult = try space.get([4]) else {
                 fail()
                 return

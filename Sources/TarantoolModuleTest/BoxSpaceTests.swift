@@ -79,7 +79,7 @@ struct BoxSpaceTests {
     }
 
     static func testUpdate() throws {
-        try space.update([3], ops: [["=", 1, "zab"]])
+        try space.update([3], operations: [["=", 1, "zab"]])
         let result = try space.get([3])
         guard let tuple = result, tuple.rawValue == [3, "zab"] else {
             throw "\(String(describing: result)) is not equal to [3, 'zab']"
@@ -92,7 +92,7 @@ struct BoxSpaceTests {
             throw "\(String(describing: expectedNil)) is not nil"
         }
 
-        try space.upsert([4, "quux", 42], ops: [["+", 2, 8]])
+        try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
         let insert = try space.get([4])
 
         guard let insertResult = insert,
@@ -101,7 +101,7 @@ struct BoxSpaceTests {
                 " is not equal to [4, 'quux', 42]"
         }
 
-        try space.upsert([4, "quux", 42], ops: [["+", 2, 8]])
+        try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
         let update = try space.get([4])
 
         guard let updateResult = update, updateResult.rawValue == [4, "quux", 50] else {

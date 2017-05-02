@@ -46,9 +46,9 @@ struct BoxTransactionTests {
         }
 
         try transaction {
-            try space.upsert([1, "one"])
-            try space.upsert([2, "two"])
-            try space.upsert([3, "three"])
+            try space.insert([1, "one"])
+            try space.insert([2, "two"])
+            try space.insert([3, "three"])
             return .rollback
         }
 

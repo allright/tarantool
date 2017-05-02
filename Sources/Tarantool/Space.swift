@@ -57,15 +57,15 @@ public struct Space<T: DataSource> {
     }
 
     public func update(
-        _ keys: [MessagePack], ops: [MessagePack] = [], indexId: Int = 0
+        _ keys: [MessagePack], operations: [MessagePack], indexId: Int = 0
     ) throws {
-        try source.update(id, indexId, keys, ops)
+        try source.update(id, indexId, keys, operations)
     }
 
     public func upsert(
-        _ tuple: [MessagePack], ops: [MessagePack] = [], indexId: Int = 0
+        _ tuple: [MessagePack], operations: [MessagePack], indexId: Int = 0
     ) throws {
-        try source.upsert(id, indexId, tuple, ops)
+        try source.upsert(id, indexId, tuple, operations)
     }
 }
 
