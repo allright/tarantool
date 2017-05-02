@@ -18,6 +18,7 @@ public enum IProtoError: Error {
 public enum IProtoPacketError {
     case invalidSize
     case invalidHeader
+    case invalidCode
     case invalidBodyHeader
     case invalidBody
 }

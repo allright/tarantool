@@ -9,23 +9,23 @@
  */
 
 struct HeaderLength {
-    let length: Int
+    let value: Int
 
     var bytes: [UInt8] {
         var bytes = [UInt8](repeating: 0, count: 5)
         bytes[0] = 0xce
-        bytes[1] = UInt8(truncatingBitPattern: length >> 24)
-        bytes[2] = UInt8(truncatingBitPattern: length >> 16)
-        bytes[3] = UInt8(truncatingBitPattern: length >> 8)
-        bytes[4] = UInt8(truncatingBitPattern: length)
+        bytes[1] = UInt8(truncatingBitPattern: value >> 24)
+        bytes[2] = UInt8(truncatingBitPattern: value >> 16)
+        bytes[3] = UInt8(truncatingBitPattern: value >> 8)
+        bytes[4] = UInt8(truncatingBitPattern: value)
         return bytes
     }
 
-    init(_ length: Int) throws {
-        guard length <= Int(Int32.max) else {
+    init(_ value: Int) throws {
+        guard value <= Int(Int32.max) else {
             throw IProtoError.invalidPacket(reason: .invalidSize)
         }
-        self.length = length
+        self.value = value
     }
 
     init(bytes: [UInt8]) throws {
@@ -36,7 +36,7 @@ struct HeaderLength {
             throw MessagePackError.insufficientData
         }
 
-        self.length = Int(bytes[1]) << 24
+        self.value = Int(bytes[1]) << 24
             | Int(bytes[2]) << 16
             | Int(bytes[3]) << 8
             | Int(bytes[4])

@@ -37,118 +37,40 @@ public class IProtoConnection {
         try? socket.close(silent: true)
     }
 
-    //  Request/Response:
-    //
-    //  0        5
-    //  +--------+ +============+ +===================================+
-    //  | BODY + | |            | |                                   |
-    //  | HEADER | |   HEADER   | |               BODY                |
-    //  |  SIZE  | |            | |                                   |
-    //  +--------+ +============+ +===================================+
-    //    MP_INT       MP_MAP                     MP_MAP
-
-    //  UNIFIED HEADER:
-    //
-    //  +================+================+=====================+
-    //  |                |                |                     |
-    //  |   0x00: CODE   |   0x01: SYNC   |    0x05: SCHEMA_ID  |
-    //  | MP_INT: MP_INT | MP_INT: MP_INT |  MP_INT: MP_INT     |
-    //  |                |                |                     |
-    //  +================+================+=====================+
-    //                            MP_MAP
-
-    private func send(
+    public func request(
         code: Code,
         keys: Keys = [:],
-        sync: MessagePack? = nil,
-        schemaId: MessagePack? = nil
-    ) throws {
-        // header
-        var header: Map = [:]
-        header[Key.code.rawValue] = code.rawValue
-        if let sync = sync {
-            header[Key.sync.rawValue] = sync
-        }
-        if let schemaId = schemaId {
-            header[Key.schemaId.rawValue] = schemaId
-        }
+        sync: Int? = nil,
+        schemaId: Int? = nil
+    ) throws -> [MessagePack] {
+        let request = IProtoMessage(
+            code: code,
+            sync: sync,
+            schemaId: schemaId,
+            body: keys
+        )
+        var requestBytes = [UInt8]()
+        try request.encode(to: &requestBytes)
+        _ = try socket.send(bytes: requestBytes)
 
-        // body
-        var body: Map = [:]
-        for (key, value) in keys {
-            body[key.rawValue] = value
-        }
-
-        var encoder = Encoder()
-        encoder.encode(header)
-        encoder.encode(body)
-        let packet = encoder.bytes
-
-        // body + header size
-        let size = try HeaderLength(packet.count).bytes
-
-        _ = try socket.send(bytes: size + packet)
-    }
-
-    private func receive() throws -> (header: MessagePack, body: MessagePack) {
         let length = try readPacketLength()
-
         var buffer = [UInt8](repeating: 0, count: length)
         guard try socket.receive(to: &buffer) == length else {
             throw IProtoError.invalidPacket(reason: .invalidSize)
         }
 
-        var decoder = Decoder(bytes: buffer, count: buffer.count)
-        let header = try decoder.decode() as MessagePack
-        let body = try decoder.decode() as MessagePack
+        let response = try IProtoMessage(from: buffer)
 
-        return (header, body)
+        return Array(response.body[Key.data]) ?? []
     }
 
     private func readPacketLength() throws -> Int {
         // always packed as 32bit integer CE XX XX XX XX
-        var lengthBuffer = [UInt8](repeating: 0, count: 5)
-        guard try socket.receive(to: &lengthBuffer) == 5 else {
+        var buffer = [UInt8](repeating: 0, count: 5)
+        guard try socket.receive(to: &buffer) == 5 else {
             throw IProtoError.invalidPacket(reason: .invalidSize)
         }
-        return try HeaderLength(bytes: lengthBuffer).length
-    }
-
-    public func request(
-        code: Code,
-        keys: Keys = [:],
-        sync: MessagePack? = nil,
-        schemaId: MessagePack? = nil
-    ) throws -> [MessagePack] {
-        try send(code: code, keys: keys, sync: sync, schemaId: schemaId)
-        let (encodedHeader, encodedBody) = try receive()
-
-        guard let header = Map(encodedHeader), header.count == 3,
-            let code = Int(header[0]) else {
-                throw IProtoError.invalidPacket(reason: .invalidHeader)
-        }
-
-        guard let body = Map(encodedBody) else {
-            throw IProtoError.invalidPacket(reason: .invalidBodyHeader)
-        }
-
-        guard code < 0x8000 else {
-            // error packed as [0x31 : MP_STRING]
-            let message = String(body[Key.error.rawValue]) ?? "unknown"
-            throw IProtoError.badRequest(code: code, message: message)
-        }
-
-        // empty body e.g. ping response
-        guard body.count > 0 else {
-            return [MessagePack]()
-        }
-
-        // response packed as [0x30 : MP_OBJECT]
-        guard let response = [MessagePack](body[Key.data.rawValue]) else {
-            throw IProtoError.invalidPacket(reason: .invalidBody)
-        }
-
-        return response
+        return try HeaderLength(bytes: buffer).value
     }
 }
 

@@ -9,6 +9,8 @@
  */
 
 public enum Code: MessagePack {
+    case response  = 0x00
+
     case select    = 0x01
     case insert    = 0x02
     case replace   = 0x03
