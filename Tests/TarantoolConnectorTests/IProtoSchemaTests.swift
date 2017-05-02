@@ -52,9 +52,7 @@ class IProtoSchemaTests: TestCase {
     }
 
 
-    static var allTests : [(String, (IProtoSchemaTests) -> () throws -> Void)] {
-        return [
-            ("testSchema", testSchema),
-        ]
-    }
+    static var allTests = [
+        ("testSchema", testSchema),
+    ]
 }

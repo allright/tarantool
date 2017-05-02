@@ -126,14 +126,12 @@ class IProtoIteratorTests: TestCase {
     }
 
 
-    static var allTests : [(String, (IProtoIteratorTests) -> () throws -> Void)] {
-        return [
-            ("testSelectAll", testSelectAll),
-            ("testSelectEQ", testSelectEQ),
-            ("testSelectGT", testSelectGT),
-            ("testSelectGE", testSelectGE),
-            ("testSelectLT", testSelectLT),
-            ("testSelectLE", testSelectLE),
-        ]
-    }
+    static var allTests = [
+        ("testSelectAll", testSelectAll),
+        ("testSelectEQ", testSelectEQ),
+        ("testSelectGT", testSelectGT),
+        ("testSelectGE", testSelectGE),
+        ("testSelectLT", testSelectLT),
+        ("testSelectLE", testSelectLE),
+    ]
 }

@@ -95,13 +95,11 @@ class IProtoConnectionTests: TestCase {
     }
 
 
-    static var allTests : [(String, (IProtoConnectionTests) -> () throws -> Void)] {
-        return [
-            ("testPing", testPing),
-            ("testEval", testEval),
-            ("testCall", testCall),
-            ("testAuth", testAuth),
-            ("testRequest", testRequest),
-        ]
-    }
+    static var allTests = [
+        ("testPing", testPing),
+        ("testEval", testEval),
+        ("testCall", testCall),
+        ("testAuth", testAuth),
+        ("testRequest", testRequest),
+    ]
 }

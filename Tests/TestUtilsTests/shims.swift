@@ -128,7 +128,12 @@ public func assertGreaterThan<T>(
     _ message: @autoclosure () -> String = "",
     file: StaticString = #file,
     line: UInt = #line) where T : Comparable {
-    XCTAssertGreaterThan(expression1, expression2, message, file: file, line: line)
+    XCTAssertGreaterThan(
+        expression1,
+        expression2,
+        message,
+        file: file,
+        line: line)
 }
 
 public func assertGreaterThanOrEqual<T>(

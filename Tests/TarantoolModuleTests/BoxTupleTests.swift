@@ -62,9 +62,7 @@ class BoxTupleTests: TestCase {
     }
 
 
-    static var allTests : [(String, (BoxTupleTests) -> () throws -> Void)] {
-        return [
-            ("testUnpackTuple", testUnpackTuple),
-        ]
-    }
+    static var allTests = [
+        ("testUnpackTuple", testUnpackTuple),
+    ]
 }

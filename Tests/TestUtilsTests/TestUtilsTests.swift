@@ -49,11 +49,9 @@ class TestUtilsTests: TestCase {
     }
 
 
-    static var allTests : [(String, (TestUtilsTests) -> () throws -> Void)] {
-        return [
-            ("testTarantoolProcess", testTarantoolProcess),
-            ("testTempFolder", testTempFolder),
-            ("testModulePath", testModulePath),
-        ]
-    }
+    static var allTests = [
+        ("testTarantoolProcess", testTarantoolProcess),
+        ("testTempFolder", testTempFolder),
+        ("testModulePath", testModulePath),
+    ]
 }

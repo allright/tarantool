@@ -139,17 +139,15 @@ class BoxSpaceTests: TestCase {
     }
 
 
-    static var allTests : [(String, (BoxSpaceTests) -> () throws -> Void)] {
-        return [
-            ("BoxSpaceTests_testCount", testCount),
-            ("BoxSpaceTests_testSelect", testSelect),
-            ("BoxSpaceTests_testGet", testGet),
-            ("BoxSpaceTests_testInsert", testInsert),
-            ("BoxSpaceTests_testInsertAutoincrement", testInsertAutoincrement),
-            ("BoxSpaceTests_testReplace", testReplace),
-            ("BoxSpaceTests_testDelete", testDelete),
-            ("BoxSpaceTests_testUpdate", testUpdate),
-            ("BoxSpaceTests_testUpsert", testUpsert),
-        ]
-    }
+    static var allTests = [
+        ("BoxSpaceTests_testCount", testCount),
+        ("BoxSpaceTests_testSelect", testSelect),
+        ("BoxSpaceTests_testGet", testGet),
+        ("BoxSpaceTests_testInsert", testInsert),
+        ("BoxSpaceTests_testInsertAutoincrement", testInsertAutoincrement),
+        ("BoxSpaceTests_testReplace", testReplace),
+        ("BoxSpaceTests_testDelete", testDelete),
+        ("BoxSpaceTests_testUpdate", testUpdate),
+        ("BoxSpaceTests_testUpsert", testUpsert),
+    ]
 }

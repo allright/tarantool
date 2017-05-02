@@ -73,10 +73,8 @@ class BoxTransactionTests: TestCase {
     }
 
 
-    static var allTests : [(String, (BoxTransactionTests) -> () throws -> Void)] {
-        return [
-            ("testTransactionCommit", testTransactionCommit),
-            ("testTransactionRollback", testTransactionRollback),
-        ]
-    }
+    static var allTests = [
+        ("testTransactionCommit", testTransactionCommit),
+        ("testTransactionRollback", testTransactionRollback),
+    ]
 }

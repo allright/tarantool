@@ -29,9 +29,7 @@ class CHAPSHA1Tests: TestCase {
     }
 
 
-    static var allTests : [(String, (CHAPSHA1Tests) -> () throws -> Void)] {
-        return [
-            ("testCHAPSHA1", testCHAPSHA1),
-        ]
-    }
+    static var allTests = [
+        ("testCHAPSHA1", testCHAPSHA1),
+    ]
 }

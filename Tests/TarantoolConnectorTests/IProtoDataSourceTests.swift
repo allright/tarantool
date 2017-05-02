@@ -175,17 +175,15 @@ class IProtoDataSourceTests: TestCase {
     }
 
 
-    static var allTests : [(String, (IProtoDataSourceTests) -> () throws -> Void)] {
-        return [
-            ("testCount", testCount),
-            ("testSelect", testSelect),
-            ("testGet", testGet),
-            ("testInsert", testInsert),
-            ("testInsertAutoincrement", testInsertAutoincrement),
-            ("testReplace", testReplace),
-            ("testDelete", testDelete),
-            ("testUpdate", testUpdate),
-            ("testUpsert", testUpsert),
-        ]
-    }
+    static var allTests = [
+        ("testCount", testCount),
+        ("testSelect", testSelect),
+        ("testGet", testGet),
+        ("testInsert", testInsert),
+        ("testInsertAutoincrement", testInsertAutoincrement),
+        ("testReplace", testReplace),
+        ("testDelete", testDelete),
+        ("testUpdate", testUpdate),
+        ("testUpsert", testUpsert),
+    ]
 }
