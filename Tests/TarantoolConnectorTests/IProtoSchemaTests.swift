@@ -14,18 +14,16 @@ import Foundation
 
 class IProtoSchemaTests: TestCase {
     var tarantool: TarantoolProcess!
-    var source: IProtoDataSource!
+    var iproto: IProtoConnection!
 
     override func setUp() {
         do {
             tarantool = try TarantoolProcess(with:
                 "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
-                "box.schema.space.create('space1')\n" +
-                "box.schema.space.create('space2')")
+                "box.schema.user.passwd('admin', 'admin')")
             try tarantool.launch()
 
-            let iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
-            source = IProtoDataSource(connection: iproto)
+            iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
         } catch {
             fail(String(describing: error))
             return
@@ -39,20 +37,60 @@ class IProtoSchemaTests: TestCase {
 
     func testSchema() {
         do {
-            let schema = try Schema(source)
+            let schema = try Schema(IProtoDataSource(connection: iproto))
 
-            let space1 = schema.spaces["space1"]
-            assertNotNil(space1)
-
-            let space2 = schema.spaces["space2"]
-            assertNotNil(space2)
+            guard schema.spaces.count > 0 else {
+                throw "schema.spaces.count == 0"
+            }
+            let spaces = schema.spaces
+            let expexted = [
+                "_schema": 272,
+                "_space": 280,
+                "_vspace": 281,
+                "_index": 288,
+                "_vindex": 289,
+                "_func": 296,
+                "_vfunc": 297,
+                "_user": 304,
+                "_vuser": 305,
+                "_priv": 312,
+                "_vpriv": 313,
+                "_cluster": 320,
+            ]
+            for (key, value) in expexted {
+                guard spaces[key]?.id == value else {
+                    throw "spaces['\(key)']?.id is not equal to \(value)"
+                }
+            }
         } catch {
             fail(String(describing: error))
+        }
+    }
+
+    func testCreateSpace() throws {
+        try iproto.auth(username: "admin", password: "admin")
+        var schema = try Schema(IProtoDataSource(connection: iproto))
+
+        try schema.createSpace(name: "new_space")
+        guard let newSpace = schema.spaces["new_space"] else {
+            throw "new_space not found"
+        }
+        guard newSpace.id == 512 else {
+            throw "new_space.id \(newSpace.id) is not equal to 512"
+        }
+
+        try schema.createSpace(name: "another_space")
+        guard let anotherSpace = schema.spaces["another_space"] else {
+            throw "another_space not found"
+        }
+        guard anotherSpace.id == 513 else {
+            throw "another_space.id \(anotherSpace.id) is not equal to 513"
         }
     }
 
 
     static var allTests = [
         ("testSchema", testSchema),
+        ("testCreateSpace", testCreateSpace),
     ]
 }

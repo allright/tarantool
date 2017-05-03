@@ -14,4 +14,5 @@ public enum TarantoolError: Error {
     case invalidSchema
     case invalidTuple(message: String)
     case notEnoughMemory
+    case unexpected(message: String)
 }
