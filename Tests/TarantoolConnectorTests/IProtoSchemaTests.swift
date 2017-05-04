@@ -14,7 +14,7 @@ import Foundation
 
 class IProtoSchemaTests: TestCase {
     var tarantool: TarantoolProcess!
-    var iproto: IProtoConnection!
+    var connection: IProtoConnection!
 
     override func setUp() {
         do {
@@ -23,7 +23,7 @@ class IProtoSchemaTests: TestCase {
                 "box.schema.user.passwd('admin', 'admin')")
             try tarantool.launch()
 
-            iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
+            connection = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
         } catch {
             fail(String(describing: error))
             return
@@ -37,7 +37,7 @@ class IProtoSchemaTests: TestCase {
 
     func testSchema() {
         do {
-            let schema = try Schema(IProtoDataSource(connection: iproto))
+            let schema = try Schema(IProto(connection: connection))
 
             guard schema.spaces.count > 0 else {
                 throw "schema.spaces.count == 0"
@@ -68,8 +68,8 @@ class IProtoSchemaTests: TestCase {
     }
 
     func testCreateSpace() throws {
-        try iproto.auth(username: "admin", password: "admin")
-        var schema = try Schema(IProtoDataSource(connection: iproto))
+        try connection.auth(username: "admin", password: "admin")
+        var schema = try Schema(IProto(connection: connection))
 
         try schema.createSpace(name: "new_space")
         guard let newSpace = schema.spaces["new_space"] else {

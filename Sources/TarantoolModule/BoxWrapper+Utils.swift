@@ -11,7 +11,7 @@
 import CTarantool
 import MessagePack
 
-extension Box {
+extension BoxWrapper {
     fileprivate static let invalid = UInt32(Int32.max)
 
     static func getSpaceIdByName(_ name: [UInt8]) throws -> UInt32 {

@@ -13,11 +13,11 @@ import TarantoolModule
 
 struct BoxDataSourceTests {
     fileprivate static var testId: Int {
-        return try! Schema(BoxDataSource()).spaces["test"]!.id
+        return try! Schema(Box()).spaces["test"]!.id
     }
 
-    fileprivate static var source: BoxDataSource {
-        return BoxDataSource()
+    fileprivate static var source: Box {
+        return Box()
     }
 
     static func testCount() throws {

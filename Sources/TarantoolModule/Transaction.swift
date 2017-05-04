@@ -10,48 +10,51 @@
 
 import CTarantool
 
-extension Box {
-    public struct Transaction {
-        public enum Action {
-            case commit, rollback
-        }
-
+extension BoxWrapper {
+    struct Transaction {
+        @inline(__always)
         fileprivate static func begin() throws {
             guard _box_txn_begin() == 0 else {
                 throw BoxError()
             }
         }
 
+        @inline(__always)
         fileprivate static func commit() throws {
             guard _box_txn_commit() == 0 else {
                 throw BoxError()
             }
         }
 
+        @inline(__always)
         fileprivate static func rollback() throws {
             guard _box_txn_rollback() == 0 else {
                 throw BoxError()
             }
         }
+    }
+}
 
-        fileprivate static func run(_ closure: (Void) throws -> Action) throws {
-            try begin()
-
-            do {
-                switch try closure() {
-                case .commit: try commit()
-                case .rollback: try rollback()
-                }
-            } catch {
-                try rollback()
-                throw error
-            }
+extension Box {
+    public struct Transaction {
+        public enum Action {
+            case commit, rollback
         }
     }
 
     public static func transaction(
         _ closure: (Void) throws -> Box.Transaction.Action
     ) throws {
-        try Transaction.run(closure)
+        try BoxWrapper.Transaction.begin()
+
+        do {
+            switch try closure() {
+            case .commit: try BoxWrapper.Transaction.commit()
+            case .rollback: try BoxWrapper.Transaction.rollback()
+            }
+        } catch {
+            try BoxWrapper.Transaction.rollback()
+            throw error
+        }
     }
 }

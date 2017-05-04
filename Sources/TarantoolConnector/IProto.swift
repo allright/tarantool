@@ -12,7 +12,7 @@ import Foundation
 import MessagePack
 import Tarantool
 
-public struct IProtoDataSource: DataSource {
+public struct IProto: DataSource {
     let connection: IProtoConnection
 
     public init(connection: IProtoConnection) {

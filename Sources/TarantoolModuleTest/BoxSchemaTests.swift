@@ -15,7 +15,7 @@ import TarantoolModule
 
 struct BoxSchemaTests {
     static func testSchema() throws {
-        let schema = try Schema(BoxDataSource())
+        let schema = try Schema(Box())
         guard schema.spaces.count > 0 else {
             throw "schema.spaces.count == 0"
         }
@@ -42,7 +42,7 @@ struct BoxSchemaTests {
     }
 
     static func testCreateSpace() throws {
-        var schema = try Schema(BoxDataSource())
+        var schema = try Schema(Box())
 
         try schema.createSpace(name: "new_space")
         guard let newSpace = schema.spaces["new_space"] else {

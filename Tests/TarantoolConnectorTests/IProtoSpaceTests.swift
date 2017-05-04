@@ -14,7 +14,7 @@ import Foundation
 
 class IProtoSpaceTests: TestCase {
     var tarantool: TarantoolProcess!
-    var space: Space<IProtoDataSource>!
+    var space: Space<IProto>!
 
     override func setUp() {
         do {
@@ -27,8 +27,8 @@ class IProtoSpaceTests: TestCase {
                 "test:replace({3, 'baz'})")
             try tarantool.launch()
 
-            let iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
-            let space = IProtoDataSource(connection: iproto)
+            let connection = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
+            let space = IProto(connection: connection)
             let schema = try Schema(space)
 
             self.space = schema.spaces["test"]

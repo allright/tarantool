@@ -10,137 +10,95 @@
 
 import CTarantool
 import MessagePack
-import Foundation
 
-public struct Box {
-    static func count(
-        _ spaceId: UInt32,
-        _ indexId: UInt32,
+@_exported import Tarantool
+
+public struct Box: DataSource {
+    public init() {}
+
+    public func count(
+        _ spaceId: Int,
+        _ indexId: Int,
         _ iterator: Iterator,
-        _ keys: [UInt8]
+        _ keys: [MessagePack]
     ) throws -> Int {
-        let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        let pKeysEnd = pKeys + keys.count
-        let count = _box_index_count(
-            spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd)
-        guard count >= 0 else {
-            throw BoxError()
-        }
-        return count
+        let keys = MessagePack.encode(.array(keys))
+        return try BoxWrapper.count(
+            UInt32(spaceId), UInt32(indexId), iterator, keys)
     }
 
-    static func select(
-        _ spaceId: UInt32,
-        _ indexId: UInt32,
+    public func select(
+        _ spaceId: Int,
+        _ indexId: Int,
         _ iterator: Iterator,
-        _ keys: [UInt8]
+        _ keys: [MessagePack],
+        _ offset: Int,
+        _ limit: Int
     ) throws -> AnySequence<BoxTuple> {
-        let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        let pKeysEnd = pKeys + keys.count
-        guard let iterator = _box_index_iterator(
-            spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd) else {
-                throw BoxError()
-        }
-        return AnySequence { BoxIterator(iterator) }
+        let keys = MessagePack.encode(.array(keys))
+        return try BoxWrapper.select(
+            numericCast(spaceId), numericCast(indexId), iterator, keys)
     }
 
-    static func get(
-        _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
+    public func get(
+        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
     ) throws -> BoxTuple? {
-        var result: OpaquePointer?
-        let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        guard _box_index_get(
-            spaceId, indexId, pKeys, pKeys+keys.count, &result) == 0 else {
-                throw BoxError()
-        }
-        guard let tuple = result else {
-            return nil
-        }
-        return BoxTuple(tuple)
+        let keys = MessagePack.encode(.array(keys))
+        return try BoxWrapper.get(UInt32(spaceId), UInt32(indexId), keys)
     }
 
-    static func insert(_ spaceId: UInt32, _ tuple: [UInt8]) throws {
-        let pointer = try copyToInternalMemory(tuple)
-        guard _box_insert(
-            spaceId, pointer, pointer+tuple.count, nil) == 0 else {
-                throw BoxError()
-        }
+    public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {
+        let tuple = MessagePack.encode(.array(tuple))
+        try BoxWrapper.insert(UInt32(spaceId), tuple)
     }
 
-    static func max(
-        _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
-    ) throws -> Int? {
-        var result: OpaquePointer?
-        let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        let pKeysEnd = pKeys + keys.count
-        guard _box_index_max(
-            spaceId, indexId, pKeys, pKeysEnd, &result) == 0 else {
-                throw BoxError()
+    public func insertAutoincrement(
+        _ spaceId: Int,
+        _ tuple: [MessagePack]
+    ) throws -> Int {
+        var id = 0
+        let emptyKeys = MessagePack.encode(.array([]))
+        if let max = try BoxWrapper.max(UInt32(spaceId), UInt32(0), emptyKeys) {
+            id = max + 1
         }
-        guard let pointer = result,
-            let tuple = BoxTuple(pointer) else {
-                return nil
-        }
-        return tuple[0, as: Int.self]
+        var tuple = tuple
+        tuple.insert(.int(id), at: 0)
+        let tupleBytes = MessagePack.encode(.array(tuple))
+        try BoxWrapper.insert(UInt32(spaceId), tupleBytes)
+        return id
     }
 
-    static func replace(_ spaceId: UInt32, _ tuple: [UInt8]) throws {
-        let pointer = try copyToInternalMemory(tuple)
-        guard _box_replace(
-            spaceId, pointer, pointer+tuple.count, nil) == 0 else {
-                throw BoxError()
-        }
+    public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
+        let tuple = MessagePack.encode(.array(tuple))
+        try BoxWrapper.replace(UInt32(spaceId), tuple)
     }
 
-    static func update(
-        _ spaceId: UInt32,
-        _ indexId: UInt32,
-        _ keys: [UInt8],
-        _ ops: [UInt8]
+    public func delete(
+        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
     ) throws {
-        let pKeys = try copyToInternalMemory(keys)
-        let pOps = try copyToInternalMemory(ops)
-        guard _box_update(
-            spaceId,
-            indexId,
-            pKeys,
-            pKeys+keys.count,
-            pOps,
-            pOps+ops.count,
-            0,
-            nil) == 0 else {
-                throw BoxError()
-        }
+        let keys = MessagePack.encode(.array(keys))
+        try BoxWrapper.delete(UInt32(spaceId), UInt32(indexId), keys)
     }
 
-    static func upsert(
-        _ spaceId: UInt32,
-        _ indexId: UInt32,
-        _ tuple: [UInt8],
-        _ ops: [UInt8]
+    public func update(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ keys: [MessagePack],
+        _ ops: [MessagePack]
     ) throws {
-        let pTuple = try copyToInternalMemory(tuple)
-        let pOps = try copyToInternalMemory(ops)
-        guard _box_upsert(
-            spaceId,
-            indexId,
-            pTuple,
-            pTuple+tuple.count,
-            pOps,
-            pOps+ops.count,
-            0,
-            nil) == 0 else {
-                throw BoxError()
-        }
+        let keys = MessagePack.encode(.array(keys))
+        let ops = MessagePack.encode(.array(ops))
+        try BoxWrapper.update(UInt32(spaceId), UInt32(indexId), keys, ops)
     }
 
-    static func delete(
-        _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
-    ) throws{
-        let pointer = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
-        guard _box_delete(
-            spaceId, indexId, pointer, pointer+keys.count, nil) == 0 else {
-                throw BoxError()
-        }
+    public func upsert(
+        _ spaceId: Int,
+        _ indexId: Int,
+        _ tuple: [MessagePack],
+        _ ops: [MessagePack]
+    ) throws {
+        let tuple = MessagePack.encode(.array(tuple))
+        let ops = MessagePack.encode(.array(ops))
+        try BoxWrapper.upsert(UInt32(spaceId), UInt32(indexId), tuple, ops)
     }
 }
