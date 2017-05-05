@@ -35,9 +35,7 @@ struct BoxSchemaTests {
             "_cluster": 320,
         ]
         for (key, value) in expexted {
-            guard spaces[key]?.id == value else {
-                throw "spaces['\(key)']?.id is not equal to \(value)"
-            }
+            try assertEqualThrows(spaces[key]?.id, value)
         }
     }
 
@@ -48,17 +46,31 @@ struct BoxSchemaTests {
         guard let newSpace = schema.spaces["new_space"] else {
             throw "new_space not found"
         }
-        guard newSpace.id == 512 else {
-            throw "new_space.id \(newSpace.id) is not equal to 512"
-        }
+        try assertEqualThrows(newSpace.id, 512)
 
         try schema.createSpace(name: "another_space")
         guard let anotherSpace = schema.spaces["another_space"] else {
             throw "another_space not found"
         }
-        guard anotherSpace.id == 513 else {
-            throw "another_space.id \(anotherSpace.id) is not equal to 513"
-        }
+        try assertEqualThrows(anotherSpace.id, 513)
+    }
+
+    static func testCreateIndex() throws {
+        var schema = try Schema(Box())
+        try schema.createSpace(name: "new_space")
+
+        let index1 = try schema.createIndex(name: "primary", in: "new_space")
+        let expected1 = Index(id: 0, name: "primary", type: .tree, unique: true)
+        try assertEqualThrows(index1, expected1)
+
+        let index2 = try schema.createIndex(name: "another", in: "new_space")
+        let expected2 = Index(id: 1, name: "another", type: .tree, unique: true)
+        try assertEqualThrows(index2, expected2)
+
+        let index3 = try schema.createIndex(
+            name: "rtree", type: .rtree, in: "new_space")
+        let expected3 = Index(id: 2, name: "rtree", type: .rtree, unique: false)
+        try assertEqualThrows(index3, expected3)
     }
 }
 
@@ -78,6 +90,16 @@ public func BoxSchemaTests_testSchema(context: BoxContext) -> BoxResult {
 public func BoxSchemaTests_testCreateSpace(context: BoxContext) -> BoxResult {
     do {
         try BoxSchemaTests.testCreateSpace()
+    } catch {
+        return Box.returnError(code: .procC, message: String(describing: error))
+    }
+    return 0
+}
+
+@_silgen_name("BoxSchemaTests_testCreateIndex")
+public func BoxSchemaTests_testCreateIndex(context: BoxContext) -> BoxResult {
+    do {
+        try BoxSchemaTests.testCreateIndex()
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }

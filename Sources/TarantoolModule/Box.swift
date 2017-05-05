@@ -13,8 +13,10 @@ import MessagePack
 
 @_exported import Tarantool
 
-public struct Box: DataSource {
+public struct Box: DataSource, LuaScript {
     public init() {}
+
+    // MARK: DataSource
 
     public func count(
         _ spaceId: Int,
@@ -100,5 +102,21 @@ public struct Box: DataSource {
         let tuple = MessagePack.encode(.array(tuple))
         let ops = MessagePack.encode(.array(ops))
         try BoxWrapper.upsert(UInt32(spaceId), UInt32(indexId), tuple, ops)
+    }
+
+    // MARK: LuaScript
+
+    public func call(
+        _ function: String,
+        arguments: [MessagePack] = []
+    ) throws -> [MessagePack] {
+        return try Lua.call(function, arguments)
+    }
+
+    public func eval(
+        _ expression: String,
+        arguments: [MessagePack] = []
+    ) throws -> [MessagePack] {
+        return try Lua.eval(expression, arguments)
     }
 }

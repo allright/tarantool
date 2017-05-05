@@ -16,17 +16,13 @@ fileprivate let _vspace: Int = 281
 
 fileprivate let admin: Int = 1
 
-public struct Schema<T: DataSource> {
+public struct Schema<T: DataSource & LuaScript> {
     let source: T
     public private(set) var spaces: [String: Space<T>]
 
     public init(_ source: T) throws {
         self.source = source
-        self.spaces = [:]
-        try update()
-    }
 
-    mutating func update() throws {
         let sysview = Space(id: _vspace, source: source)
         let tuples = try sysview.select(.all)
 
@@ -42,33 +38,43 @@ public struct Schema<T: DataSource> {
     }
 
     public mutating func createSpace(name: String) throws {
-        let schemaSpace = Space(id: _schema, source: source)
-        try schemaSpace.upsert(["max_id", 512], operations: [["+", 1, 1]])
-        guard let result = try schemaSpace.get(["max_id"]) else {
-            throw TarantoolError.unexpected(message: "can't read max_id")
+        let script = "return box.schema.space.create('\(name)').id"
+        let result = try source.eval(script, arguments: [])
+        guard result.count == 1, let id = Int(result[0]) else {
+            let message = "[integer] expected, got \(result)"
+            throw TarantoolError.invalidTuple(message: message)
         }
-        guard result.count == 2, let maxId = Int(result[1]) else {
-            throw TarantoolError.unexpected(message: "invalid max_id tuple")
+        spaces[name] = Space(id: id, source: source)
+    }
+
+    @discardableResult
+    public mutating func createIndex(
+        name: String,
+        type: IndexType = .tree,
+        parts: [Int: IndexFieldType]? = nil,
+        in space: String
+    ) throws -> Index {
+        let partsString: String
+        if let parts = parts {
+            let string = parts.map({ return "\($0), '\($1.rawValue)'" })
+                .joined(separator: ", ")
+            partsString = ", parts = {\(string)}"
+        } else {
+            partsString = ""
         }
 
-        let spaceSpace = Space(id: _space, source: source)
-        let id = maxId
-        let userId = admin
-        let engine = "memtx"
-        let fieldCount = 0
-        let options: Map = [:]
-        let format: [MessagePack] = []
-
-        try spaceSpace.insert([
-            .int(id),
-            .int(userId),
-            .string(name),
-            .string(engine),
-            .int(fieldCount),
-            .map(options),
-            .array(format)
-        ])
-
-        try update()
+        let script =
+            "return box.space.\(space):create_index(" +
+                "'\(name)', {type = '\(type.rawValue)'\(partsString)}" +
+        ")"
+        let result = try source.eval(script, arguments: [])
+        guard result.count == 1,
+            let table = Map(result[0]),
+            let id = Int(table["id"]) else {
+                let message = "[map] expected, got \(result)"
+                throw TarantoolError.invalidTuple(message: message)
+        }
+        let unique = Bool(table["unique"]) ?? false
+        return Index(id: id, name: name, type: type, unique: unique)
     }
 }

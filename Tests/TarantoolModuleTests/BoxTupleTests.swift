@@ -29,7 +29,7 @@ class BoxTupleTests: TestCase {
 
             let script =
                 "package.cpath = '\(module);'..package.cpath\n" +
-                "require('TarantoolModuleTest')" +
+                "require('TarantoolModuleTest')\n" +
 
                 "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
 

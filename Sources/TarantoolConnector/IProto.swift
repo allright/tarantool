@@ -12,12 +12,14 @@ import Foundation
 import MessagePack
 import Tarantool
 
-public struct IProto: DataSource {
+public struct IProto: DataSource, LuaScript {
     let connection: IProtoConnection
 
     public init(connection: IProtoConnection) {
         self.connection = connection
     }
+
+    // MARK: DataSource
 
     public func count(
         _ spaceId: Int,
@@ -147,5 +149,21 @@ public struct IProto: DataSource {
             .indexId: .int(indexId),
             .tuple:   .array(tuple),
             .ops:     .array(ops)])
+    }
+
+    // MARK: LuaScript
+
+    public func call(
+        _ function: String,
+        arguments: [MessagePack] = []
+    ) throws -> [MessagePack] {
+        return try connection.call(function, arguments: arguments)
+    }
+
+    public func eval(
+        _ expression: String,
+        arguments: [MessagePack] = []
+    ) throws -> [MessagePack] {
+        return try connection.eval(expression, arguments: arguments)
     }
 }

@@ -58,33 +58,60 @@ class IProtoSchemaTests: TestCase {
                 "_cluster": 320,
             ]
             for (key, value) in expexted {
-                guard spaces[key]?.id == value else {
-                    throw "spaces['\(key)']?.id is not equal to \(value)"
-                }
+                assertEqual(spaces[key]?.id, value)
             }
         } catch {
             fail(String(describing: error))
         }
     }
 
-    func testCreateSpace() throws {
-        try connection.auth(username: "admin", password: "admin")
-        var schema = try Schema(IProto(connection: connection))
+    func testCreateSpace() {
+        do {
+            try connection.auth(username: "admin", password: "admin")
+            var schema = try Schema(IProto(connection: connection))
 
-        try schema.createSpace(name: "new_space")
-        guard let newSpace = schema.spaces["new_space"] else {
-            throw "new_space not found"
-        }
-        guard newSpace.id == 512 else {
-            throw "new_space.id \(newSpace.id) is not equal to 512"
-        }
+            try schema.createSpace(name: "new_space")
+            guard let newSpace = schema.spaces["new_space"] else {
+                throw "new_space not found"
+            }
+            assertEqual(newSpace.id, 512)
 
-        try schema.createSpace(name: "another_space")
-        guard let anotherSpace = schema.spaces["another_space"] else {
-            throw "another_space not found"
+            try schema.createSpace(name: "another_space")
+            guard let anotherSpace = schema.spaces["another_space"] else {
+                throw "another_space not found"
+            }
+            assertEqual(anotherSpace.id, 513)
+        } catch {
+            fail(String(describing: error))
         }
-        guard anotherSpace.id == 513 else {
-            throw "another_space.id \(anotherSpace.id) is not equal to 513"
+    }
+
+    func testCreateIndex() {
+        do {
+            try connection.auth(username: "admin", password: "admin")
+            var schema = try Schema(IProto(connection: connection))
+
+            try schema.createSpace(name: "new_space")
+
+            let index1 = try schema.createIndex(
+                name: "primary", in: "new_space")
+            let expected1 = Index(
+                id: 0, name: "primary", type: .tree, unique: true)
+            assertEqual(index1, expected1)
+
+            let index2 =
+                try schema.createIndex(name: "another", in: "new_space")
+            let expected2 = Index(
+                id: 1, name: "another", type: .tree, unique: true)
+            assertEqual(index2, expected2)
+
+            let index3 = try schema.createIndex(
+                name: "rtree", type: .rtree, in: "new_space")
+            let expected3 = Index(
+                id: 2, name: "rtree", type: .rtree, unique: false)
+            assertEqual(index3, expected3)
+        } catch {
+            fail(String(describing: error))
         }
     }
 
@@ -92,5 +119,6 @@ class IProtoSchemaTests: TestCase {
     static var allTests = [
         ("testSchema", testSchema),
         ("testCreateSpace", testCreateSpace),
+        ("testCreateIndex", testCreateIndex),
     ]
 }

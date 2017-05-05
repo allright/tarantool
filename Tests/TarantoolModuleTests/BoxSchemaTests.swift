@@ -19,6 +19,7 @@ class BoxSchemaTests: TestCase {
     let functions: ContiguousArray<String> = [
         "BoxSchemaTests_testSchema",
         "BoxSchemaTests_testCreateSpace",
+        "BoxSchemaTests_testCreateIndex"
     ]
 
     override func setUp() {
@@ -30,7 +31,7 @@ class BoxSchemaTests: TestCase {
 
             let script =
                 "package.cpath = '\(module);'..package.cpath\n" +
-                "require('TarantoolModuleTest')" +
+                "require('TarantoolModuleTest')\n" +
 
                 "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
                 "box.schema.user.passwd('admin', 'admin')" +
@@ -69,9 +70,19 @@ class BoxSchemaTests: TestCase {
         }
     }
 
+    func testCreateIndex() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+            _ = try iproto.call("BoxSchemaTests_testCreateIndex")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
 
     static var allTests = [
         ("testSchema", testSchema),
         ("testCreateSpace", testCreateSpace),
+        ("testCreateIndex", testCreateIndex),
     ]
 }
