@@ -13,9 +13,11 @@ import MessagePack
 
 class BoxIterator: IteratorProtocol {
     let iterator: OpaquePointer
+
     init(_ iterator: OpaquePointer) {
         self.iterator = iterator
     }
+
     deinit {
         _box_iterator_free(iterator)
     }

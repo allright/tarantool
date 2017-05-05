@@ -29,10 +29,7 @@ class BoxTupleTests: TestCase {
 
             let script =
                 "package.cpath = '\(module);'..package.cpath\n" +
-                "local ffi = require('ffi')\n" +
-                "local lib = ffi.load('\(module)')\n" +
-                "ffi.cdef[[void tarantool_module_init();]]\n" +
-                "lib.tarantool_module_init()\n" +
+                "require('TarantoolModuleTest')" +
 
                 "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
 
