@@ -26,4 +26,5 @@ XCTMain([
     testCase(IProtoSchemaTests.allTests),
     testCase(IProtoSpaceTests.allTests),
     testCase(CHAPSHA1Tests.allTests),
+    testCase(LuaTests.allTests),
 ])

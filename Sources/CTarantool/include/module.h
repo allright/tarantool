@@ -54,6 +54,8 @@
 #include <stdio.h> /* ssize_t for Apple */
 #include <sys/types.h> /* ssize_t */
 
+#include <lua.h>
+
 /** \cond public */
 
 struct fiber;
@@ -273,6 +275,138 @@ int
 (*_coio_getaddrinfo)(const char *host, const char *port,
                      const struct addrinfo *hints, struct addrinfo **res,
                      double timeout);
+/** \endcond public */
+/** \cond public */
+
+/**
+ * @brief Push cdata of given \a ctypeid onto the stack.
+ * CTypeID must be used from FFI at least once. Allocated memory returned
+ * uninitialized. Only numbers and pointers are supported.
+ * @param L Lua State
+ * @param ctypeid FFI's CTypeID of this cdata
+ * @sa luaL_checkcdata
+ * @return memory associated with this cdata
+ */
+void *
+(*_luaL_pushcdata)(struct lua_State *L, uint32_t ctypeid);
+
+/**
+ * @brief Checks whether the function argument idx is a cdata
+ * @param L Lua State
+ * @param idx stack index
+ * @param ctypeid FFI's CTypeID of this cdata
+ * @sa luaL_pushcdata
+ * @return memory associated with this cdata
+ */
+void *
+(*_luaL_checkcdata)(struct lua_State *L, int idx, uint32_t *ctypeid);
+
+/**
+ * @brief Sets finalizer function on a cdata object.
+ * Equivalent to call ffi.gc(obj, function).
+ * Finalizer function must be on the top of the stack.
+ * @param L Lua State
+ * @param idx object
+ */
+void
+(*_luaL_setcdatagc)(struct lua_State *L, int idx);
+
+/**
+ * @brief Return CTypeID (FFI) of given СDATA type
+ * @param L Lua State
+ * @param ctypename С type name as string (e.g. "struct request" or "uint32_t")
+ * @sa luaL_pushcdata
+ * @sa luaL_checkcdata
+ * @return CTypeID
+ */
+uint32_t
+(*_luaL_ctypeid)(struct lua_State *L, const char *ctypename);
+
+/**
+ * @brief Declare symbols for FFI
+ * @param L Lua State
+ * @param ctypename C definitions, e.g "struct stat"
+ * @sa ffi.cdef(def)
+ * @retval 0 on success
+ * @retval LUA_ERRRUN, LUA_ERRMEM, LUA_ERRERR otherwise
+ */
+int
+(*_luaL_cdef)(struct lua_State *L, const char *ctypename);
+
+/** \endcond public */
+/** \cond public */
+
+/**
+ * Push uint64_t onto the stack
+ *
+ * @param L is a Lua State
+ * @param val is a value to push
+ */
+void
+(*_luaL_pushuint64)(struct lua_State *L, uint64_t val);
+
+/**
+ * Push int64_t onto the stack
+ *
+ * @param L is a Lua State
+ * @param val is a value to push
+ */
+void
+(*_luaL_pushint64)(struct lua_State *L, int64_t val);
+
+/**
+ * Checks whether the argument idx is a uint64 or a convertable string and
+ * returns this number.
+ * \throws error if the argument can't be converted.
+ */
+uint64_t
+(*_luaL_checkuint64)(struct lua_State *L, int idx);
+
+/**
+ * Checks whether the argument idx is a int64 or a convertable string and
+ * returns this number.
+ * \throws error if the argument can't be converted.
+ */
+int64_t
+(*_luaL_checkint64)(struct lua_State *L, int idx);
+
+/**
+ * Checks whether the argument idx is a uint64 or a convertable string and
+ * returns this number.
+ * \return the converted number or 0 of argument can't be converted.
+ */
+uint64_t
+(*_luaL_touint64)(struct lua_State *L, int idx);
+
+/**
+ * Checks whether the argument idx is a int64 or a convertable string and
+ * returns this number.
+ * \return the converted number or 0 of argument can't be converted.
+ */
+int64_t
+(*_luaL_toint64)(struct lua_State *L, int idx);
+
+/**
+ * Re-throws the last Tarantool error as a Lua object.
+ * \sa lua_error()
+ * \sa box_error_last()
+ */
+int
+(*_luaT_error)(lua_State *L);
+
+/**
+ * Like lua_call(), but with the proper support of Tarantool errors.
+ * \sa lua_call()
+ */
+int
+(*_luaT_call)(lua_State *L, int nargs, int nreturns);
+
+/*
+ * Like lua_cpcall(), but with the proper support of Tarantool errors.
+ */
+int
+(*_luaT_cpcall)(lua_State *L, lua_CFunction func, void *ud);
+
 /** \endcond public */
 /** \cond public */
 

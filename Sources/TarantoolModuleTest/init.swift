@@ -8,14 +8,7 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import CTarantool
-
-var savedL: OpaquePointer!
-fileprivate var ref: Int32? = nil
-
 @_silgen_name("luaopen_TarantoolModuleTest")
 func open(L: OpaquePointer!) -> Int32 {
-    ref = _luaL_ref(L, LUA_REGISTRYINDEX)
-    savedL = L
     return 0
 }

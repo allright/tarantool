@@ -137,7 +137,22 @@ static void resolve_tarantool(void *handle) {
     resolve(handle, "clock_process64", (void**)&_clock_process64);
     resolve(handle, "clock_thread64", (void**)&_clock_thread64);
 
-    // resolve(handle, "tarantool_L", (void**)&_tarantool_L);
+    resolve(handle, "luaL_pushcdata", (void**)&_luaL_pushcdata);
+    resolve(handle, "luaL_checkcdata", (void**)&_luaL_checkcdata);
+    resolve(handle, "luaL_setcdatagc", (void**)&_luaL_setcdatagc);
+    resolve(handle, "luaL_ctypeid", (void**)&_luaL_ctypeid);
+    resolve(handle, "luaL_cdef", (void**)&_luaL_cdef);
+    resolve(handle, "luaL_pushuint64", (void**)&_luaL_pushuint64);
+    resolve(handle, "luaL_pushint64", (void**)&_luaL_pushint64);
+    resolve(handle, "luaL_checkuint64", (void**)&_luaL_checkuint64);
+    resolve(handle, "luaL_checkint64", (void**)&_luaL_checkint64);
+    resolve(handle, "luaL_touint64", (void**)&_luaL_touint64);
+    resolve(handle, "luaL_toint64", (void**)&_luaL_toint64);
+    resolve(handle, "luaT_error", (void**)&_luaT_error);
+    resolve(handle, "luaT_call", (void**)&_luaT_call);
+    resolve(handle, "luaT_cpcall", (void**)&_luaT_cpcall);
+
+    resolve(handle, "tarantool_L", (void**)&_tarantool_L);
 }
 
 void resolve_lua(void *handle) {
