@@ -59,7 +59,7 @@ public struct Lua {
     private static func withLuaStack<T>(
         _ task: (OpaquePointer) throws -> T
     ) throws -> T {
-        let tarantool_L = _tarantool_L.pointee!
+        let tarantool_L = _luaT_state()!
         guard let L = _lua_newthread(tarantool_L) else {
             throw LuaError(tarantool_L)
         }

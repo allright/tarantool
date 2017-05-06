@@ -151,8 +151,7 @@ static void resolve_tarantool(void *handle) {
     resolve(handle, "luaT_error", (void**)&_luaT_error);
     resolve(handle, "luaT_call", (void**)&_luaT_call);
     resolve(handle, "luaT_cpcall", (void**)&_luaT_cpcall);
-
-    resolve(handle, "tarantool_L", (void**)&_tarantool_L);
+    resolve(handle, "luaT_state", (void**)&_luaT_state);
 }
 
 void resolve_lua(void *handle) {

@@ -17,6 +17,4 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-lua_State **_tarantool_L;
-
 #endif /* init_h */

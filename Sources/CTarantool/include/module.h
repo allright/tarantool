@@ -407,6 +407,12 @@ int
 int
 (*_luaT_cpcall)(lua_State *L, lua_CFunction func, void *ud);
 
+/*
+ * Get lua global state (tarantool_L)
+ */
+lua_State *
+(*_luaT_state)(void);
+
 /** \endcond public */
 /** \cond public */
 
