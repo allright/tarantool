@@ -93,23 +93,16 @@ class IProtoSchemaTests: TestCase {
 
             try schema.createSpace(name: "new_space")
 
-            let index1 = try schema.createIndex(
-                name: "primary", in: "new_space")
-            let expected1 = Index(
-                id: 0, name: "primary", type: .tree, unique: true)
-            assertEqual(index1, expected1)
+            let tree = try schema.createIndex(name: "tree", in: "new_space")
+            let expected0 =
+                Index(id: 0, name: "tree", type: .tree, unique: true)
+            assertEqual(tree, expected0)
 
-            let index2 =
-                try schema.createIndex(name: "another", in: "new_space")
-            let expected2 = Index(
-                id: 1, name: "another", type: .tree, unique: true)
-            assertEqual(index2, expected2)
-
-            let index3 = try schema.createIndex(
+            let rtree = try schema.createIndex(
                 name: "rtree", type: .rtree, in: "new_space")
-            let expected3 = Index(
-                id: 2, name: "rtree", type: .rtree, unique: false)
-            assertEqual(index3, expected3)
+            let expected1 =
+                Index(id: 1, name: "rtree", type: .rtree, unique: false)
+            assertEqual(rtree, expected1)
         } catch {
             fail(String(describing: error))
         }
