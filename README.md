@@ -28,10 +28,13 @@ You can find this code and more in [examples](https://github.com/tris-foundation
 ### Tarantool Connector
 
 ```swift
+import Foundation
+import TarantoolConnector
+
 let connection = try IProtoConnection(host: "127.0.0.1")
 try connection.auth(username: "tester", password: "tester")
 
-let source = IProtoDataSource(connection: connection)
+let source = IProto(connection: connection)
 let schema = try Schema(source)
 
 guard let test = schema.spaces["test"] else {
@@ -60,6 +63,9 @@ if let answer = try test.get([42]) {
 #### Server-side
 
 ```swift
+import MessagePack
+import TarantoolModule
+
 struct ModuleError: Error, CustomStringConvertible {
     let description: String
 }
@@ -69,7 +75,7 @@ func helloSwift() -> MessagePack {
 }
 
 func getFoo() throws -> MessagePack {
-    let schema = try Schema(BoxDataSource())
+    let schema = try Schema(Box())
 
     guard let space = schema.spaces["data"] else {
         throw BoxError(code: .noSuchSpace, message: "space 'data' not found")
@@ -84,7 +90,7 @@ func getFoo() throws -> MessagePack {
 }
 
 func getCount(args: [MessagePack]) throws -> MessagePack {
-    let schema = try Schema(BoxDataSource())
+    let schema = try Schema(Box())
 
     guard let first = args.first, let spaceName = String(first) else {
         throw ModuleError(description: "incorrect space name argument")
@@ -102,6 +108,9 @@ func getCount(args: [MessagePack]) throws -> MessagePack {
 #### Client-side
 
 ```swift
+import Foundation
+import TarantoolConnector
+
 let iproto = try IProtoConnection(host: "127.0.0.1")
 
 print(try iproto.call("helloSwift"))
