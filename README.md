@@ -28,7 +28,6 @@ You can find this code and more in [examples](https://github.com/tris-foundation
 ### Tarantool Connector
 
 ```swift
-import Foundation
 import TarantoolConnector
 
 let connection = try IProtoConnection(host: "127.0.0.1")
@@ -108,7 +107,6 @@ func getCount(args: [MessagePack]) throws -> MessagePack {
 #### Client-side
 
 ```swift
-import Foundation
 import TarantoolConnector
 
 let iproto = try IProtoConnection(host: "127.0.0.1")
