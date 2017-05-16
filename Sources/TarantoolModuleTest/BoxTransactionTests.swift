@@ -19,7 +19,7 @@ struct BoxTransactionTests {
     }()
 
     fileprivate static var space: Space = {
-        return Space(id: testId, source: Box())
+        return Space(id: testId, name: "test", source: Box())
     }()
 
     static func testTransactionCommit() throws {

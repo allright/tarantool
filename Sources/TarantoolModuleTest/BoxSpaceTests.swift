@@ -17,7 +17,7 @@ struct BoxSpaceTests {
     }
 
     fileprivate static var space: Space<Box> {
-        return Space(id: testId, source: Box())
+        return Space(id: testId, name: "test", source: Box())
     }
 
     static func testCount() throws {

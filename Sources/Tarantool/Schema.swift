@@ -23,7 +23,7 @@ public struct Schema<T: DataSource & LuaScript> {
     public init(_ source: T) throws {
         self.source = source
 
-        let sysview = Space(id: _vspace, source: source)
+        let sysview = Space(id: _vspace, name: "_vspace", source: source)
         let tuples = try sysview.select(.all)
 
         var spaces: [String: Space<T>] = [:]
@@ -32,7 +32,7 @@ public struct Schema<T: DataSource & LuaScript> {
                 let name = String(tuple[2]) else {
                     throw TarantoolError.invalidSchema
             }
-            spaces[name] = Space(id: id, source: source)
+            spaces[name] = Space(id: id, name: name, source: source)
         }
         self.spaces = spaces
     }
@@ -44,7 +44,7 @@ public struct Schema<T: DataSource & LuaScript> {
             let message = "[integer] expected, got \(result)"
             throw TarantoolError.invalidTuple(message: message)
         }
-        spaces[name] = Space(id: id, source: source)
+        spaces[name] = Space(id: id, name: name, source: source)
     }
 
     @discardableResult

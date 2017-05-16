@@ -13,10 +13,12 @@ import MessagePack
 
 public struct Space<T: DataSource> {
     public let id: Int
+    public let name: String
     private let source: T
 
-    public init(id: Int, source: T) {
+    public init(id: Int, name: String, source: T) {
         self.id = id
+        self.name = name
         self.source = source
     }
 
@@ -71,6 +73,6 @@ public struct Space<T: DataSource> {
 
 extension Space: CustomStringConvertible {
     public var description: String {
-        return "space: \(id)"
+        return "space id: \(id), name: \(name)"
     }
 }
