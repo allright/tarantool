@@ -64,11 +64,16 @@ class TarantoolProcess {
         _ = FileManager.default.createFile(atPath: lock.path, contents: nil)
         try script.write(to: config, atomically: true, encoding: .utf8)
 
-    #if os(macOS)
-        process.launchPath = "/usr/local/bin/tarantool"
-    #else
-        process.launchPath = "/usr/bin/tarantool"
-    #endif
+        if let env_bin = ProcessInfo.processInfo.environment["TARANTOOL_BIN"] {
+            process.launchPath = env_bin
+        } else {
+        #if os(macOS)
+            process.launchPath = "/usr/local/bin/tarantool"
+        #else
+            process.launchPath = "/usr/bin/tarantool"
+        #endif
+        }
+
         process.arguments = [config.path]
 
         guard FileManager.default.fileExists(atPath: process.launchPath!) else {
