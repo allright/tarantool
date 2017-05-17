@@ -75,12 +75,14 @@ class IProtoSchemaTests: TestCase {
                 throw "new_space not found"
             }
             assertEqual(newSpace.id, 512)
+            assertEqual(newSpace.name, "new_space")
 
             try schema.createSpace(name: "another_space")
             guard let anotherSpace = schema.spaces["another_space"] else {
                 throw "another_space not found"
             }
             assertEqual(anotherSpace.id, 513)
+            assertEqual(newSpace.name, "another_space")
         } catch {
             fail(String(describing: error))
         }

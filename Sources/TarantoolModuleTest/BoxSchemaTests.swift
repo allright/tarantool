@@ -47,12 +47,14 @@ struct BoxSchemaTests {
             throw "new_space not found"
         }
         try assertEqualThrows(newSpace.id, 512)
+        try assertEqualThrows(newSpace.name, "new_space")
 
         try schema.createSpace(name: "another_space")
         guard let anotherSpace = schema.spaces["another_space"] else {
             throw "another_space not found"
         }
         try assertEqualThrows(anotherSpace.id, 513)
+        try assertEqualThrows(newSpace.name, "another_space")
     }
 
     static func testCreateIndex() throws {
