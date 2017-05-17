@@ -54,7 +54,7 @@ struct BoxSchemaTests {
             throw "another_space not found"
         }
         try assertEqualThrows(anotherSpace.id, 513)
-        try assertEqualThrows(newSpace.name, "another_space")
+        try assertEqualThrows(anotherSpace.name, "another_space")
     }
 
     static func testCreateIndex() throws {

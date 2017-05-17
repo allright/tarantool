@@ -82,7 +82,7 @@ class IProtoSchemaTests: TestCase {
                 throw "another_space not found"
             }
             assertEqual(anotherSpace.id, 513)
-            assertEqual(newSpace.name, "another_space")
+            assertEqual(anotherSpace.name, "another_space")
         } catch {
             fail(String(describing: error))
         }
