@@ -115,3 +115,12 @@ print(try iproto.call("helloSwift"))
 print(try iproto.call("getFoo"))
 print(try iproto.call("getCount", arguments: ["test"]))
 ```
+
+### Run tests
+
+You can launch tests with custom `tarantool` binary file use:
+
+```bash
+TARANTOOL_BIN=/path/to/bin/tarantool swift test
+```
+
