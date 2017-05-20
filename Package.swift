@@ -20,9 +20,9 @@ let package = Package(
     ],
     dependencies: [
         .Package(url: "https://github.com/tris-foundation/async.git", majorVersion: 0),
+        .Package(url: "https://github.com/tris-foundation/crypto.git", majorVersion: 0)
         .Package(url: "https://github.com/tris-foundation/network.git", majorVersion: 0),
         .Package(url: "https://github.com/tris-foundation/messagepack.git", majorVersion: 0),
-        .Package(url: "https://github.com/tris-foundation/cryptoswift.git", majorVersion: 0)
     ]
 )
 

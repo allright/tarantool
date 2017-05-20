@@ -8,7 +8,7 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import CryptoSwift
+import Crypto
 
 extension Array where Element == UInt8 {
     func chapSha1(salt: [UInt8]) -> [UInt8] {
