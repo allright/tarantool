@@ -18,7 +18,7 @@ Follow the examples link below to see how to use it all together.
 ## Package.swift
 
 ```swift
-.Package(url: "https://github.com/tris-foundation/tarantool.git", majorVersion: 0)
+.Package(url: "https://github.com/tris-foundation/tarantool.git", majorVersion: 0, minor: 3)
 ```
 
 ## Usage

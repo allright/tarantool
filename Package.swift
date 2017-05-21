@@ -19,11 +19,31 @@ let package = Package(
         Target(name: "TarantoolModuleTest", dependencies: ["TarantoolModule"])
     ],
     dependencies: [
-        .Package(url: "https://github.com/tris-foundation/async.git", majorVersion: 0),
-        .Package(url: "https://github.com/tris-foundation/crypto.git", majorVersion: 0)
-        .Package(url: "https://github.com/tris-foundation/network.git", majorVersion: 0),
-        .Package(url: "https://github.com/tris-foundation/messagepack.git", majorVersion: 0),
+        .Package(
+            url: "https://github.com/tris-foundation/async.git",
+            majorVersion: 0,
+            minor: 3
+        ),
+        .Package(
+            url: "https://github.com/tris-foundation/crypto.git",
+            majorVersion: 0,
+            minor: 3
+        ),
+        .Package(
+            url: "https://github.com/tris-foundation/network.git",
+            majorVersion: 0,
+            minor: 3
+        ),
+        .Package(
+            url: "https://github.com/tris-foundation/messagepack.git",
+            majorVersion: 0,
+            minor: 3
+        ),
     ]
 )
 
-products.append(Product(name: "TarantoolModuleTest", type: .Library(.Dynamic), modules: "TarantoolModuleTest"))
+products.append(Product(
+    name: "TarantoolModuleTest",
+    type: .Library(.Dynamic),
+    modules: "TarantoolModuleTest"
+))
