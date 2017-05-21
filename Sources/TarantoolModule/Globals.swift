@@ -13,10 +13,10 @@ import CTarantool
 import Foundation
 
 @inline(__always)
-public func fiber(_ closure: @escaping (Void) -> Void) {
+public func fiber(_ closure: @escaping () -> Void) {
     var closure = closure
     fiber_wrapper(&closure, { pointer in
-        pointer?.assumingMemoryBound(to: ((Void) -> Void).self).pointee()
+        pointer?.assumingMemoryBound(to: (() -> Void).self).pointee()
     })
 }
 
@@ -36,7 +36,7 @@ public func now() -> Date {
 }
 
 public func transaction(
-    _ closure: (Void) throws -> Box.Transaction.Action
+    _ closure: () throws -> Box.Transaction.Action
 ) throws {
     try Box.transaction(closure)
 }

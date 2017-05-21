@@ -8,9 +8,9 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Test
 import TarantoolConnector
 @testable import TestUtils
-@testable import TarantoolModuleTest
 
 class BoxDataSourceTests: TestCase {
     var tarantool: TarantoolProcess!

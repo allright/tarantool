@@ -1,3 +1,4 @@
+// swift-tools-version:4.0
 /*
  * Copyright 2017 Tris Foundation and the project authors
  *
@@ -12,38 +13,77 @@ import PackageDescription
 
 let package = Package(
     name: "Tarantool",
-    targets: [
-        Target(name: "TarantoolConnector", dependencies: ["Tarantool"]),
-        Target(name: "TarantoolModule", dependencies: ["CTarantool", "Tarantool"]),
-        Target(name: "AsyncTarantool", dependencies: ["CTarantool", "TarantoolModule"]),
-        Target(name: "TarantoolModuleTest", dependencies: ["TarantoolModule"])
+    products: [
+        .library(name: "TarantoolConnector", targets: ["TarantoolConnector"]),
+        .library(name: "TarantoolModule", targets: ["TarantoolModule"]),
+        .library(name: "AsyncTarantool", targets: ["AsyncTarantool"]),
+        // used by TarantoolModuleTests
+        .library(
+            name: "TarantoolModuleTest",
+            type: .dynamic,
+            targets: ["TarantoolModuleTest"]
+        )
     ],
     dependencies: [
-        .Package(
+        .package(
+            url: "https://github.com/tris-foundation/platform.git",
+            from: "0.4.0"
+        ),
+        .package(
             url: "https://github.com/tris-foundation/async.git",
-            majorVersion: 0,
-            minor: 3
+            from: "0.4.0"
         ),
-        .Package(
+        .package(
             url: "https://github.com/tris-foundation/crypto.git",
-            majorVersion: 0,
-            minor: 3
+            from: "0.4.0"
         ),
-        .Package(
+        .package(
             url: "https://github.com/tris-foundation/network.git",
-            majorVersion: 0,
-            minor: 3
+            from: "0.4.0"
         ),
-        .Package(
+        .package(
             url: "https://github.com/tris-foundation/messagepack.git",
-            majorVersion: 0,
-            minor: 3
+            from: "0.4.0"
         ),
+        .package(
+            url: "https://github.com/tris-foundation/test.git",
+            from: "0.4.0"
+        )
+    ],
+    targets: [
+        .target(name: "CTarantool"),
+        .target(name: "Tarantool", dependencies: ["MessagePack"]),
+        .target(
+            name: "TarantoolConnector",
+            dependencies: ["Tarantool", "Network", "Crypto"]
+        ),
+        .target(
+            name: "TarantoolModule",
+            dependencies: ["CTarantool", "Tarantool"]
+        ),
+        .target(
+            name: "AsyncTarantool",
+            dependencies: ["CTarantool", "TarantoolModule"]
+        ),
+        .target(
+            name: "TarantoolModuleTest",
+            dependencies: ["TarantoolModule"]
+        ),
+        .target(
+            name: "TestUtils",
+            dependencies: ["Platform", "Network"]
+        ),
+        .testTarget(
+            name: "TarantoolModuleTests",
+            dependencies: ["TarantoolModule", "TarantoolConnector", "Test"]
+        ),
+        .testTarget(
+            name: "TarantoolConnectorTests",
+            dependencies: ["TarantoolConnector", "Test"]
+        ),
+        .testTarget(
+            name: "TestUtilsTests",
+            dependencies: ["TestUtils", "Test"]
+        )
     ]
 )
-
-products.append(Product(
-    name: "TarantoolModuleTest",
-    type: .Library(.Dynamic),
-    modules: "TarantoolModuleTest"
-))

@@ -56,7 +56,8 @@ public struct Schema<T: DataSource & LuaScript> {
     ) throws -> Index {
         let partsString: String
         if let parts = parts {
-            let string = parts.map({ return "\($0), '\($1.rawValue)'" })
+            let string = parts
+                .map({ "\($0.key), '\($0.value.rawValue)'" })
                 .joined(separator: ", ")
             partsString = ", parts = {\(string)}"
         } else {

@@ -8,8 +8,10 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import class Foundation.FileManager
+import Test
 @testable import TestUtils
+
+import class Foundation.FileManager
 
 class TestUtilsTests: TestCase {
     func testTarantoolProcess() {

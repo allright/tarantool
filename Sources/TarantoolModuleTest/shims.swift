@@ -89,7 +89,7 @@ func assertEqualThrows<T, U>(
     _ expression2: @autoclosure () throws -> [T : U],
     _ message: @autoclosure () -> String = "",
     file: StaticString = #file,
-    line: UInt = #line) throws where T : Hashable, U : Equatable {
+    line: UInt = #line) throws where U : Equatable {
     let result1 = try expression1()
     let result2 = try expression2()
     guard result1 == result2 else {
