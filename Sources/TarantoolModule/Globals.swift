@@ -35,8 +35,8 @@ public func now() -> Date {
     return Date(timeIntervalSince1970: _fiber_time())
 }
 
-public func transaction(
-    _ closure: () throws -> Box.Transaction.Action
-) throws {
-    try Box.transaction(closure)
+public func transaction<T>(
+    _ closure: () throws -> T
+) throws -> T {
+    return try Box.transaction(closure)
 }

@@ -19,6 +19,8 @@ class BoxTransactionTests: TestCase {
     let functions: ContiguousArray<String> = [
         "BoxTransactionTests_testTransactionCommit",
         "BoxTransactionTests_testTransactionRollback",
+        "BoxTransactionTests_testGenericTransactionCommit",
+        "BoxTransactionTests_testGenericTransactionRollback",
     ]
 
     override func setUp() {
@@ -69,9 +71,27 @@ class BoxTransactionTests: TestCase {
         }
     }
 
+    func testGenericTransactionCommit() {
+        do {
+            _ = try iproto.call("BoxTransactionTests_testGenericTransactionCommit")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testGenericTransactionRollback() {
+        do {
+            _ = try iproto.call("BoxTransactionTests_testGenericTransactionRollback")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
 
     static var allTests = [
         ("testTransactionCommit", testTransactionCommit),
         ("testTransactionRollback", testTransactionRollback),
+        ("testGenericTransactionCommit", testGenericTransactionCommit),
+        ("testGenericTransactionRollback", testGenericTransactionRollback),
     ]
 }

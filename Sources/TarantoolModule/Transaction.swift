@@ -36,22 +36,15 @@ extension BoxWrapper {
 }
 
 extension Box {
-    public struct Transaction {
-        public enum Action {
-            case commit, rollback
-        }
-    }
-
-    public static func transaction(
-        _ closure: () throws -> Box.Transaction.Action
-    ) throws {
+    public static func transaction<T>(
+        _ closure: () throws -> T
+    ) throws -> T {
         try BoxWrapper.Transaction.begin()
 
         do {
-            switch try closure() {
-            case .commit: try BoxWrapper.Transaction.commit()
-            case .rollback: try BoxWrapper.Transaction.rollback()
-            }
+            let result = try closure()
+            try BoxWrapper.Transaction.commit()
+            return result
         } catch {
             try BoxWrapper.Transaction.rollback()
             throw error
