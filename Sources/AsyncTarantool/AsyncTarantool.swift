@@ -38,34 +38,11 @@ public struct TarantoolAwaiterTimeout: Error {}
 public struct TarantoolAwaiter: IOAwaiter {
     public init() {}
 
-    struct Timeout {
-        static let infinity: Double = 100*365*24*3600
-    }
-
-    struct COIOEvent {
-        static let read: Int32 = 0x1
-        static let write: Int32 = 0x2
-    }
-
     public func wait(
         for descriptor: Int32,
         event: IOEvent,
         deadline: Date = Date.distantFuture
     ) throws {
-        let timeout = deadline == Date.distantFuture
-            ? Timeout.infinity
-            : deadline.timeIntervalSinceNow
-        switch event {
-        case .read:
-            guard COIOEvent.read ==
-                _coio_wait(descriptor, COIOEvent.read, timeout) else {
-                    throw TarantoolAwaiterTimeout()
-            }
-        case .write:
-            guard COIOEvent.write ==
-                _coio_wait(descriptor, COIOEvent.write, timeout) else {
-                    throw TarantoolAwaiterTimeout()
-            }
-        }
+        try COIOWrapper.wait(for: descriptor, event: event, deadline: deadline)
     }
 }
