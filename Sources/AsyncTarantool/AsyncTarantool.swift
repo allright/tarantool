@@ -37,6 +37,16 @@ public struct AsyncTarantool: Async {
             deadline: deadline,
             task: task)
     }
+
+    public func sleep(until deadline: Date) {
+        _fiber_sleep(deadline.timeIntervalSinceNow)
+    }
+
+    public func testCancel() throws {
+        if _fiber_is_cancelled() {
+            throw AsyncError.taskCanceled
+        }
+    }
 }
 
 public struct TarantoolLoop: AsyncLoop {

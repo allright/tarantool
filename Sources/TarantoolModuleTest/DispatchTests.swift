@@ -20,7 +20,7 @@ struct DispatchTests {
         fiber {
             while iterations < 10 {
                 // tick tock tick tock
-                sleep(until: Date().addingTimeInterval(0.1))
+                sleep(until: Date().addingTimeInterval(0.09))
                 iterations += 1
             }
         }
