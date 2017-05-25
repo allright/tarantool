@@ -59,11 +59,11 @@ let package = Package(
         ),
         .target(
             name: "TarantoolModule",
-            dependencies: ["CTarantool", "Tarantool"]
+            dependencies: ["CTarantool", "Tarantool", "Async"]
         ),
         .target(
             name: "AsyncTarantool",
-            dependencies: ["CTarantool", "TarantoolModule"]
+            dependencies: ["TarantoolModule"]
         ),
         .target(
             name: "TarantoolModuleTest",

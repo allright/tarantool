@@ -9,9 +9,35 @@
  */
 
 import Async
+import Platform
 import CTarantool
-import Foundation
 import TarantoolModule
+
+import struct Foundation.Date
+import struct Dispatch.DispatchQoS
+
+public struct AsyncTarantool: Async {
+    public init() {}
+
+    public var loop: AsyncLoop = TarantoolLoop()
+    public var awaiter: IOAwaiter? = TarantoolAwaiter()
+
+    public func task(_ closure: @escaping AsyncTask) -> Void {
+        fiber(closure)
+    }
+
+    /// doesn't support fibers inside the task
+    public func syncTask<T>(
+        qos: DispatchQoS.QoSClass = .background,
+        deadline: Date = Date.distantFuture,
+        task: @escaping () throws -> T
+    ) throws -> T {
+        return try DispatchWrapper.syncTask(
+            qos: qos,
+            deadline: deadline,
+            task: task)
+    }
+}
 
 public struct TarantoolLoop: AsyncLoop {
     public func run() {
@@ -24,13 +50,6 @@ public struct TarantoolLoop: AsyncLoop {
             exit(0)
         }
     }
-}
-
-public struct AsyncTarantool: Async {
-    public init() {}
-    public var loop: AsyncLoop = TarantoolLoop()
-    public var task: (@escaping AsyncTask) -> Void = fiber
-    public var awaiter: IOAwaiter? = TarantoolAwaiter()
 }
 
 public struct TarantoolAwaiterTimeout: Error {}

@@ -10,7 +10,9 @@
 
 import Async
 import CTarantool
-import Foundation
+
+import struct Foundation.Date
+import struct Dispatch.DispatchQoS
 
 @inline(__always)
 public func fiber(_ closure: @escaping () -> Void) {
@@ -18,6 +20,18 @@ public func fiber(_ closure: @escaping () -> Void) {
     fiber_wrapper(&closure, { pointer in
         pointer?.assumingMemoryBound(to: (() -> Void).self).pointee()
     })
+}
+
+@inline(__always)
+public func syncTask<T>(
+    qos: DispatchQoS.QoSClass = .background,
+    deadline: Date = Date.distantFuture,
+    task: @escaping () throws -> T
+) throws -> T {
+    return try DispatchWrapper.syncTask(
+        qos: qos,
+        deadline: deadline,
+        task: task)
 }
 
 @inline(__always)
@@ -35,6 +49,7 @@ public func now() -> Date {
     return Date(timeIntervalSince1970: _fiber_time())
 }
 
+@inline(__always)
 public func transaction<T>(
     _ closure: () throws -> T
 ) throws -> T {
