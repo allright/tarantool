@@ -51,23 +51,15 @@ public struct Schema<T: DataSource & LuaScript> {
     public mutating func createIndex(
         name: String,
         type: IndexType = .tree,
+        unique: Bool? = nil,
         parts: [Int: IndexFieldType]? = nil,
         in space: String
     ) throws -> Index {
-        let partsString: String
-        if let parts = parts {
-            let string = parts
-                .map({ "\($0.key), '\($0.value.rawValue)'" })
-                .joined(separator: ", ")
-            partsString = ", parts = {\(string)}"
-        } else {
-            partsString = ""
-        }
+        let arguments = buildArguments(type: type, unique: unique, parts: parts)
 
         let script =
-            "return box.space.\(space):create_index(" +
-                "'\(name)', {type = '\(type.rawValue)'\(partsString)}" +
-        ")"
+            "return box.space.\(space):create_index('\(name)', {\(arguments)})"
+        
         let result = try source.eval(script, arguments: [])
         guard result.count == 1,
             let table = Map(result[0]),
@@ -77,5 +69,27 @@ public struct Schema<T: DataSource & LuaScript> {
         }
         let unique = Bool(table["unique"]) ?? false
         return Index(id: id, name: name, type: type, unique: unique)
+    }
+
+    private func buildArguments(
+        type: IndexType,
+        unique: Bool?,
+        parts: [Int: IndexFieldType]?
+    ) -> String {
+        var arguments = [String]()
+
+        arguments.append("type = '\(type.rawValue)'")
+
+        if let unique = unique {
+            arguments.append("unique = \(unique)")
+        }
+
+        if let parts = parts {
+            let string = parts.map({ "\($0.key), '\($0.value.rawValue)'" })
+                .joined(separator: ", ")
+            arguments.append("parts = {\(string)}")
+        }
+
+        return arguments.joined(separator: ", ")
     }
 }

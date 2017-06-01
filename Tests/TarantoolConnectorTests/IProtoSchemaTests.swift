@@ -106,6 +106,12 @@ class IProtoSchemaTests: TestCase {
             let expected1 =
                 Index(id: 1, name: "rtree", type: .rtree, unique: false)
             assertEqual(rtree, expected1)
+
+            let nonUnique = try schema.createIndex(
+                name: "non_unique", unique: false, in: "new_space")
+            let expected2 =
+                Index(id: 2, name: "non_unique", type: .tree, unique: false)
+            assertEqual(nonUnique, expected2)
         } catch {
             fail(String(describing: error))
         }
