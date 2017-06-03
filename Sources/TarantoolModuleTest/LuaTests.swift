@@ -14,6 +14,9 @@ import MessagePack
 
 struct LuaTests {
     static func testEval() throws {
+        let null = try Lua.eval("return nil")
+        try assertEqualThrows(null, [.nil])
+
         let answer = try Lua.eval("return 40 + 2")
         try assertEqualThrows(answer, [.int(42)])
 
