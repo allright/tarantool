@@ -50,7 +50,8 @@ public struct Lua {
             _luaL_checkstack(L, Int32(arguments.count), "eval: out of stack")
             try push(values: arguments, to: L)
             guard _luaT_call(L, Int32(arguments.count), LUA_MULTRET) == 0 else {
-                throw LuaError(message: "eval: failed")
+                let pointer = _lua_tolstring(L, -1, nil)!
+                throw LuaError(message: String(cString: pointer))
             }
             return try popValues(from: L)
         }
