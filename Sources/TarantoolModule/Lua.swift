@@ -12,11 +12,7 @@ import CTarantool
 import MessagePack
 
 public struct LuaError: Error {
-    let function: String = #function
-    let file: String = #file
-    let line: Int = #line
-
-    let message: String
+    public let message: String
 }
 
 extension LuaError {
