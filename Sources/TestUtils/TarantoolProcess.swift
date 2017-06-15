@@ -41,23 +41,25 @@ class TarantoolProcess {
 
     func launch() throws {
         let config = temp.appendingPathComponent("init.lua")
-        let script = "box.cfg{ " +
-            "  listen=\(port)," +
-            "  log_level=1," +
-            "  memtx_dir='\(temp.path)'," +
-            "  wal_dir='\(temp.path)'," +
-            "  vinyl_dir='\(temp.path)'," +
-            "  memtx_memory=100000000" +
-            "}\n" +
-            "\(self.script)\n" +
-            "local fiber = require('fiber')\n" +
-            "local fio = require('fio')\n" +
-            "local net = require('net.box')\n" +
-            "net.connect('127.0.0.1:\(syncPort)')" +
-            "while fio.stat('\(lock.path)') do\n" +
-            "  fiber.sleep(0.1)\n" +
-            "end\n" +
-            "os.exit(0)"
+        let script = """
+            box.cfg{
+              listen=\(port),
+              log_level=1,
+              memtx_dir='\(temp.path)',
+              wal_dir='\(temp.path)',
+              vinyl_dir='\(temp.path)',
+              memtx_memory=100000000
+            }
+            \(self.script)
+            local fiber = require('fiber')
+            local fio = require('fio')
+            local net = require('net.box')
+            net.connect('127.0.0.1:\(syncPort)')
+            while fio.stat('\(lock.path)') do
+              fiber.sleep(0.1)
+            end
+            os.exit(0)
+            """
 
         try FileManager.default.createDirectory(
             at: temp, withIntermediateDirectories: true)

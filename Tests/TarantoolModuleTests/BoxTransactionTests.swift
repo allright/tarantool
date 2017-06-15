@@ -30,15 +30,20 @@ class BoxTransactionTests: TestCase {
                 return
             }
 
-            let script =
-                "package.cpath = '\(module);'..package.cpath\n" +
-                "require('TarantoolModuleTest')\n" +
+            let script = """
+                package.cpath = '\(module);'..package.cpath
+                require('TarantoolModuleTest')
 
-                "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
-                "local test = box.schema.space.create('test')\n" +
-                "test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})\n" +
-
-                functions.reduce("") { $0 + "box.schema.func.create('\($1)', {language = 'C'})\n" }
+                box.schema.user.grant('guest', 'read,write,execute', 'universe')
+                local test = box.schema.space.create('test')
+                test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+                """ +
+                functions.reduce("") {
+                    """
+                    \($0)
+                    box.schema.func.create('\($1)', {language = 'C'})
+                    """
+                }
 
             tarantool = try TarantoolProcess(with: script)
             try tarantool.launch()

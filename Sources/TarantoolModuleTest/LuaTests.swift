@@ -29,12 +29,12 @@ struct LuaTests {
         let id = try Lua.eval("return box.space._vindex.id")
         try assertEqualThrows(id, [.int(289)])
 
-        let arguments = try Lua.eval(
-            "local name, value = ...;" +
-            "local result = {};" +
-            "result[name] = value;" +
-            "return result",
-            [.string("answer"), .int(42)])
+        let arguments = try Lua.eval("""
+            local name, value = ...
+            local result = {}
+            result[name] = value
+            return result
+            """, [.string("answer"), .int(42)])
         try assertEqualThrows(arguments, [.map([.string("answer") : .int(42)])])
 
         let empty = try Lua.eval("local var = 'empty stack'")

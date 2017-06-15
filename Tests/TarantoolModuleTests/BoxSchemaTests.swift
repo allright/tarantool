@@ -29,14 +29,19 @@ class BoxSchemaTests: TestCase {
                 return
             }
 
-            let script =
-                "package.cpath = '\(module);'..package.cpath\n" +
-                "require('TarantoolModuleTest')\n" +
+            let script = """
+                package.cpath = '\(module);'..package.cpath
+                require('TarantoolModuleTest')
 
-                "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
-                "box.schema.user.passwd('admin', 'admin')" +
-
-                functions.reduce("") { $0 + "box.schema.func.create('\($1)', {language = 'C'})\n" }
+                box.schema.user.grant('guest', 'read,write,execute', 'universe')
+                box.schema.user.passwd('admin', 'admin')
+                """ +
+                functions.reduce("") {
+                    """
+                    \($0)
+                    box.schema.func.create('\($1)', {language = 'C'})
+                    """
+                }
 
             tarantool = try TarantoolProcess(with: script)
             try tarantool.launch()

@@ -20,13 +20,14 @@ class IProtoDataSourceTests: TestCase {
 
     override func setUp() {
         do {
-            tarantool = try TarantoolProcess(with:
-                "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
-                "local test = box.schema.space.create('test')\n" +
-                "test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})\n" +
-                "test:replace({1, 'foo'})\n" +
-                "test:replace({2, 'bar'})\n" +
-                "test:replace({3, 'baz'})")
+            tarantool = try TarantoolProcess(with: """
+                box.schema.user.grant('guest', 'read,write,execute', 'universe')
+                local test = box.schema.space.create('test')
+                test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+                test:replace({1, 'foo'})
+                test:replace({2, 'bar'})
+                test:replace({3, 'baz'})
+                """)
             try tarantool.launch()
             
             let connection = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)

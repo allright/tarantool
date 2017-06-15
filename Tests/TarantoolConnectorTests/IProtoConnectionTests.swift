@@ -69,11 +69,12 @@ class IProtoConnectionTests: TestCase {
 
     func testCall() {
         do {
-            _ = try iproto.eval(
-                "box.schema.func.create('hello')\n" +
-                "function hello()\n" +
-                "  return 'hey there!'\n" +
-                "end\n")
+            _ = try iproto.eval("""
+                box.schema.func.create('hello')
+                function hello()
+                  return 'hey there!'
+                end
+                """)
             let result = try iproto.call("hello")
             guard let first = result.first,
                 let answer = String(first) else {

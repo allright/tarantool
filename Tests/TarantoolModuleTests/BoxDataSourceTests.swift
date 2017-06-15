@@ -35,19 +35,24 @@ class BoxDataSourceTests: TestCase {
                 return
             }
 
-            let script =
-                "package.cpath = '\(module);'..package.cpath\n" +
-                "require('TarantoolModuleTest')\n" +
+            let script = """
+                package.cpath = '\(module);'..package.cpath
+                require('TarantoolModuleTest')
 
-                "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
-                "local test = box.schema.space.create('test')\n" +
-                "test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})\n" +
-                "test:replace({1, 'foo'})\n" +
-                "test:replace({2, 'bar'})\n" +
-                "test:replace({3, 'baz'})\n" +
+                box.schema.user.grant('guest', 'read,write,execute', 'universe')
+                local test = box.schema.space.create('test')
+                test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+                test:replace({1, 'foo'})
+                test:replace({2, 'bar'})
+                test:replace({3, 'baz'})
+                """ +
+                functions.reduce("") {
+                    """
+                    \($0)
+                    box.schema.func.create('\($1)', {language = 'C'})
+                    """
+                }
 
-                functions.reduce("") { $0 + "box.schema.func.create('\($1)', {language = 'C'})\n" }
-            
             tarantool = try TarantoolProcess(with: script)
             try tarantool.launch()
 

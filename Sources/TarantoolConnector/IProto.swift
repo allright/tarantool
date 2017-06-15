@@ -96,10 +96,10 @@ public struct IProto: DataSource, LuaScript {
         _ spaceId: Int,
         _ tuple: [MessagePack]
     ) throws -> Int {
-        let result = try connection.eval(
-            "local id, tuple = ...;" +
-            "return box.space[id]:auto_increment(tuple)",
-            arguments: [.int(spaceId), .array(tuple)])
+        let result = try connection.eval("""
+            local id, tuple = ...
+            return box.space[id]:auto_increment(tuple)
+            """, arguments: [.int(spaceId), .array(tuple)])
 
         guard let tuple = [MessagePack]([MessagePack](result).first),
             let id = Int(tuple[0]) else {

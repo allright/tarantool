@@ -19,9 +19,10 @@ class IProtoSchemaTests: TestCase {
 
     override func setUp() {
         do {
-            tarantool = try TarantoolProcess(with:
-                "box.schema.user.grant('guest', 'read,write,execute', 'universe')\n" +
-                "box.schema.user.passwd('admin', 'admin')")
+            tarantool = try TarantoolProcess(with: """
+                box.schema.user.grant('guest', 'read,write,execute', 'universe')
+                box.schema.user.passwd('admin', 'admin')
+                """)
             try tarantool.launch()
 
             connection = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
