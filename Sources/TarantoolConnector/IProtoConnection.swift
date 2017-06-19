@@ -34,7 +34,7 @@ public class IProtoConnection {
     }
 
     deinit {
-        try? socket.close(silent: true)
+        try? socket.close()
     }
 
     public func request(
