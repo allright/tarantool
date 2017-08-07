@@ -14,10 +14,10 @@ struct HeaderLength {
     var bytes: [UInt8] {
         var bytes = [UInt8](repeating: 0, count: 5)
         bytes[0] = 0xce
-        bytes[1] = UInt8(extendingOrTruncating: value >> 24)
-        bytes[2] = UInt8(extendingOrTruncating: value >> 16)
-        bytes[3] = UInt8(extendingOrTruncating: value >> 8)
-        bytes[4] = UInt8(extendingOrTruncating: value)
+        bytes[1] = UInt8(truncatingIfNeeded: value >> 24)
+        bytes[2] = UInt8(truncatingIfNeeded: value >> 16)
+        bytes[3] = UInt8(truncatingIfNeeded: value >> 8)
+        bytes[4] = UInt8(truncatingIfNeeded: value)
         return bytes
     }
 
