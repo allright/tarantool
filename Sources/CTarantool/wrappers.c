@@ -29,13 +29,13 @@ void fiber_wrapper(void* ctx, void (*closure)(void*)) {
 }
 
 int box_error_set_wrapper(const char* file, unsigned line, uint32_t code, const char* message) {
-    int len = strlen(message);
+    size_t len = strlen(message);
     if (len <= 0)
         return -1;
 
     char buf[len*2];
     bzero(buf, len*2);
-    for(int i = 0, j = 0; i < len; i++, j++) {
+    for(size_t i = 0, j = 0; i < len; i++, j++) {
         buf[j] = message[i];
         if(buf[j] == '%') {
             buf[++j] = '%';

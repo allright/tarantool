@@ -20,8 +20,8 @@ module_func(lua_State *L)
     if (_lua_gettop(L) < 2)
         _luaL_error(L, "Usage: module_func(a: number, b: number)");
 
-    int a = _lua_tointeger(L, 1);
-    int b = _lua_tointeger(L, 2);
+    lua_Integer a = _lua_tointeger(L, 1);
+    lua_Integer b = _lua_tointeger(L, 2);
 
     _lua_pushinteger(L, a + b);
     return 1; /* one return value */

@@ -8,7 +8,6 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-#include <ctarantool.h>
 #include <module.h>
 #include <wrappers.h>
 #include <stdarg.h>
@@ -19,7 +18,7 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-static bool is_tarantool();
+static bool is_tarantool(void *handle);
 static void resolve_tarantool(void *handle);
 static void resolve_lua(void *handle);
 static void resolve(void *handle, const char *symbol, void **to);

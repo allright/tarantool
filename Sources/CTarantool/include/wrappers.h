@@ -8,8 +8,13 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+#ifndef wrappers_h
+#define wrappers_h
+
 #include <stdlib.h>
 #include <stdint.h>
 
 void fiber_wrapper(void* ctx, void (*closure)(void*));
 int box_error_set_wrapper(const char* file, unsigned line, uint32_t code, const char* message);
+
+#endif /* wrappers_h */
