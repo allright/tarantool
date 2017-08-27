@@ -53,14 +53,15 @@ public final class BoxTuple: Tuple {
         guard let field = _box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
-        var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
+        var decoder = UnsafeMessagePackDecoder(
+            bytes: field, count: getFieldMaxSize(field))
         return try? decoder.decode()
     }
 }
 
 extension BoxTuple: RawRepresentable {
     public convenience init?(rawValue: [MessagePack]) {
-        var encoder = Encoder()
+        var encoder = MessagePackEncoder()
         encoder.encode(rawValue)
         let bytes = encoder.bytes
         let pointer = UnsafeRawPointer(bytes).assumingMemoryBound(to: Int8.self)
@@ -112,7 +113,8 @@ extension BoxTuple {
         guard let field = _box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
-        var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
+        var decoder = UnsafeMessagePackDecoder(
+            bytes: field, count: getFieldMaxSize(field))
         return try? decoder.decode(Bool.self)
     }
 
@@ -120,7 +122,8 @@ extension BoxTuple {
         guard let field = _box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
-        var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
+        var decoder = UnsafeMessagePackDecoder(
+            bytes: field, count: getFieldMaxSize(field))
         return try? decoder.decode(Int.self)
     }
 
@@ -128,7 +131,8 @@ extension BoxTuple {
         guard let field = _box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
-        var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
+        var decoder = UnsafeMessagePackDecoder(
+            bytes: field, count: getFieldMaxSize(field))
         return try? decoder.decode(UInt.self)
     }
 
@@ -136,7 +140,8 @@ extension BoxTuple {
         guard let field = _box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
-        var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
+        var decoder = UnsafeMessagePackDecoder(
+            bytes: field, count: getFieldMaxSize(field))
         return try? decoder.decode(Float.self)
     }
 
@@ -144,7 +149,8 @@ extension BoxTuple {
         guard let field = _box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
-        var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
+        var decoder = UnsafeMessagePackDecoder(
+            bytes: field, count: getFieldMaxSize(field))
         return try? decoder.decode(Double.self)
     }
 
@@ -152,7 +158,8 @@ extension BoxTuple {
         guard let field = _box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
-        var decoder = Decoder(bytes: field, count: getFieldMaxSize(field))
+        var decoder = UnsafeMessagePackDecoder(
+            bytes: field, count: getFieldMaxSize(field))
         return try? decoder.decode(String.self)
     }
 }

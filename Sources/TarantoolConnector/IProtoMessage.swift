@@ -54,7 +54,7 @@ extension IProtoMessage {
             body[key.rawValue] = value
         }
 
-        var encoder = Encoder()
+        var encoder = MessagePackEncoder()
         encoder.encode(header)
         encoder.encode(body)
 
@@ -67,7 +67,7 @@ extension IProtoMessage {
 
 extension IProtoMessage {
     init(from bytes: [UInt8]) throws {
-        var decoder = Decoder(bytes: bytes, count: bytes.count)
+        var decoder = UnsafeMessagePackDecoder(bytes: bytes, count: bytes.count)
 
         guard let header =
             try? decoder.decode([MessagePack : MessagePack].self),
