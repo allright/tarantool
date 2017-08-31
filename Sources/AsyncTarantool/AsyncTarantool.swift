@@ -15,6 +15,7 @@ import TarantoolModule
 
 import struct Foundation.Date
 import struct Dispatch.DispatchQoS
+import class Dispatch.DispatchQueue
 
 public struct AsyncTarantool: Async {
     public init() {}
@@ -28,11 +29,13 @@ public struct AsyncTarantool: Async {
 
     /// doesn't support fibers inside the task
     public func syncTask<T>(
-        qos: DispatchQoS.QoSClass = .background,
+        onQueue queue: DispatchQueue = DispatchQueue.global(),
+        qos: DispatchQoS = .background,
         deadline: Date = Date.distantFuture,
         task: @escaping () throws -> T
     ) throws -> T {
         return try DispatchWrapper.syncTask(
+            onQueue: queue,
             qos: qos,
             deadline: deadline,
             task: task)

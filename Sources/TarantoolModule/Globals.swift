@@ -13,6 +13,7 @@ import CTarantool
 
 import struct Foundation.Date
 import struct Dispatch.DispatchQoS
+import class Dispatch.DispatchQueue
 
 @inline(__always)
 public func fiber(_ closure: @escaping () -> Void) {
@@ -24,7 +25,8 @@ public func fiber(_ closure: @escaping () -> Void) {
 
 @inline(__always)
 public func syncTask<T>(
-    qos: DispatchQoS.QoSClass = .background,
+    onQueue queue: DispatchQueue = DispatchQueue.global(),
+    qos: DispatchQoS = .background,
     deadline: Date = Date.distantFuture,
     task: @escaping () throws -> T
 ) throws -> T {

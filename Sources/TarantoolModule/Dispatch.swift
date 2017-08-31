@@ -22,7 +22,8 @@ public struct DispatchWrapper {
     }
 
     public static func syncTask<T>(
-        qos: DispatchQoS.QoSClass = .background,
+        onQueue queue: DispatchQueue = DispatchQueue.global(),
+        qos: DispatchQoS = .background,
         deadline: Date = Date.distantFuture,
         task: @escaping () throws -> T
     ) throws -> T {
@@ -35,7 +36,7 @@ public struct DispatchWrapper {
 
         // TODO: allow fibers inside the task
         // cord_create, cord_destroy, ev_run, ev_break
-        DispatchQueue.global(qos: qos).async {
+        let workItem = DispatchWorkItem(qos: qos) {
             // fiber {
             // ...
             //}
@@ -49,6 +50,8 @@ public struct DispatchWrapper {
             var done: UInt8 = 1
             write(fd.1, &done, 1)
         }
+
+        queue.async(execute: workItem)
 
         try COIOWrapper.wait(for: fd.0, event: .read, deadline: deadline)
 
