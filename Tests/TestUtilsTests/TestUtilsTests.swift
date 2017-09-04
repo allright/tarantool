@@ -16,6 +16,9 @@ import class Foundation.FileManager
 class TestUtilsTests: TestCase {
     func testTarantoolProcess() {
         do {
+            if async == nil {
+                TestAsync().registerGlobal()
+            }
             let tarantool = try TarantoolProcess()
             assertEqual(tarantool.isRunning, false)
             

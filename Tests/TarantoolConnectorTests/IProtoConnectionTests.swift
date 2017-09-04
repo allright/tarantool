@@ -19,6 +19,9 @@ class IProtoConnectionTests: TestCase {
     
     override func setUp() {
         do {
+            if async == nil {
+                TestAsync().registerGlobal()
+            }
             tarantool = try TarantoolProcess(with:
                 "box.schema.user.grant('guest', 'read,write,execute', 'universe')")
             try tarantool.launch()

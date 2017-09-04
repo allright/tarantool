@@ -19,6 +19,9 @@ class IProtoSchemaTests: TestCase {
 
     override func setUp() {
         do {
+            if async == nil {
+                TestAsync().registerGlobal()
+            }
             tarantool = try TarantoolProcess(with: """
                 box.schema.user.grant('guest', 'read,write,execute', 'universe')
                 box.schema.user.passwd('admin', 'admin')

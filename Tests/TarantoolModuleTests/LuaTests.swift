@@ -22,6 +22,9 @@ class LuaTests: TestCase {
 
     override func setUp() {
         do {
+            if async == nil {
+                TestAsync().registerGlobal()
+            }
             guard let module = Module("TarantoolModuleTest").path else {
                 fail("can't find swift module")
                 return

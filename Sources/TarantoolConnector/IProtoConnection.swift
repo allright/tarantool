@@ -20,11 +20,8 @@ public class IProtoConnection {
     let socket: Socket
     let welcome: Welcome
 
-    public init(
-        host: String, port: UInt16 = 3301, awaiter: IOAwaiter? = nil
-    ) throws {
-        socket = try Socket(awaiter: awaiter)
-        try socket.connect(to: host, port: port)
+    public init(host: String, port: UInt16 = 3301) throws {
+        socket = try Socket().connect(to: host, port: port)
 
         var buffer = [UInt8](repeating: 0, count: Welcome.packetSize)
         guard try socket.receive(to: &buffer) == Welcome.packetSize else {
@@ -85,7 +82,10 @@ extension IProtoConnection {
     ) throws -> [MessagePack] {
         return try request(
             code: .call,
-            keys: [.functionName: .string(function), .tuple: .array(arguments)]
+            keys: [
+                .functionName: .string(function),
+                .tuple: .array(arguments)
+            ]
         )
     }
 
@@ -95,7 +95,10 @@ extension IProtoConnection {
     ) throws -> [MessagePack] {
         return try request(
             code: .eval,
-            keys: [.expression: .string(expression), .tuple: .array(arguments)]
+            keys: [
+                .expression: .string(expression),
+                .tuple: .array(arguments)
+            ]
         )
     }
 
@@ -109,7 +112,10 @@ extension IProtoConnection {
 
         let keys: Keys = [
             .username: .string(username),
-            .tuple: .array([.string("chap-sha1"), .binary(scramble)])
+            .tuple: .array([
+                .string("chap-sha1"),
+                .binary(scramble)
+                ])
         ]
         _ = try request(code: .auth, keys: keys)
     }

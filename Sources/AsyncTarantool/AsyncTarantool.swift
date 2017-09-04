@@ -8,7 +8,8 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import Async
+@_exported import Async
+
 import Platform
 import CTarantool
 import TarantoolModule
@@ -21,7 +22,6 @@ public struct AsyncTarantool: Async {
     public init() {}
 
     public var loop: AsyncLoop = TarantoolLoop()
-    public var awaiter: IOAwaiter? = TarantoolAwaiter()
 
     public func task(_ closure: @escaping AsyncTask) -> Void {
         fiber(closure)
@@ -35,10 +35,15 @@ public struct AsyncTarantool: Async {
         task: @escaping () throws -> T
     ) throws -> T {
         return try DispatchWrapper.syncTask(
-            onQueue: queue,
-            qos: qos,
-            deadline: deadline,
-            task: task)
+            onQueue: queue, qos: qos, deadline: deadline, task: task)
+    }
+
+    public func wait(
+        for descriptor: Int32,
+        event: IOEvent,
+        deadline: Date = Date.distantFuture
+    ) throws {
+        try COIOWrapper.wait(for: descriptor, event: event, deadline: deadline)
     }
 
     public func sleep(until deadline: Date) {
@@ -62,19 +67,5 @@ public struct TarantoolLoop: AsyncLoop {
             sleep(until: date)
             exit(0)
         }
-    }
-}
-
-public struct TarantoolAwaiterTimeout: Error {}
-
-public struct TarantoolAwaiter: IOAwaiter {
-    public init() {}
-
-    public func wait(
-        for descriptor: Int32,
-        event: IOEvent,
-        deadline: Date = Date.distantFuture
-    ) throws {
-        try COIOWrapper.wait(for: descriptor, event: event, deadline: deadline)
     }
 }
