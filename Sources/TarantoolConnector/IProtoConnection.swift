@@ -14,8 +14,6 @@ import Foundation
 @_exported import Tarantool
 @_exported import MessagePack
 
-public typealias Keys = [Key : MessagePack]
-
 public class IProtoConnection {
     let socket: Socket
     let welcome: Welcome
@@ -36,7 +34,7 @@ public class IProtoConnection {
 
     public func request(
         code: Code,
-        keys: Keys = [:],
+        keys: [Key : MessagePack] = [:],
         sync: Int? = nil,
         schemaId: Int? = nil
     ) throws -> [MessagePack] {
@@ -110,7 +108,7 @@ extension IProtoConnection {
 
         let scramble = data.chapSha1(salt: [UInt8](salt))
 
-        let keys: Keys = [
+        let keys: [Key : MessagePack] = [
             .username: .string(username),
             .tuple: .array([
                 .string("chap-sha1"),

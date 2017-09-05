@@ -13,7 +13,7 @@ struct IProtoMessage {
     let sync: Int?
     let schemaId: Int?
 
-    let body: Keys
+    let body: [Key : MessagePack]
 }
 
 //  Request/Response:
