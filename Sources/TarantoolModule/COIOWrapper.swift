@@ -9,6 +9,7 @@
  */
 
 import Async
+import Platform
 import CTarantool
 
 import struct Foundation.Date
@@ -31,7 +32,7 @@ public struct COIOWrapper {
     }
 
     public static func wait(
-        for descriptor: Int32,
+        for descriptor: Descriptor,
         event: IOEvent,
         deadline: Date = Date.distantFuture
     ) throws {
@@ -40,7 +41,7 @@ public struct COIOWrapper {
             : deadline.timeIntervalSinceNow
 
         let event = Event(event)
-        let result = _coio_wait(descriptor, event.rawValue, timeout)
+        let result = _coio_wait(descriptor.rawValue, event.rawValue, timeout)
         guard let receivedEvent = Event(rawValue: result) else {
             throw AsyncError.taskCanceled
         }

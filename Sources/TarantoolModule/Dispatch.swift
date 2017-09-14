@@ -48,15 +48,15 @@ public struct DispatchWrapper {
             }
 
             var done: UInt8 = 1
-            write(fd.1, &done, 1)
+            write(fd.1.rawValue, &done, 1)
         }
 
         queue.async(execute: workItem)
 
         try COIOWrapper.wait(for: fd.0, event: .read, deadline: deadline)
 
-        close(fd.0)
-        close(fd.1)
+        close(fd.0.rawValue)
+        close(fd.1.rawValue)
 
         if let result = result {
             return result
@@ -68,12 +68,12 @@ public struct DispatchWrapper {
     }
 
     fileprivate static func pipe() throws -> (Descriptor, Descriptor) {
-        var fd: (Descriptor, Descriptor) = (0, 0)
+        var fd: (Int32, Int32) = (0, 0)
         let pointer = UnsafeMutableRawPointer(&fd)
             .assumingMemoryBound(to: Int32.self)
         guard Platform.pipe(pointer) != -1 else {
             throw SystemError()
         }
-        return fd
+        return (Descriptor(rawValue: fd.0)!, Descriptor(rawValue: fd.1)!)
     }
 }

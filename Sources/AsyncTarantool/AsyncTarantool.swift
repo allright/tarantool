@@ -39,7 +39,7 @@ public struct AsyncTarantool: Async {
     }
 
     public func wait(
-        for descriptor: Int32,
+        for descriptor: Descriptor,
         event: IOEvent,
         deadline: Date = Date.distantFuture
     ) throws {

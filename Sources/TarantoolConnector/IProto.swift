@@ -12,6 +12,35 @@ import Foundation
 import MessagePack
 import Tarantool
 
+//struct TupleSequence: Sequence {
+//    let tuples: [UInt8]
+//    init(tuples: [UInt8]) {
+//        self.tuples = tuples
+//    }
+//
+//    func makeIterator() -> TupleIterator {
+//        return TupleIterator(tuples: tuples)
+//    }
+//}
+//
+//struct TupleIterator: IteratorProtocol {
+//    let tuples: [UInt8]
+//    var decoder: UnsafeMessagePackDecoder
+//    init(tuples: [UInt8]) {
+//        self.tuples = tuples
+//        self.decoder = UnsafeMessagePackDecoder(
+//            bytes: tuples, count: tuples.count)
+//    }
+//
+//    mutating func next() -> IProtoTuple? {
+//        try decoder.decodeArrayItemsCount()
+//    }
+//
+//    typealias Element = IProtoTuple
+//
+//
+//}
+
 public struct IProto: DataSource, LuaScript {
     let connection: IProtoConnection
 
