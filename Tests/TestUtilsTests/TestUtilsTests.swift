@@ -9,6 +9,7 @@
  */
 
 import Test
+import AsyncDispatch
 @testable import TestUtils
 
 import class Foundation.FileManager
@@ -16,9 +17,7 @@ import class Foundation.FileManager
 class TestUtilsTests: TestCase {
     func testTarantoolProcess() {
         do {
-            if async == nil {
-                TestAsync().registerGlobal()
-            }
+            AsyncDispatch().registerGlobal()
             let tarantool = try TarantoolProcess()
             assertEqual(tarantool.isRunning, false)
             

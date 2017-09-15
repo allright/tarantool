@@ -63,9 +63,10 @@ public struct TarantoolLoop: AsyncLoop {
     }
 
     public func run(until date: Date) {
-        fiber {
-            sleep(until: date)
-            exit(0)
-        }
+        fatalError("not implemented")
+    }
+
+    public func terminate() {
+        fatalError("not implemented")
     }
 }

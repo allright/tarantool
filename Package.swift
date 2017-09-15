@@ -75,15 +75,17 @@ let package = Package(
         ),
         .testTarget(
             name: "TarantoolModuleTests",
-            dependencies: ["TarantoolModule", "TarantoolConnector", "Test"]
+            dependencies: [
+                "TarantoolModule", "TarantoolConnector", "Test", "AsyncDispatch"
+            ]
         ),
         .testTarget(
             name: "TarantoolConnectorTests",
-            dependencies: ["TarantoolConnector", "Test"]
+            dependencies: ["TarantoolConnector", "Test", "AsyncDispatch"]
         ),
         .testTarget(
             name: "TestUtilsTests",
-            dependencies: ["TestUtils", "Test"]
+            dependencies: ["TestUtils", "Test", "AsyncDispatch"]
         )
     ]
 )
