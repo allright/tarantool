@@ -11,10 +11,11 @@
 import Foundation
 import MessagePack
 
-public struct Space<T: DataSource> {
+public struct Space<T: DataSource & LuaScript> {
     public let id: Int
     public let name: String
-    private let source: T
+
+    let source: T
 
     public init(id: Int, name: String, source: T) {
         self.id = id

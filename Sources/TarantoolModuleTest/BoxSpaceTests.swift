@@ -12,12 +12,8 @@ import MessagePack
 import TarantoolModule
 
 struct BoxSpaceTests {
-    fileprivate static var testId: Int {
-        return try! Schema(Box()).spaces["test"]!.id
-    }
-
     fileprivate static var space: Space<Box> {
-        return Space(id: testId, name: "test", source: Box())
+        return try! Schema(Box()).spaces["test"]!
     }
 
     static func testCount() throws {

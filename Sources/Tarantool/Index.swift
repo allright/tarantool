@@ -26,12 +26,24 @@ public struct Index {
     let id: Int
     let name: String
     let type: IndexType
+    let sequenceId: Int?
     let unique: Bool
 
-    public init(id: Int, name: String, type: IndexType, unique: Bool) {
+    var sequence: Bool {
+        return sequenceId != nil
+    }
+
+    public init(
+        id: Int,
+        name: String,
+        type: IndexType,
+        sequenceId: Int? = nil,
+        unique: Bool = false
+    ) {
         self.id = id
         self.name = name
         self.type = type
+        self.sequenceId = sequenceId
         self.unique = unique
     }
 }
@@ -41,6 +53,7 @@ extension Index: Equatable {
         return lhs.id == rhs.id &&
             lhs.name == rhs.name &&
             lhs.type == rhs.type &&
+            lhs.sequenceId == rhs.sequenceId &&
             lhs.unique == rhs.unique
     }
 }

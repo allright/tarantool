@@ -13,13 +13,17 @@ import AsyncDispatch
 import TarantoolConnector
 @testable import TestUtils
 
-class BoxSchemaTests: TestCase {
+class BoxSpaceIndexTests: TestCase {
     var tarantool: TarantoolProcess!
     var iproto: IProtoConnection!
 
     let functions: ContiguousArray<String> = [
-        "BoxSchemaTests_testSchema",
-        "BoxSchemaTests_testCreateSpace"
+        "BoxSpaceIndexTests_testHash",
+        "BoxSpaceIndexTests_testTree",
+        "BoxSpaceIndexTests_testRTree",
+        "BoxSpaceIndexTests_testBitset",
+        "BoxSpaceIndexTests_testSequence",
+        "BoxSpaceIndexTests_testMany"
     ]
 
     override func setUp() {
@@ -42,7 +46,7 @@ class BoxSchemaTests: TestCase {
                     \($0)
                     box.schema.func.create('\($1)', {language = 'C'})
                     """
-                }
+            }
 
             tarantool = try TarantoolProcess(with: script)
             try tarantool.launch()
@@ -59,18 +63,55 @@ class BoxSchemaTests: TestCase {
         assertEqual(status, 0)
     }
 
-    func testSchema() {
+    func testHash() {
         do {
-            _ = try iproto.call("BoxSchemaTests_testSchema")
+            try iproto.auth(username: "admin", password: "admin")
+            _ = try iproto.call("BoxSpaceIndexTests_testHash")
         } catch {
             fail(String(describing: error))
         }
     }
 
-    func testCreateSpace() {
+    func testTree() {
         do {
             try iproto.auth(username: "admin", password: "admin")
-            _ = try iproto.call("BoxSchemaTests_testCreateSpace")
+            _ = try iproto.call("BoxSpaceIndexTests_testTree")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testRTree() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+            _ = try iproto.call("BoxSpaceIndexTests_testRTree")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testBitset() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+            _ = try iproto.call("BoxSpaceIndexTests_testBitset")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testSequence() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+            _ = try iproto.call("BoxSpaceIndexTests_testSequence")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testMany() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+            _ = try iproto.call("BoxSpaceIndexTests_testMany")
         } catch {
             fail(String(describing: error))
         }
@@ -78,7 +119,11 @@ class BoxSchemaTests: TestCase {
 
 
     static var allTests = [
-        ("testSchema", testSchema),
-        ("testCreateSpace", testCreateSpace),
+        ("testHash", testHash),
+        ("testTree", testTree),
+        ("testRTree", testRTree),
+        ("testBitset", testBitset),
+        ("testSequence", testSequence),
+        ("testMany", testMany),
     ]
 }

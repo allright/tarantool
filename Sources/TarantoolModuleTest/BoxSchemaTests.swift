@@ -53,28 +53,6 @@ struct BoxSchemaTests {
         try assertEqualThrows(anotherSpace.id, 513)
         try assertEqualThrows(anotherSpace.name, "another_space")
     }
-
-    static func testCreateIndex() throws {
-        var schema = try Schema(Box())
-        try schema.createSpace(name: "new_space")
-
-        let tree = try schema.createIndex(name: "tree", in: "new_space")
-        let expected0 =
-            Index(id: 0, name: "tree", type: .tree, unique: true)
-        try assertEqualThrows(tree, expected0)
-
-        let rtree = try schema.createIndex(
-            name: "rtree", type: .rtree, in: "new_space")
-        let expected1 =
-            Index(id: 1, name: "rtree", type: .rtree, unique: false)
-        try assertEqualThrows(rtree, expected1)
-
-        let nonUnique = try schema.createIndex(
-            name: "non_unique", unique: false, in: "new_space")
-        let expected2 =
-            Index(id: 2, name: "non_unique", type: .tree, unique: false)
-        try assertEqualThrows(nonUnique, expected2)
-    }
 }
 
 // C API Wrappers
@@ -93,16 +71,6 @@ public func BoxSchemaTests_testSchema(context: BoxContext) -> BoxResult {
 public func BoxSchemaTests_testCreateSpace(context: BoxContext) -> BoxResult {
     do {
         try BoxSchemaTests.testCreateSpace()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
-    }
-    return 0
-}
-
-@_silgen_name("BoxSchemaTests_testCreateIndex")
-public func BoxSchemaTests_testCreateIndex(context: BoxContext) -> BoxResult {
-    do {
-        try BoxSchemaTests.testCreateIndex()
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }

@@ -88,38 +88,9 @@ class IProtoSchemaTests: TestCase {
         }
     }
 
-    func testCreateIndex() {
-        do {
-            try connection.auth(username: "admin", password: "admin")
-            var schema = try Schema(IProto(connection: connection))
-
-            try schema.createSpace(name: "new_space")
-
-            let tree = try schema.createIndex(name: "tree", in: "new_space")
-            let expected0 =
-                Index(id: 0, name: "tree", type: .tree, unique: true)
-            assertEqual(tree, expected0)
-
-            let rtree = try schema.createIndex(
-                name: "rtree", type: .rtree, in: "new_space")
-            let expected1 =
-                Index(id: 1, name: "rtree", type: .rtree, unique: false)
-            assertEqual(rtree, expected1)
-
-            let nonUnique = try schema.createIndex(
-                name: "non_unique", unique: false, in: "new_space")
-            let expected2 =
-                Index(id: 2, name: "non_unique", type: .tree, unique: false)
-            assertEqual(nonUnique, expected2)
-        } catch {
-            fail(String(describing: error))
-        }
-    }
-
 
     static var allTests = [
         ("testSchema", testSchema),
-        ("testCreateSpace", testCreateSpace),
-        ("testCreateIndex", testCreateIndex),
+        ("testCreateSpace", testCreateSpace)
     ]
 }
