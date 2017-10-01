@@ -51,17 +51,6 @@ struct BoxSpaceTests {
         }
     }
 
-    static func testInsertAutoincrement() throws {
-        let id = try space.insert(autoincrementing: ["quux"])
-        guard id == 4 else {
-            throw "\(id)  is not equal to 4"
-        }
-        let result = try space.get([4])
-        guard let tuple = result, tuple.rawValue == [4, "quux"] else {
-            throw "\(String(describing: result))  is not equal to [4, 'quux']"
-        }
-    }
-
     static func testReplace() throws {
         try space.replace([3, "zab"])
         let result = try space.get([3])
@@ -147,18 +136,6 @@ public func BoxSpaceTests_testGet(context: BoxContext) -> BoxResult {
 public func BoxSpaceTests_testInsert(context: BoxContext) -> BoxResult {
     do {
         try BoxSpaceTests.testInsert()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
-    }
-}
-
-@_silgen_name("BoxSpaceTests_testInsertAutoincrement")
-public func BoxSpaceTests_testInsertAutoincrement(
-    context: BoxContext
-) -> BoxResult {
-    do {
-        try BoxSpaceTests.testInsertAutoincrement()
         return Box.returnTuple(nil, to: context)
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))

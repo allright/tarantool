@@ -22,7 +22,6 @@ class BoxDataSourceTests: TestCase {
         "BoxDataSourceTests_testSelect",
         "BoxDataSourceTests_testGet",
         "BoxDataSourceTests_testInsert",
-        "BoxDataSourceTests_testInsertAutoincrement",
         "BoxDataSourceTests_testReplace",
         "BoxDataSourceTests_testDelete",
         "BoxDataSourceTests_testUpdate",
@@ -102,14 +101,6 @@ class BoxDataSourceTests: TestCase {
         }
     }
 
-    func testInsertAutoincrement() {
-        do {
-            _ = try iproto.call("BoxDataSourceTests_testInsertAutoincrement")
-        } catch {
-            fail(String(describing: error))
-        }
-    }
-
     func testReplace() {
         do {
             _ = try iproto.call("BoxDataSourceTests_testReplace")
@@ -148,7 +139,6 @@ class BoxDataSourceTests: TestCase {
         ("testSelect", testSelect),
         ("testGet", testGet),
         ("testInsert", testInsert),
-        ("testInsertAutoincrement", testInsertAutoincrement),
         ("testReplace", testReplace),
         ("testDelete", testDelete),
         ("testUpdate", testUpdate),
