@@ -12,16 +12,36 @@ import CTarantool
 import MessagePack
 
 public struct LuaError: Error {
+    public let code: Int?
     public let message: String
 }
 
 extension LuaError {
+    init(message: String) {
+        self.code = nil
+        self.message = message
+    }
+}
+
+extension LuaError {
     fileprivate init(_ L: OpaquePointer) {
-        guard let pointer = _lua_tolstring(L, -1, nil) else {
-            self.message = "unknown"
+        // standart lua error
+        if let pointer = _lua_tolstring(L, -1, nil) {
+            self.code = nil
+            self.message = String(cString: pointer)
             return
         }
-        self.message = String(cString: pointer)
+
+        // tarantool error
+        if let errorPointer = _box_error_last(),
+            let messagePointer = _box_error_message(errorPointer) {
+            self.code = Int(_box_error_code(errorPointer))
+            self.message = String(cString: messagePointer)
+            return
+        }
+
+        self.code = nil
+        self.message = "unknown"
     }
 }
 
@@ -46,10 +66,7 @@ public struct Lua {
             _luaL_checkstack(L, Int32(arguments.count), "eval: out of stack")
             try push(values: arguments, to: L)
             guard _luaT_call(L, Int32(arguments.count), LUA_MULTRET) == 0 else {
-                guard let pointer = _lua_tolstring(L, -1, nil) else {
-                    throw LuaError(message: "eval: unknown error")
-                }
-                throw LuaError(message: String(cString: pointer))
+                throw LuaError(L)
             }
             return try popValues(from: L)
         }
@@ -108,7 +125,7 @@ public struct Lua {
                 _lua_settable(L, -3)
             }
         default:
-            throw LuaError(message: "[push] type \(value) is not implemented")
+            throw LuaError(message: "argument type \(value) is not supported")
         }
     }
 
@@ -158,7 +175,7 @@ public struct Lua {
             }
             return .map(map)
         default:
-            throw LuaError(message: "[pop] type \(type) is not implemented")
+            throw LuaError(message: "return type \(type) is not supported")
         }
     }
 }
