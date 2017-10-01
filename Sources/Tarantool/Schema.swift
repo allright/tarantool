@@ -37,14 +37,17 @@ public struct Schema<T: DataSource & LuaScript> {
         self.spaces = spaces
     }
 
-    public mutating func createSpace(name: String) throws {
+    @discardableResult
+    public mutating func createSpace(name: String) throws -> Space<T> {
         let script = "return box.schema.space.create('\(name)').id"
         let result = try source.eval(script, arguments: [])
         guard result.count == 1, let id = Int(result[0]) else {
             let message = "[integer] expected, got \(result)"
             throw TarantoolError.invalidTuple(message: message)
         }
-        spaces[name] = Space(id: id, name: name, source: source)
+        let space = Space(id: id, name: name, source: source)
+        spaces[name] = space
+        return space
     }
 
     @discardableResult
