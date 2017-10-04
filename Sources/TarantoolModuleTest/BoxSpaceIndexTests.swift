@@ -52,7 +52,7 @@ struct BoxSpaceIndexTests {
 
         // BITSET can not be unique
         let rtree = try space.createIndex(name: "bitset", type: .bitset)
-        let expected = Index(id: 1, name: "bitset", type: .rtree)
+        let expected = Index(id: 1, name: "bitset", type: .bitset)
         try assertEqualThrows(rtree, expected)
     }
 
