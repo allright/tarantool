@@ -24,7 +24,7 @@ public struct Box: DataSource, LuaScript {
         _ iterator: Iterator,
         _ keys: [MessagePack]
     ) throws -> Int {
-        let keys = MessagePack.encode(.array(keys))
+        let keys = try MessagePack.encode(.array(keys))
         return try BoxWrapper.count(
             UInt32(spaceId), UInt32(indexId), iterator, keys)
     }
@@ -37,7 +37,7 @@ public struct Box: DataSource, LuaScript {
         _ offset: Int,
         _ limit: Int
     ) throws -> AnySequence<BoxTuple> {
-        let keys = MessagePack.encode(.array(keys))
+        let keys = try MessagePack.encode(.array(keys))
         return try BoxWrapper.select(
             numericCast(spaceId), numericCast(indexId), iterator, keys)
     }
@@ -45,12 +45,12 @@ public struct Box: DataSource, LuaScript {
     public func get(
         _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
     ) throws -> BoxTuple? {
-        let keys = MessagePack.encode(.array(keys))
+        let keys = try MessagePack.encode(.array(keys))
         return try BoxWrapper.get(UInt32(spaceId), UInt32(indexId), keys)
     }
 
     public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {
-        let tuple = MessagePack.encode(.array(tuple))
+        let tuple = try MessagePack.encode(.array(tuple))
         try BoxWrapper.insert(UInt32(spaceId), tuple)
     }
 
@@ -59,26 +59,26 @@ public struct Box: DataSource, LuaScript {
         _ tuple: [MessagePack]
     ) throws -> Int {
         var id = 0
-        let emptyKeys = MessagePack.encode(.array([]))
+        let emptyKeys = try MessagePack.encode(.array([]))
         if let max = try BoxWrapper.max(UInt32(spaceId), UInt32(0), emptyKeys) {
             id = max + 1
         }
         var tuple = tuple
         tuple.insert(.int(id), at: 0)
-        let tupleBytes = MessagePack.encode(.array(tuple))
+        let tupleBytes = try MessagePack.encode(.array(tuple))
         try BoxWrapper.insert(UInt32(spaceId), tupleBytes)
         return id
     }
 
     public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
-        let tuple = MessagePack.encode(.array(tuple))
+        let tuple = try MessagePack.encode(.array(tuple))
         try BoxWrapper.replace(UInt32(spaceId), tuple)
     }
 
     public func delete(
         _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
     ) throws {
-        let keys = MessagePack.encode(.array(keys))
+        let keys = try MessagePack.encode(.array(keys))
         try BoxWrapper.delete(UInt32(spaceId), UInt32(indexId), keys)
     }
 
@@ -88,8 +88,8 @@ public struct Box: DataSource, LuaScript {
         _ keys: [MessagePack],
         _ ops: [MessagePack]
     ) throws {
-        let keys = MessagePack.encode(.array(keys))
-        let ops = MessagePack.encode(.array(ops))
+        let keys = try MessagePack.encode(.array(keys))
+        let ops = try MessagePack.encode(.array(ops))
         try BoxWrapper.update(UInt32(spaceId), UInt32(indexId), keys, ops)
     }
 
@@ -99,8 +99,8 @@ public struct Box: DataSource, LuaScript {
         _ tuple: [MessagePack],
         _ ops: [MessagePack]
     ) throws {
-        let tuple = MessagePack.encode(.array(tuple))
-        let ops = MessagePack.encode(.array(ops))
+        let tuple = try MessagePack.encode(.array(tuple))
+        let ops = try MessagePack.encode(.array(ops))
         try BoxWrapper.upsert(UInt32(spaceId), UInt32(indexId), tuple, ops)
     }
 

@@ -27,7 +27,11 @@ extension Box {
     public static func returnTuple(
         _ object: MessagePack, to context: BoxContext
     ) -> Int32 {
-        return returnTuple(MessagePack.encode(object), to: context)
+        guard let tuple = try? MessagePack.encode(object) else {
+            return returnError(
+                code: .invalidMsgpack, message: "encoding of \(object) failed")
+        }
+        return returnTuple(tuple, to: context)
     }
 
     public static func returnError(
