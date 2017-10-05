@@ -54,22 +54,6 @@ public struct Box: DataSource, LuaScript {
         try BoxWrapper.insert(UInt32(spaceId), tuple)
     }
 
-    public func insertAutoincrement(
-        _ spaceId: Int,
-        _ tuple: [MessagePack]
-    ) throws -> Int {
-        var id = 0
-        let emptyKeys = try MessagePack.encode(.array([]))
-        if let max = try BoxWrapper.max(UInt32(spaceId), UInt32(0), emptyKeys) {
-            id = max + 1
-        }
-        var tuple = tuple
-        tuple.insert(.int(id), at: 0)
-        let tupleBytes = try MessagePack.encode(.array(tuple))
-        try BoxWrapper.insert(UInt32(spaceId), tupleBytes)
-        return id
-    }
-
     public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         let tuple = try MessagePack.encode(.array(tuple))
         try BoxWrapper.replace(UInt32(spaceId), tuple)

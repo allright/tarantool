@@ -40,11 +40,6 @@ public protocol DataSource {
         _ tuple: [MessagePack]
     ) throws
 
-    func insertAutoincrement(
-        _ spaceId: Int,
-        _ tuple: [MessagePack]
-    ) throws -> Int
-
     func replace(
         _ spaceId: Int,
         _ tuple: [MessagePack]

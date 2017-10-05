@@ -121,23 +121,6 @@ public struct IProto: DataSource, LuaScript {
             .tuple:   .array(tuple)])
     }
 
-    public func insertAutoincrement(
-        _ spaceId: Int,
-        _ tuple: [MessagePack]
-    ) throws -> Int {
-        let result = try connection.eval("""
-            local id, tuple = ...
-            return box.space[id]:auto_increment(tuple)
-            """, arguments: [.int(spaceId), .array(tuple)])
-
-        guard let tuple = [MessagePack]([MessagePack](result).first),
-            let id = Int(tuple[0]) else {
-                throw TarantoolError.invalidTuple(
-                    message: "expected array, received: \(result)")
-        }
-
-        return id
-    }
 
     public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         _ = try connection.request(code: .replace, keys: [
