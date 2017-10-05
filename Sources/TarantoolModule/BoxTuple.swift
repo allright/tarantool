@@ -18,7 +18,7 @@ public final class InputRawStream: InputStream {
     let count: Int
     var position: Int
 
-    init(pointer: UnsafeRawPointer, count: Int) {
+    public init(pointer: UnsafeRawPointer, count: Int) {
         self.pointer = pointer
         self.count = count
         self.position = 0
