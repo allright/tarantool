@@ -78,11 +78,11 @@ extension Index {
         return try source.get(spaceId, id, keys)
     }
 
-    public func insert(tuple: [MessagePack]) throws {
+    public func insert(_ tuple: [MessagePack]) throws {
         return try source.insert(spaceId, tuple)
     }
 
-    public func replace(tuple: [MessagePack]) throws {
+    public func replace(_ tuple: [MessagePack]) throws {
         return try source.replace(spaceId, tuple)
     }
 
@@ -94,7 +94,10 @@ extension Index {
         try source.update(spaceId, id, keys, operations)
     }
 
-    public func upsert(tuple: [MessagePack], operations: [MessagePack]) throws {
+    public func upsert(
+        _ tuple: [MessagePack],
+        operations: [MessagePack]
+    ) throws {
         try source.upsert(spaceId, id, tuple, operations)
     }
 }

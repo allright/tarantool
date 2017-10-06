@@ -265,7 +265,7 @@ class IProtoIndexTests: TestCase {
                 fail("index not found")
                 return
             }
-            try index.insert(tuple: [4, "quux"])
+            try index.insert([4, "quux"])
             guard let result = try index.get(keys: [4]) else {
                 fail("tuple not found")
                 return
@@ -282,7 +282,7 @@ class IProtoIndexTests: TestCase {
                 fail("index not found")
                 return
             }
-            try index.replace(tuple: [3, "zab"])
+            try index.replace([3, "zab"])
             guard let result = try index.get(keys: [3]) else {
                 fail("tuple not found")
                 return
@@ -331,14 +331,14 @@ class IProtoIndexTests: TestCase {
             }
             assertNil(try index.get(keys: [4]))
 
-            try index.upsert(tuple: [4, "quux", 42], operations: [["+", 2, 8]])
+            try index.upsert([4, "quux", 42], operations: [["+", 2, 8]])
             guard let insertResult = try index.get(keys: [4]) else {
                 fail("tuple not found")
                 return
             }
             assertEqual(insertResult, IProtoTuple(rawValue: [4, "quux", 42]))
 
-            try index.upsert(tuple: [4, "quux", 42], operations: [["+", 2, 8]])
+            try index.upsert([4, "quux", 42], operations: [["+", 2, 8]])
             guard let updateResult = try index.get(keys: [4]) else {
                 fail("tuple not found")
                 return

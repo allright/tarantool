@@ -183,7 +183,7 @@ struct BoxIndexTests {
         guard let index = space[index: "primary"] else {
             throw "index not found"
         }
-        try index.insert(tuple: [4, "quux"])
+        try index.insert([4, "quux"])
         let result = try index.get(keys: [4])
         guard let tuple = result, tuple.rawValue == [4, "quux"] else {
             throw "\(String(describing: result))  is not equal to [4, 'quux']"
@@ -194,7 +194,7 @@ struct BoxIndexTests {
         guard let index = space[index: "primary"] else {
             throw "index not found"
         }
-        try index.replace(tuple: [3, "zab"])
+        try index.replace([3, "zab"])
         let result = try index.get(keys: [3])
         guard let tuple = result, tuple.rawValue == [3, "zab"] else {
             throw "\(String(describing: result))  is not equal to [3, 'zab']"
@@ -232,7 +232,7 @@ struct BoxIndexTests {
             throw "\(String(describing: expectedNil)) is not nil"
         }
 
-        try index.upsert(tuple: [4, "quux", 42], operations: [["+", 2, 8]])
+        try index.upsert([4, "quux", 42], operations: [["+", 2, 8]])
         let insert = try index.get(keys: [4])
 
         guard let insertResult = insert,
@@ -241,7 +241,7 @@ struct BoxIndexTests {
                 " is not equal to [4, 'quux', 42]"
         }
 
-        try index.upsert(tuple: [4, "quux", 42], operations: [["+", 2, 8]])
+        try index.upsert([4, "quux", 42], operations: [["+", 2, 8]])
         let update = try index.get(keys: [4])
 
         guard let updateResult = update,

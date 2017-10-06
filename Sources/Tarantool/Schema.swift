@@ -27,7 +27,7 @@ public struct Schema<T: DataSource & LuaScript> {
         let indicesView =
             Space(id: _vindex, name: "_vindex", indices: [], source: source)
 
-        let indices = try indicesView.select(.all)
+        let indices = try indicesView.select(iterator: .all)
             .reduce(into: [Int : [Index<T>]]()) { (result, row) in
                 guard let index =
                     Index(from: row.rawValue, source: source) else {
@@ -39,7 +39,7 @@ public struct Schema<T: DataSource & LuaScript> {
         let spacesView =
             Space(id: _vspace, name: "_vspace", indices: [], source: source)
 
-        let spaces = try spacesView.select(.all)
+        let spaces = try spacesView.select(iterator: .all)
             .reduce(into: [String : Space<T>]()) { (result, row) in
                 guard let id = Int(row[0]),
                     let name = String(row[2]) else {

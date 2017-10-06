@@ -25,7 +25,7 @@ struct BoxSpaceTests {
 
     static func testSelect() throws {
         let expected: [[MessagePack]] = [[1, "foo"], [2, "bar"], [3, "baz"]]
-        let result = try space.select(.all)
+        let result = try space.select(iterator: .all)
         let converted = [[MessagePack]](result)
         guard converted == expected else {
             throw "\(converted) is not equal to \(expected)"
@@ -33,7 +33,7 @@ struct BoxSpaceTests {
     }
 
     static func testGet() throws {
-        let result = try space.get([3])
+        let result = try space.get(keys: [3])
         guard let tuple = result, tuple.rawValue == [3, "baz"] else {
             throw "\(String(describing: result)) is not equal to [3, 'baz']"
         }
@@ -41,7 +41,7 @@ struct BoxSpaceTests {
 
     static func testInsert() throws {
         try space.insert([4, "quux"])
-        let result = try space.get([4])
+        let result = try space.get(keys: [4])
         guard let tuple = result, tuple.rawValue == [4, "quux"] else {
             throw "\(String(describing: result))  is not equal to [4, 'quux']"
         }
@@ -49,36 +49,36 @@ struct BoxSpaceTests {
 
     static func testReplace() throws {
         try space.replace([3, "zab"])
-        let result = try space.get([3])
+        let result = try space.get(keys: [3])
         guard let tuple = result, tuple.rawValue == [3, "zab"] else {
             throw "\(String(describing: result))  is not equal to [3, 'zab']"
         }
     }
 
     static func testDelete() throws {
-        try space.delete([3])
-        let result = try space.get([3])
+        try space.delete(keys: [3])
+        let result = try space.get(keys: [3])
         guard result == nil else {
             throw "\(String(describing: result)) is not nil"
         }
     }
 
     static func testUpdate() throws {
-        try space.update([3], operations: [["=", 1, "zab"]])
-        let result = try space.get([3])
+        try space.update(keys: [3], operations: [["=", 1, "zab"]])
+        let result = try space.get(keys: [3])
         guard let tuple = result, tuple.rawValue == [3, "zab"] else {
             throw "\(String(describing: result)) is not equal to [3, 'zab']"
         }
     }
 
     static func testUpsert() throws {
-        let expectedNil = try space.get([4])
+        let expectedNil = try space.get(keys: [4])
         guard expectedNil == nil else {
             throw "\(String(describing: expectedNil)) is not nil"
         }
 
         try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
-        let insert = try space.get([4])
+        let insert = try space.get(keys: [4])
 
         guard let insertResult = insert,
             insertResult.rawValue == [4, "quux", 42] else {
@@ -87,7 +87,7 @@ struct BoxSpaceTests {
         }
 
         try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
-        let update = try space.get([4])
+        let update = try space.get(keys: [4])
 
         guard let updateResult = update, updateResult.rawValue == [4, "quux", 50] else {
             throw String(describing: update) +

@@ -46,7 +46,7 @@ public struct Space<T: DataSource & LuaScript> {
     }
 
     public func select(
-        _ iterator: Iterator,
+        iterator: Iterator,
         keys: [MessagePack] = [],
         offset: Int = 0,
         limit: Int = Int.max
@@ -55,7 +55,7 @@ public struct Space<T: DataSource & LuaScript> {
             id, primaryIndex, iterator, keys, offset, limit)
     }
 
-    public func get(_ keys: [MessagePack]) throws -> T.Row? {
+    public func get(keys: [MessagePack]) throws -> T.Row? {
         return try source.get(id, primaryIndex, keys)
     }
 
@@ -67,12 +67,12 @@ public struct Space<T: DataSource & LuaScript> {
         try source.replace(id, tuple)
     }
 
-    public func delete(_ keys: [MessagePack]) throws {
+    public func delete(keys: [MessagePack]) throws {
         try source.delete(id, primaryIndex, keys)
     }
 
     public func update(
-        _ keys: [MessagePack], operations: [MessagePack]
+        keys: [MessagePack], operations: [MessagePack]
     ) throws {
         try source.update(id, primaryIndex, keys, operations)
     }
