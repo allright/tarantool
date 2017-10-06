@@ -16,7 +16,7 @@ extension Space {
         sequence: Bool? = nil,
         unique: Bool? = nil,
         parts: [Int: IndexFieldType]? = nil
-    ) throws -> Index {
+    ) throws -> Index<T> {
         let arguments = buildArguments(
             type: type, sequence: sequence, unique: unique, parts: parts)
 
@@ -33,11 +33,13 @@ extension Space {
         let unique = Bool(table["unique"]) ?? false
         let sequenceId = Int(table["sequence_id"])
         return Index(
+            spaceId: self.id,
             id: id,
             name: name,
             type: type,
             sequenceId: sequenceId,
-            unique: unique)
+            unique: unique,
+            source: source)
     }
 
     private func buildArguments(

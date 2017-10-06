@@ -13,17 +13,25 @@ import AsyncDispatch
 import TarantoolConnector
 @testable import TestUtils
 
-class BoxSpaceIndexTests: TestCase {
+class BoxIndexTests: TestCase {
     var tarantool: TarantoolProcess!
     var iproto: IProtoConnection!
 
     let functions: ContiguousArray<String> = [
-        "BoxSpaceIndexTests_testHash",
-        "BoxSpaceIndexTests_testTree",
-        "BoxSpaceIndexTests_testRTree",
-        "BoxSpaceIndexTests_testBitset",
-        "BoxSpaceIndexTests_testSequence",
-        "BoxSpaceIndexTests_testMany"
+        "BoxIndexTests_testHash",
+        "BoxIndexTests_testTree",
+        "BoxIndexTests_testRTree",
+        "BoxIndexTests_testBitset",
+        "BoxIndexTests_testSequence",
+        "BoxIndexTests_testMany",
+        "BoxIndexTests_testCount",
+        "BoxIndexTests_testSelect",
+        "BoxIndexTests_testGet",
+        "BoxIndexTests_testInsert",
+        "BoxIndexTests_testReplace",
+        "BoxIndexTests_testDelete",
+        "BoxIndexTests_testUpdate",
+        "BoxIndexTests_testUpsert"
     ]
 
     override func setUp() {
@@ -40,6 +48,12 @@ class BoxSpaceIndexTests: TestCase {
 
                 box.schema.user.grant('guest', 'read,write,execute', 'universe')
                 box.schema.user.passwd('admin', 'admin')
+
+                local test = box.schema.space.create('test')
+                test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
+                test:replace({1, 'foo'})
+                test:replace({2, 'bar'})
+                test:replace({3, 'baz'})
                 """ +
                 functions.reduce("") {
                     """
@@ -66,7 +80,7 @@ class BoxSpaceIndexTests: TestCase {
     func testHash() {
         do {
             try iproto.auth(username: "admin", password: "admin")
-            _ = try iproto.call("BoxSpaceIndexTests_testHash")
+            _ = try iproto.call("BoxIndexTests_testHash")
         } catch {
             fail(String(describing: error))
         }
@@ -75,7 +89,7 @@ class BoxSpaceIndexTests: TestCase {
     func testTree() {
         do {
             try iproto.auth(username: "admin", password: "admin")
-            _ = try iproto.call("BoxSpaceIndexTests_testTree")
+            _ = try iproto.call("BoxIndexTests_testTree")
         } catch {
             fail(String(describing: error))
         }
@@ -84,7 +98,7 @@ class BoxSpaceIndexTests: TestCase {
     func testRTree() {
         do {
             try iproto.auth(username: "admin", password: "admin")
-            _ = try iproto.call("BoxSpaceIndexTests_testRTree")
+            _ = try iproto.call("BoxIndexTests_testRTree")
         } catch {
             fail(String(describing: error))
         }
@@ -93,7 +107,7 @@ class BoxSpaceIndexTests: TestCase {
     func testBitset() {
         do {
             try iproto.auth(username: "admin", password: "admin")
-            _ = try iproto.call("BoxSpaceIndexTests_testBitset")
+            _ = try iproto.call("BoxIndexTests_testBitset")
         } catch {
             fail(String(describing: error))
         }
@@ -102,7 +116,7 @@ class BoxSpaceIndexTests: TestCase {
     func testSequence() {
         do {
             try iproto.auth(username: "admin", password: "admin")
-            _ = try iproto.call("BoxSpaceIndexTests_testSequence")
+            _ = try iproto.call("BoxIndexTests_testSequence")
         } catch {
             fail(String(describing: error))
         }
@@ -111,7 +125,71 @@ class BoxSpaceIndexTests: TestCase {
     func testMany() {
         do {
             try iproto.auth(username: "admin", password: "admin")
-            _ = try iproto.call("BoxSpaceIndexTests_testMany")
+            _ = try iproto.call("BoxIndexTests_testMany")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testCount() {
+        do {
+            _ = try iproto.call("BoxIndexTests_testCount")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testSelect() {
+        do {
+            _ = try iproto.call("BoxIndexTests_testSelect")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testGet() {
+        do {
+            _ = try iproto.call("BoxIndexTests_testGet")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testInsert() {
+        do {
+            _ = try iproto.call("BoxIndexTests_testInsert")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testReplace() {
+        do {
+            _ = try iproto.call("BoxIndexTests_testReplace")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testDelete() {
+        do {
+            _ = try iproto.call("BoxIndexTests_testDelete")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testUpdate() {
+        do {
+            _ = try iproto.call("BoxIndexTests_testUpdate")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testUpsert() {
+        do {
+            _ = try iproto.call("BoxIndexTests_testUpsert")
         } catch {
             fail(String(describing: error))
         }
@@ -125,5 +203,13 @@ class BoxSpaceIndexTests: TestCase {
         ("testBitset", testBitset),
         ("testSequence", testSequence),
         ("testMany", testMany),
+        ("testCount", testCount),
+        ("testSelect", testSelect),
+        ("testGet", testGet),
+        ("testInsert", testInsert),
+        ("testReplace", testReplace),
+        ("testDelete", testDelete),
+        ("testUpdate", testUpdate),
+        ("testUpsert", testUpsert),
     ]
 }

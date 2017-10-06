@@ -135,13 +135,13 @@ class BoxSpaceTests: TestCase {
 
 
     static var allTests = [
-        ("BoxSpaceTests_testCount", testCount),
-        ("BoxSpaceTests_testSelect", testSelect),
-        ("BoxSpaceTests_testGet", testGet),
-        ("BoxSpaceTests_testInsert", testInsert),
-        ("BoxSpaceTests_testReplace", testReplace),
-        ("BoxSpaceTests_testDelete", testDelete),
-        ("BoxSpaceTests_testUpdate", testUpdate),
-        ("BoxSpaceTests_testUpsert", testUpsert),
+        ("testCount", testCount),
+        ("testSelect", testSelect),
+        ("testGet", testGet),
+        ("testInsert", testInsert),
+        ("testReplace", testReplace),
+        ("testDelete", testDelete),
+        ("testUpdate", testUpdate),
+        ("testUpsert", testUpsert),
     ]
 }

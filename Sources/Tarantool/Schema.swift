@@ -13,6 +13,7 @@ import MessagePack
 fileprivate let _schema: Int = 272
 fileprivate let _space: Int = 280
 fileprivate let _vspace: Int = 281
+fileprivate let _vindex: Int = 289
 
 fileprivate let admin: Int = 1
 
@@ -23,17 +24,33 @@ public struct Schema<T: DataSource & LuaScript> {
     public init(_ source: T) throws {
         self.source = source
 
-        let sysview = Space(id: _vspace, name: "_vspace", source: source)
-        let tuples = try sysview.select(.all)
+        let indicesView =
+            Space(id: _vindex, name: "_vindex", indices: [], source: source)
 
-        var spaces: [String: Space<T>] = [:]
-        for tuple in tuples {
-            guard let id = Int(tuple[0]),
-                let name = String(tuple[2]) else {
-                    throw TarantoolError.invalidSchema
+        let indices = try indicesView.select(.all)
+            .reduce(into: [Int : [Index<T>]]()) { (result, row) in
+                guard let index =
+                    Index(from: row.rawValue, source: source) else {
+                        throw TarantoolError.invalidIndex
+                }
+                result[index.spaceId, default: []].append(index)
             }
-            spaces[name] = Space(id: id, name: name, source: source)
-        }
+
+        let spacesView =
+            Space(id: _vspace, name: "_vspace", indices: [], source: source)
+
+        let spaces = try spacesView.select(.all)
+            .reduce(into: [String : Space<T>]()) { (result, row) in
+                guard let id = Int(row[0]),
+                    let name = String(row[2]) else {
+                        throw TarantoolError.invalidSchema
+                }
+                result[name] = Space(
+                    id: id,
+                    name: name,
+                    indices: indices[id, default: []],
+                    source: source)
+            }
         self.spaces = spaces
     }
 
@@ -45,8 +62,30 @@ public struct Schema<T: DataSource & LuaScript> {
             let message = "[integer] expected, got \(result)"
             throw TarantoolError.invalidTuple(message: message)
         }
-        let space = Space(id: id, name: name, source: source)
+        let space = Space(id: id, name: name, indices: [], source: source)
         spaces[name] = space
         return space
+    }
+}
+
+extension Index {
+    init?(from messagePack: [MessagePack], source: T) {
+        guard messagePack.count >= 5,
+            let spaceId = Int(messagePack[0]),
+            let id = Int(messagePack[1]),
+            let name = String(messagePack[2]),
+            let typeString = String(messagePack[3]),
+            let type = IndexType(rawValue: typeString),
+            let options = [MessagePack : MessagePack](messagePack[4]),
+            let unique = Bool(options["unique"]) else {
+                return nil
+        }
+        self = Index(
+            spaceId: spaceId,
+            id: id,
+            name: name,
+            type: type,
+            unique: unique,
+            source: source)
     }
 }

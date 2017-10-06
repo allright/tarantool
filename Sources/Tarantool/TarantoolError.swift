@@ -12,6 +12,7 @@ public enum TarantoolError: Error {
     case spaceNotFound
     case indexNotFound
     case invalidSchema
+    case invalidIndex
     case invalidTuple(message: String)
     case notEnoughMemory
     case unexpected(message: String)

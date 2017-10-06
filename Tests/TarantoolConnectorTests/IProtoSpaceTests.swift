@@ -31,8 +31,8 @@ class IProtoSpaceTests: TestCase {
             try tarantool.launch()
 
             let connection = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
-            let space = IProto(connection: connection)
-            let schema = try Schema(space)
+            let iproto = IProto(connection: connection)
+            let schema = try Schema(iproto)
 
             self.space = schema.spaces["test"]
         } catch {

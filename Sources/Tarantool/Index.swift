@@ -8,6 +8,8 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import MessagePack
+
 public enum IndexType: String {
     case hash
     case tree
@@ -22,38 +24,88 @@ public enum IndexFieldType: String {
     case array
 }
 
-public struct Index {
-    let id: Int
-    let name: String
-    let type: IndexType
-    let sequenceId: Int?
-    let unique: Bool
+public struct Index<T: DataSource> {
+    public let spaceId: Int
+    public let id: Int
+    public let name: String
+    public let type: IndexType
+    public let sequenceId: Int?
+    public let isUnique: Bool
 
-    var sequence: Bool {
+    private let source: T
+
+    public var isSequence: Bool {
         return sequenceId != nil
     }
 
     public init(
+        spaceId: Int,
         id: Int,
         name: String,
         type: IndexType,
         sequenceId: Int? = nil,
-        unique: Bool = false
+        unique: Bool = false,
+        source: T
     ) {
+        self.spaceId = spaceId
         self.id = id
         self.name = name
         self.type = type
         self.sequenceId = sequenceId
-        self.unique = unique
+        self.isUnique = unique
+        self.source = source
+    }
+}
+
+extension Index {
+    public func count(
+        iterator: Iterator,
+        keys: [MessagePack] = []
+    ) throws -> Int {
+        return try source.count(spaceId, id, iterator, keys)
+    }
+
+    public func select(
+        iterator: Iterator,
+        keys: [MessagePack] = [],
+        offset: Int = 0,
+        limit: Int = Int.max
+    ) throws -> AnySequence<T.Row> {
+        return try source.select(spaceId, id, iterator, keys, offset, limit)
+    }
+
+    public func get(keys: [MessagePack]) throws -> T.Row? {
+        return try source.get(spaceId, id, keys)
+    }
+
+    public func insert(tuple: [MessagePack]) throws {
+        return try source.insert(spaceId, tuple)
+    }
+
+    public func replace(tuple: [MessagePack]) throws {
+        return try source.replace(spaceId, tuple)
+    }
+
+    public func delete(keys: [MessagePack]) throws {
+        try source.delete(spaceId, id, keys)
+    }
+
+    public func update(keys: [MessagePack], operations: [MessagePack]) throws {
+        try source.update(spaceId, id, keys, operations)
+    }
+
+    public func upsert(tuple: [MessagePack], operations: [MessagePack]) throws {
+        try source.upsert(spaceId, id, tuple, operations)
     }
 }
 
 extension Index: Equatable {
     public static func ==(lhs: Index, rhs: Index) -> Bool {
-        return lhs.id == rhs.id &&
+        return lhs.spaceId == rhs.spaceId &&
+            lhs.id == rhs.id &&
             lhs.name == rhs.name &&
             lhs.type == rhs.type &&
             lhs.sequenceId == rhs.sequenceId &&
-            lhs.unique == rhs.unique
+            lhs.isUnique == rhs.isUnique
     }
 }

@@ -14,33 +14,49 @@ import MessagePack
 public struct Space<T: DataSource & LuaScript> {
     public let id: Int
     public let name: String
+    public var indices: [Index<T>]
 
     let source: T
 
-    public init(id: Int, name: String, source: T) {
+    private let primaryIndex = 0
+
+    public init(id: Int, name: String, indices: [Index<T>], source: T) {
         self.id = id
         self.name = name
+        self.indices = indices
         self.source = source
     }
 
+    public subscript(index id: Int) -> Index<T>? {
+        get {
+            return indices[id]
+        }
+    }
+
+    public subscript(index name: String) -> Index<T>? {
+        get {
+            return indices.first(where: { $0.name == name })
+        }
+    }
+
     public func count(
-        _ iterator: Iterator = .all, keys: [MessagePack] = [], indexId: Int = 0
+        _ iterator: Iterator = .all, keys: [MessagePack] = []
     ) throws -> Int {
-        return try source.count(id, indexId, iterator, keys)
+        return try source.count(id, primaryIndex, iterator, keys)
     }
 
     public func select(
         _ iterator: Iterator,
         keys: [MessagePack] = [],
-        indexId: Int = 0,
         offset: Int = 0,
         limit: Int = Int.max
     ) throws -> AnySequence<T.Row> {
-        return try source.select(id, indexId, iterator, keys, offset, limit)
+        return try source.select(
+            id, primaryIndex, iterator, keys, offset, limit)
     }
 
-    public func get(_ keys: [MessagePack], indexId: Int = 0) throws -> T.Row? {
-        return try source.get(id, indexId, keys)
+    public func get(_ keys: [MessagePack]) throws -> T.Row? {
+        return try source.get(id, primaryIndex, keys)
     }
 
     public func insert(_ tuple: [MessagePack]) throws {
@@ -51,20 +67,20 @@ public struct Space<T: DataSource & LuaScript> {
         try source.replace(id, tuple)
     }
 
-    public func delete(_ keys: [MessagePack], indexId: Int = 0) throws {
-        try source.delete(id, indexId, keys)
+    public func delete(_ keys: [MessagePack]) throws {
+        try source.delete(id, primaryIndex, keys)
     }
 
     public func update(
-        _ keys: [MessagePack], operations: [MessagePack], indexId: Int = 0
+        _ keys: [MessagePack], operations: [MessagePack]
     ) throws {
-        try source.update(id, indexId, keys, operations)
+        try source.update(id, primaryIndex, keys, operations)
     }
 
     public func upsert(
-        _ tuple: [MessagePack], operations: [MessagePack], indexId: Int = 0
+        _ tuple: [MessagePack], operations: [MessagePack]
     ) throws {
-        try source.upsert(id, indexId, tuple, operations)
+        try source.upsert(id, primaryIndex, tuple, operations)
     }
 }
 
