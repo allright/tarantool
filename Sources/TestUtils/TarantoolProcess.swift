@@ -98,7 +98,7 @@ class TarantoolProcess {
         let socket = try Socket()
             .bind(to: "127.0.0.1", port: syncPort)
             .listen()
-        _ = try socket.accept()
+        _ = try socket.accept(deadline: Date(timeIntervalSinceNow: 5))
     }
 
     func terminate() -> Int {
