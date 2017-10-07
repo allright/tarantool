@@ -100,80 +100,64 @@ struct BoxSpaceTests {
 
 @_silgen_name("BoxSpaceTests_testCount")
 public func BoxSpaceTests_testCount(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSpaceTests.testCount()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxSpaceTests_testSelect")
 public func BoxSpaceTests_testSelect(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSpaceTests.testSelect()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxSpaceTests_testGet")
 public func BoxSpaceTests_testGet(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSpaceTests.testGet()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxSpaceTests_testInsert")
 public func BoxSpaceTests_testInsert(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSpaceTests.testInsert()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxSpaceTests_testReplace")
 public func BoxSpaceTests_testReplace(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSpaceTests.testReplace()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxSpaceTests_testDelete")
 public func BoxSpaceTests_testDelete(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSpaceTests.testDelete()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxSpaceTests_testUpdate")
 public func BoxSpaceTests_testUpdate(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSpaceTests.testUpdate()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxSpaceTests_testUpsert")
 public func BoxSpaceTests_testUpsert(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSpaceTests.testUpsert()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }

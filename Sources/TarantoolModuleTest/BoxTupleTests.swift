@@ -47,10 +47,8 @@ struct BoxTupleTests {
 
 @_silgen_name("BoxTupleTests_testUnpackTuple")
 public func BoxTupleTests_testUnpackTuple(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxTupleTests.testUnpackTuple()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
-    return 0
 }

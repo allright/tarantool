@@ -101,80 +101,64 @@ struct BoxDataSourceTests {
 
 @_silgen_name("BoxDataSourceTests_testCount")
 public func BoxDataSourceTests_testCount(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxDataSourceTests.testCount()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testSelect")
 public func BoxDataSourceTests_testSelect(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxDataSourceTests.testSelect()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testGet")
 public func BoxDataSourceTests_testGet(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxDataSourceTests.testGet()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testInsert")
 public func BoxDataSourceTests_testInsert(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxDataSourceTests.testInsert()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testReplace")
 public func BoxDataSourceTests_testReplace(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxDataSourceTests.testReplace()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testDelete")
 public func BoxDataSourceTests_testDelete(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxDataSourceTests.testDelete()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testUpdate")
 public func BoxDataSourceTests_testUpdate(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxDataSourceTests.testUpdate()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testUpsert")
 public func BoxDataSourceTests_testUpsert(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxDataSourceTests.testUpsert()
-        return Box.returnTuple(nil, to: context)
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
 }

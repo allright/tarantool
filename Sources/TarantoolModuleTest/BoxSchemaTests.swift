@@ -59,20 +59,16 @@ struct BoxSchemaTests {
 
 @_silgen_name("BoxSchemaTests_testSchema")
 public func BoxSchemaTests_testSchema(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSchemaTests.testSchema()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
-    return 0
 }
 
 @_silgen_name("BoxSchemaTests_testCreateSpace")
 public func BoxSchemaTests_testCreateSpace(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try BoxSchemaTests.testCreateSpace()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
-    return 0
 }

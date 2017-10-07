@@ -22,7 +22,7 @@ struct BoxTransactionTests {
         return Space(id: testId, name: "test", indices: [], source: Box())
     }()
 
-    static func testTransactionCommit() throws {
+    static func testCommit() throws {
         guard try space.count() == 0 else {
             throw "space is not empty"
         }
@@ -39,7 +39,7 @@ struct BoxTransactionTests {
         }
     }
 
-    static func testTransactionRollback() throws {
+    static func testRollback() throws {
         guard try space.count() == 0 else {
             throw "space is not empty"
         }
@@ -59,7 +59,7 @@ struct BoxTransactionTests {
         }
     }
 
-    static func testGenericTransactionCommit() throws {
+    static func testTCommit() throws {
         guard try space.count() == 0 else {
             throw "space is not empty"
         }
@@ -77,7 +77,7 @@ struct BoxTransactionTests {
         }
     }
 
-    static func testGenericTransactionRollback() throws {
+    static func testTRollback() throws {
         guard try space.count() == 0 else {
             throw "space is not empty"
         }
@@ -109,42 +109,34 @@ struct BoxTransactionTests {
 
 // C API Wrappers
 
-@_silgen_name("BoxTransactionTests_testTransactionCommit")
-public func BoxTransactionTests_testTransactionCommit(context: BoxContext) -> BoxResult {
-    do {
-        try BoxTransactionTests.testTransactionCommit()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+@_silgen_name("BoxTransactionTests_testCommit")
+public func BoxTransactionTests_testCommit(context: BoxContext) -> BoxResult {
+    return Box.convertCall(context) {
+        try BoxTransactionTests.testTCommit()
+        return [true]
     }
-    return 0
 }
 
-@_silgen_name("BoxTransactionTests_testTransactionRollback")
-public func BoxTransactionTests_testTransactionRollback(context: BoxContext) -> BoxResult {
-    do {
-        try BoxTransactionTests.testTransactionRollback()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+@_silgen_name("BoxTransactionTests_testRollback")
+public func BoxTransactionTests_testRollback(context: BoxContext) -> BoxResult {
+    return Box.convertCall(context) {
+        try BoxTransactionTests.testRollback()
+        return [true]
     }
-    return 0
 }
 
-@_silgen_name("BoxTransactionTests_testGenericTransactionCommit")
-public func BoxTransactionTests_testGenericTransactionCommit(context: BoxContext) -> BoxResult {
-    do {
-        try BoxTransactionTests.testGenericTransactionCommit()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+@_silgen_name("BoxTransactionTests_testTCommit")
+public func BoxTransactionTests_testTCommit(context: BoxContext) -> BoxResult {
+    return Box.convertCall(context) {
+        try BoxTransactionTests.testTCommit()
+        return [true]
     }
-    return 0
 }
 
-@_silgen_name("BoxTransactionTests_testGenericTransactionRollback")
-public func BoxTransactionTests_testGenericTransactionRollback(context: BoxContext) -> BoxResult {
-    do {
-        try BoxTransactionTests.testGenericTransactionRollback()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+@_silgen_name("BoxTransactionTests_testTRollback")
+public func BoxTransactionTests_testTRollback(context: BoxContext) -> BoxResult {
+    return Box.convertCall(context) {
+        try BoxTransactionTests.testTRollback()
+        return [true]
     }
-    return 0
 }

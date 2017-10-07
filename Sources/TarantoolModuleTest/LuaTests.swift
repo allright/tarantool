@@ -68,20 +68,16 @@ struct LuaTests {
 
 @_silgen_name("LuaTests_testEval")
 public func LuaTests_testEval(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try LuaTests.testEval()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
-    return 0
 }
 
 @_silgen_name("LuaTests_testPushPop")
 public func LuaTests_testPushPop(context: BoxContext) -> BoxResult {
-    do {
+    return Box.convertCall(context) {
         try LuaTests.testPushPop()
-    } catch {
-        return Box.returnError(code: .procC, message: String(describing: error))
+        return [true]
     }
-    return 0
 }

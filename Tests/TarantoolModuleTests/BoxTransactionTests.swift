@@ -18,10 +18,10 @@ class BoxTransactionTests: TestCase {
     var iproto: IProtoConnection!
 
     let functions: ContiguousArray<String> = [
-        "BoxTransactionTests_testTransactionCommit",
-        "BoxTransactionTests_testTransactionRollback",
-        "BoxTransactionTests_testGenericTransactionCommit",
-        "BoxTransactionTests_testGenericTransactionRollback",
+        "BoxTransactionTests_testCommit",
+        "BoxTransactionTests_testRollback",
+        "BoxTransactionTests_testTCommit",
+        "BoxTransactionTests_testTRollback",
     ]
 
     override func setUp() {
@@ -61,33 +61,33 @@ class BoxTransactionTests: TestCase {
         assertEqual(status, 0)
     }
 
-    func testTransactionCommit() {
+    func testCommit() {
         do {
-            _ = try iproto.call("BoxTransactionTests_testTransactionCommit")
+            _ = try iproto.call("BoxTransactionTests_testCommit")
         } catch {
             fail(String(describing: error))
         }
     }
 
-    func testTransactionRollback() {
+    func testRollback() {
         do {
-            _ = try iproto.call("BoxTransactionTests_testTransactionRollback")
+            _ = try iproto.call("BoxTransactionTests_testRollback")
         } catch {
             fail(String(describing: error))
         }
     }
 
-    func testGenericTransactionCommit() {
+    func testTCommit() {
         do {
-            _ = try iproto.call("BoxTransactionTests_testGenericTransactionCommit")
+            _ = try iproto.call("BoxTransactionTests_testTCommit")
         } catch {
             fail(String(describing: error))
         }
     }
 
-    func testGenericTransactionRollback() {
+    func testTRollback() {
         do {
-            _ = try iproto.call("BoxTransactionTests_testGenericTransactionRollback")
+            _ = try iproto.call("BoxTransactionTests_testTRollback")
         } catch {
             fail(String(describing: error))
         }
@@ -95,9 +95,9 @@ class BoxTransactionTests: TestCase {
 
 
     static var allTests = [
-        ("testTransactionCommit", testTransactionCommit),
-        ("testTransactionRollback", testTransactionRollback),
-        ("testGenericTransactionCommit", testGenericTransactionCommit),
-        ("testGenericTransactionRollback", testGenericTransactionRollback),
+        ("testCommit", testCommit),
+        ("testRollback", testRollback),
+        ("testTCommit", testTCommit),
+        ("testTRollback", testTRollback),
     ]
 }
