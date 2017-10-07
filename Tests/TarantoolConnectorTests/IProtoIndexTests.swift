@@ -40,8 +40,7 @@ class IProtoIndexTests: TestCase {
             let schema = try Schema(iproto)
             self.space = schema.spaces["test"]
         } catch {
-            fail(String(describing: error))
-            return
+            fatalError(String(describing: error))
         }
     }
 

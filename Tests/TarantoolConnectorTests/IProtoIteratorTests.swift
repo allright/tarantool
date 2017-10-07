@@ -41,8 +41,7 @@ class IProtoIteratorTests: TestCase {
             }
             self.testSpaceId = testSpaceId
         } catch {
-            fail(String(describing: error))
-            return
+            fatalError(String(describing: error))
         }
     }
 

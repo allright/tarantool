@@ -52,8 +52,7 @@ class BoxTransactionTests: TestCase {
 
             iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            fail(String(describing: error))
-            return
+            fatalError(String(describing: error))
         }
     }
 
