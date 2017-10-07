@@ -8,6 +8,8 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Stream
+
 fileprivate let headerSize = 64
 fileprivate let saltSize = 44
 fileprivate let size = 128
@@ -20,9 +22,14 @@ struct Welcome {
         return size
     }
 
-    init(from bytes: [UInt8]) throws {
-        self.header = String(slice: bytes.prefix(upTo: headerSize))
-        self.salt = String(slice: bytes[headerSize..<headerSize+saltSize])
+    init<T: InputStream>(from stream: T) throws {
+        var buffer = [UInt8](repeating: 0, count: Welcome.packetSize)
+        guard try stream.read(to: &buffer) == Welcome.packetSize else {
+            throw IProtoError.invalidWelcome(reason: .invalidSize)
+        }
+
+        self.header = String(slice: buffer.prefix(upTo: headerSize))
+        self.salt = String(slice: buffer[headerSize..<headerSize+saltSize])
 
         guard header.hasPrefix("Tarantool") else {
             throw IProtoError.invalidWelcome(reason: .invalidHeader)

@@ -13,6 +13,7 @@ public enum IProtoError: Error {
     case invalidSalt
     case invalidPacket(reason: IProtoPacketError)
     case badRequest(code: Int, message: String)
+    case streamWriteFailed
 }
 
 public enum IProtoPacketError {

@@ -8,6 +8,8 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Stream
+
 struct IProtoMessage {
     let code: Code
     let sync: Int?
@@ -37,7 +39,7 @@ struct IProtoMessage {
 //                            MP_MAP
 
 extension IProtoMessage {
-    func encode(to bytes: inout [UInt8]) throws {
+    func encode<T: OutputStream>(to stream: T) throws {
         // header
         var header: Map = [:]
         header[Key.code.rawValue] = code.rawValue
@@ -59,15 +61,23 @@ extension IProtoMessage {
         try encoder.encode(body)
 
         // body + header size
-        let size = try HeaderLength(encoder.stream.bytes.count).bytes
-        bytes.append(contentsOf: size)
-        bytes.append(contentsOf: encoder.stream.bytes)
+        let packet = encoder.stream.bytes
+        let size = try HeaderLength.pack(packet.count)
+        guard try stream.write(size) == size.count,
+            try stream.write(packet) == packet.count else {
+                throw IProtoError.streamWriteFailed
+        }
     }
 }
 
 extension IProtoMessage {
-    init(from bytes: [UInt8]) throws {
-        var decoder = MessagePackReader(InputByteStream(bytes))
+    init<T: InputStream>(from stream: T) throws {
+        var decoder = MessagePackReader(stream)
+        let size = try decoder.decode(Int.self)
+        // we don't actually need the size because of stream
+        guard size > 0 else {
+            throw IProtoError.invalidPacket(reason: .invalidSize)
+        }
 
         guard let header =
             try? decoder.decode([MessagePack : MessagePack].self),

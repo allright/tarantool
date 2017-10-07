@@ -9,9 +9,10 @@
  */
 
 struct HeaderLength {
-    let value: Int
-
-    var bytes: [UInt8] {
+    static func pack(_ value: Int) throws -> [UInt8] {
+        guard value <= Int(Int32.max) else {
+            throw IProtoError.invalidPacket(reason: .invalidSize)
+        }
         var bytes = [UInt8](repeating: 0, count: 5)
         bytes[0] = 0xce
         bytes[1] = UInt8(truncatingIfNeeded: value >> 24)
@@ -21,14 +22,7 @@ struct HeaderLength {
         return bytes
     }
 
-    init(_ value: Int) throws {
-        guard value <= Int(Int32.max) else {
-            throw IProtoError.invalidPacket(reason: .invalidSize)
-        }
-        self.value = value
-    }
-
-    init(bytes: [UInt8]) throws {
+    static func unpack(bytes: [UInt8]) throws -> Int {
         guard bytes[0] == 0xce else {
             throw MessagePackError.invalidData
         }
@@ -42,6 +36,6 @@ struct HeaderLength {
         let byte3 = Int(bytes[3]) << 8
         let byte4 = Int(bytes[4])
 
-        self.value = byte1 | byte2 | byte3 | byte4
+        return byte1 | byte2 | byte3 | byte4
     }
 }
