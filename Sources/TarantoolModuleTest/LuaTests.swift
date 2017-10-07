@@ -40,6 +40,28 @@ struct LuaTests {
         let empty = try Lua.eval("local var = 'empty stack'")
         try assertEqualThrows(empty, [])
     }
+
+    static func testPushPop() throws {
+        try Lua.withNewStack { L in
+            try Lua.push(values: [.int(1), .int(2), .int(3)], to: L)
+            let one2Three = try Lua.popValues(from: L)
+            try assertEqualThrows(one2Three, [.int(1), .int(2), .int(3)])
+
+            try Lua.push(value: .int(1), to: L)
+            try Lua.push(value: .int(2), to: L)
+            try Lua.push(value: .int(3), to: L)
+
+            guard let one = try Lua.popFirst(from: L) else {
+                throw "value not found"
+            }
+            try assertEqualThrows(one, .int(1))
+
+            guard let three = try Lua.popLast(from: L) else {
+                throw "value not found"
+            }
+            try assertEqualThrows(three, .int(3))
+        }
+    }
 }
 
 // C API Wrappers
@@ -48,6 +70,16 @@ struct LuaTests {
 public func LuaTests_testEval(context: BoxContext) -> BoxResult {
     do {
         try LuaTests.testEval()
+    } catch {
+        return Box.returnError(code: .procC, message: String(describing: error))
+    }
+    return 0
+}
+
+@_silgen_name("LuaTests_testPushPop")
+public func LuaTests_testPushPop(context: BoxContext) -> BoxResult {
+    do {
+        try LuaTests.testPushPop()
     } catch {
         return Box.returnError(code: .procC, message: String(describing: error))
     }

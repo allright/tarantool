@@ -19,6 +19,7 @@ class LuaTests: TestCase {
 
     let functions: ContiguousArray<String> = [
         "LuaTests_testEval",
+        "LuaTests_testPushPop"
     ]
 
     override func setUp() {
@@ -64,8 +65,17 @@ class LuaTests: TestCase {
         }
     }
 
+    func testPushPop() {
+        do {
+            _ = try iproto.call("LuaTests_testPushPop")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
 
     static var allTests = [
         ("testEval", testEval),
+        ("testPushPop", testPushPop),
     ]
 }

@@ -58,7 +58,7 @@ public struct Lua {
         _ expression: String,
         _ arguments: [MessagePack] = []
     ) throws -> [MessagePack] {
-        return try withLuaStack { L in
+        return try withNewStack { L in
             guard _luaL_loadbuffer(
                 L, expression, expression.utf8.count, "=eval") == 0 else {
                     throw LuaError(L)
@@ -72,7 +72,7 @@ public struct Lua {
         }
     }
 
-    private static func withLuaStack<T>(
+    public static func withNewStack<T>(
         _ task: (OpaquePointer) throws -> T
     ) throws -> T {
         let tarantool_L = _luaT_state()!
@@ -84,7 +84,7 @@ public struct Lua {
         return try task(L)
     }
 
-    private static func push(
+    public static func push(
         values: [MessagePack],
         to L: OpaquePointer
     ) throws {
@@ -93,7 +93,7 @@ public struct Lua {
         }
     }
 
-    private static func push(value: MessagePack, to L: OpaquePointer) throws {
+    public static func push(value: MessagePack, to L: OpaquePointer) throws {
         switch value {
         case .nil:
             _lua_pushnil(L)
@@ -129,7 +129,7 @@ public struct Lua {
         }
     }
 
-    private static func popValues(
+    public static func popValues(
         from L: OpaquePointer
     ) throws -> [MessagePack] {
         let top = _lua_gettop(L)
@@ -177,5 +177,25 @@ public struct Lua {
         default:
             throw LuaError(message: "return type \(type) is not supported")
         }
+    }
+
+    public static func popFirst(from L: OpaquePointer) throws -> MessagePack? {
+        let top = _lua_gettop(L)
+        guard top > 0 else {
+            return nil
+        }
+        let result = try pop(from: L, at: 1)
+        _lua_remove(L, 1)
+        return result
+    }
+
+    public static func popLast(from L: OpaquePointer) throws -> MessagePack? {
+        let top = _lua_gettop(L)
+        guard top > 0 else {
+            return nil
+        }
+        let result = try pop(from: L, at: top)
+        _lua_settop(L, -1)
+        return result
     }
 }
