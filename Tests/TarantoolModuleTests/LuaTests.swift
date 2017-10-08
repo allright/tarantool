@@ -54,7 +54,11 @@ class LuaTests: TestCase {
 
     override func tearDown() {
         let status = tarantool.terminate()
-        assertEqual(status, 0)
+        defer { tarantool.cleanup() }
+        guard status == 0 else {
+            fail(tarantool.log ?? "")
+            return
+        }
     }
 
     func testEval() {

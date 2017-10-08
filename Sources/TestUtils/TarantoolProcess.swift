@@ -16,9 +16,10 @@ extension String: Error {}
 
 class TarantoolProcess {
     let process = Process()
-    fileprivate let syncPort: UInt16
     let port: UInt16
     let script: String
+
+    private let syncPort: UInt16
 
     var temp: URL = {
         return URL(fileURLWithPath: NSTemporaryDirectory())
@@ -33,10 +34,23 @@ class TarantoolProcess {
         return process.isRunning
     }
 
+    var log: String? {
+        let logUrl = temp.appendingPathComponent("tarantool.log")
+        guard let data = try? Data(contentsOf: logUrl),
+            let log = String(data: data, encoding: .utf8) else {
+                return nil
+        }
+        return log
+    }
+
     init(with script: String = "") throws {
         self.syncPort = UInt16(arc4random_uniform(64_000)) + 1_500
         self.port = UInt16(arc4random_uniform(64_000)) + 1_500
         self.script = script
+    }
+
+    deinit {
+        cleanup()
     }
 
     func launch() throws {
@@ -44,7 +58,7 @@ class TarantoolProcess {
         let script = """
             box.cfg{
               listen=\(port),
-              log_level=1,
+              log='\(temp.path)/tarantool.log',
               memtx_dir='\(temp.path)',
               wal_dir='\(temp.path)',
               vinyl_dir='\(temp.path)',
@@ -82,9 +96,6 @@ class TarantoolProcess {
             throw "\(process.launchPath!) doesn't exist"
         }
 
-        let outputPipe = Pipe()
-        process.standardOutput = outputPipe
-        process.standardInput = Pipe()
         process.launch()
 
         try waitForConnect()
@@ -108,7 +119,10 @@ class TarantoolProcess {
             try? FileManager.default.removeItem(at: lock)
             process.waitUntilExit()
         }
-        try? FileManager.default.removeItem(at: temp)
         return Int(process.terminationStatus)
+    }
+
+    func cleanup() {
+        try? FileManager.default.removeItem(at: temp)
     }
 }
