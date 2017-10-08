@@ -46,7 +46,7 @@ struct BoxTupleTests {
 // C API Wrappers
 
 @_silgen_name("BoxTupleTests_testUnpackTuple")
-public func BoxTupleTests_testUnpackTuple(context: BoxContext) -> BoxResult {
+public func BoxTupleTests_testUnpackTuple(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxTupleTests.testUnpackTuple()
     }

@@ -99,56 +99,56 @@ struct BoxSpaceTests {
 // C API Wrappers
 
 @_silgen_name("BoxSpaceTests_testCount")
-public func BoxSpaceTests_testCount(context: BoxContext) -> BoxResult {
+public func BoxSpaceTests_testCount(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testCount()
     }
 }
 
 @_silgen_name("BoxSpaceTests_testSelect")
-public func BoxSpaceTests_testSelect(context: BoxContext) -> BoxResult {
+public func BoxSpaceTests_testSelect(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testSelect()
     }
 }
 
 @_silgen_name("BoxSpaceTests_testGet")
-public func BoxSpaceTests_testGet(context: BoxContext) -> BoxResult {
+public func BoxSpaceTests_testGet(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testGet()
     }
 }
 
 @_silgen_name("BoxSpaceTests_testInsert")
-public func BoxSpaceTests_testInsert(context: BoxContext) -> BoxResult {
+public func BoxSpaceTests_testInsert(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testInsert()
     }
 }
 
 @_silgen_name("BoxSpaceTests_testReplace")
-public func BoxSpaceTests_testReplace(context: BoxContext) -> BoxResult {
+public func BoxSpaceTests_testReplace(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testReplace()
     }
 }
 
 @_silgen_name("BoxSpaceTests_testDelete")
-public func BoxSpaceTests_testDelete(context: BoxContext) -> BoxResult {
+public func BoxSpaceTests_testDelete(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testDelete()
     }
 }
 
 @_silgen_name("BoxSpaceTests_testUpdate")
-public func BoxSpaceTests_testUpdate(context: BoxContext) -> BoxResult {
+public func BoxSpaceTests_testUpdate(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testUpdate()
     }
 }
 
 @_silgen_name("BoxSpaceTests_testUpsert")
-public func BoxSpaceTests_testUpsert(context: BoxContext) -> BoxResult {
+public func BoxSpaceTests_testUpsert(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testUpsert()
     }

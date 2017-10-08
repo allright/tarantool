@@ -50,7 +50,7 @@ struct DispatchTests {
 // C API Wrappers
 
 @_silgen_name("DispatchTests_testSyncTask")
-public func DispatchTests_testSyncTask(context: BoxContext) -> BoxResult {
+public func DispatchTests_testSyncTask(context: Box.Context) -> Box.Result {
     return Box.execute {
         try DispatchTests.testSyncTask()
     }

@@ -58,14 +58,14 @@ struct BoxSchemaTests {
 // C API Wrappers
 
 @_silgen_name("BoxSchemaTests_testSchema")
-public func BoxSchemaTests_testSchema(context: BoxContext) -> BoxResult {
+public func BoxSchemaTests_testSchema(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSchemaTests.testSchema()
     }
 }
 
 @_silgen_name("BoxSchemaTests_testCreateSpace")
-public func BoxSchemaTests_testCreateSpace(context: BoxContext) -> BoxResult {
+public func BoxSchemaTests_testCreateSpace(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSchemaTests.testCreateSpace()
     }

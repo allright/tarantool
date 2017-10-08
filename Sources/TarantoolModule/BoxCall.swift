@@ -12,9 +12,6 @@ import CTarantool
 import Stream
 import MessagePack
 
-public typealias BoxResult = Int32
-public typealias BoxContext = OpaquePointer
-
 public struct Output {
     let context: OpaquePointer
 
@@ -32,9 +29,12 @@ public struct Output {
 }
 
 extension Box {
+    public typealias Context = OpaquePointer
+    public typealias Result = Int32
+
     @inline(__always)
     public // @testable
-    static func execute(_ task: () throws -> Void) -> BoxResult {
+    static func execute(_ task: () throws -> Void) -> Result {
         do {
             try task()
             return 0
@@ -47,20 +47,20 @@ extension Box {
     }
 
     public static func convertCall(
-        _ context: BoxContext,
+        _ context: Context,
         _ task: (Output) throws -> Void
-    ) -> BoxResult {
+    ) -> Result {
         return execute {
             try task(Output(context: context))
         }
     }
 
     public static func convertCall(
-        _ context: BoxContext,
+        _ context: Context,
         _ arguments: UnsafeRawPointer,
         _ argumentsEnd: UnsafeRawPointer,
         _ task: ([MessagePack], Output) throws -> Void
-    ) -> BoxResult {
+    ) -> Result {
         return execute {
             let arguments = try [MessagePack](arguments, argumentsEnd)
             try task(arguments, Output(context: context))
@@ -68,14 +68,14 @@ extension Box {
     }
 
     public static func returnTuple(
-        _ tuple: BoxTuple, to context: BoxContext
-    ) -> Int32 {
+        _ tuple: BoxTuple, to context: Context
+    ) -> Result {
         return _box_return_tuple(context, tuple.pointer)
     }
 
     public static func returnTuple(
-        _ tuple: [MessagePack], to context: BoxContext
-    ) -> Int32 {
+        _ tuple: [MessagePack], to context: Context
+    ) -> Result {
         var writer = MessagePackWriter(OutputByteStream())
         do {
             try writer.encode(tuple)
@@ -97,7 +97,7 @@ extension Box {
         message: String,
         file: String = #file,
         line: Int = #line
-    ) -> BoxResult {
+    ) -> Result {
         return box_error_set_wrapper(file, UInt32(line), code.rawValue, message)
     }
 }
