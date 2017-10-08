@@ -11,7 +11,7 @@
 import CTarantool
 import MessagePack
 
-enum TableType: String {
+public enum TableType: String {
     case array = "seq"
     case map = "map"
 }
@@ -50,7 +50,7 @@ extension Lua {
         return index
     }
 
-    func setTypeHint(forTableAt index: Int, type: TableType) {
+    public func setTypeHint(forTableAt index: Int, type: TableType) {
         let index = calculateIndex(index)
         assert(self.type(at: index) == LUA_TTABLE)
         switch type {
@@ -60,7 +60,7 @@ extension Lua {
         setMetatable(forTableAt: index)
     }
 
-    func getTypeHint(forTableAt index: Int) throws -> TableType? {
+    public func getTypeHint(forTableAt index: Int) throws -> TableType? {
         guard getMetadataField(at: index, name: serializeMetaField) != 0 else {
             return nil
         }
