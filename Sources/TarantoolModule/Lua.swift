@@ -29,7 +29,7 @@ extension Lua {
 public struct Lua {
     public let L: OpaquePointer
 
-    init(stack L: OpaquePointer) {
+    public init(stack L: OpaquePointer) {
         self.L = L
     }
 
