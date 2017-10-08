@@ -17,13 +17,13 @@ import Foundation
 
 public class IProtoConnection {
     let socket: Socket
-    let stream: BufferedStream<NetworkStream>
+    var stream: BufferedStream<NetworkStream>
     let welcome: Welcome
 
     public init(host: String, port: UInt16 = 3301) throws {
         socket = try Socket().connect(to: host, port: port)
         stream = BufferedStream(stream: NetworkStream(socket: socket))
-        welcome = try Welcome(from: stream)
+        welcome = try Welcome(from: &stream)
     }
 
     deinit {
@@ -43,7 +43,7 @@ public class IProtoConnection {
             body: keys
         )
 
-        try request.encode(to: stream)
+        try request.encode(to: &stream)
         try stream.flush()
 
         let response = try IProtoMessage(from: stream)

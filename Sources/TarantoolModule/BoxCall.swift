@@ -9,6 +9,7 @@
  */
 
 import CTarantool
+import Stream
 import MessagePack
 
 public typealias BoxResult = Int32
@@ -110,7 +111,7 @@ extension Box {
 
 extension Array where Element == MessagePack {
     init(_ start: UnsafeRawPointer, _ end: UnsafeRawPointer) throws {
-        var reader = MessagePackReader(InputRawStream(
+        var reader = MessagePackReader(UnsafeRawInputStream(
             pointer: start, count: end - start))
         self = try reader.decode([MessagePack].self)
     }

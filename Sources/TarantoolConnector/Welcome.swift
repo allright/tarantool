@@ -22,7 +22,7 @@ struct Welcome {
         return size
     }
 
-    init<T: InputStream>(from stream: T) throws {
+    init<T: InputStream>(from stream: inout T) throws {
         var buffer = [UInt8](repeating: 0, count: Welcome.packetSize)
         guard try stream.read(to: &buffer) == Welcome.packetSize else {
             throw IProtoError.invalidWelcome(reason: .invalidSize)

@@ -39,7 +39,7 @@ struct IProtoMessage {
 //                            MP_MAP
 
 extension IProtoMessage {
-    func encode<T: OutputStream>(to stream: T) throws {
+    func encode<T: OutputStream>(to stream: inout T) throws {
         // header
         var header: Map = [:]
         header[Key.code.rawValue] = code.rawValue

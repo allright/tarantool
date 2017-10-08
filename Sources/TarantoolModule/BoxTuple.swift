@@ -13,28 +13,6 @@ import Tarantool
 import CTarantool
 import MessagePack
 
-public final class InputRawStream: InputStream {
-    var pointer: UnsafeRawPointer
-    let count: Int
-    var position: Int
-
-    public init(pointer: UnsafeRawPointer, count: Int) {
-        self.pointer = pointer
-        self.count = count
-        self.position = 0
-    }
-
-    public func read(to buffer: UnsafeMutableRawBufferPointer) throws -> Int {
-        guard position + buffer.count <= count else {
-            throw MessagePackError.insufficientData
-        }
-        buffer.copyBytes(from: UnsafeRawBufferPointer(
-            start: pointer.advanced(by: position), count: buffer.count))
-        position += buffer.count
-        return buffer.count
-    }
-}
-
 public final class BoxTuple: Tuple {
     let pointer: OpaquePointer
 
@@ -77,7 +55,7 @@ public final class BoxTuple: Tuple {
             return nil
         }
         var decoder = MessagePackReader(
-            InputRawStream(pointer: field, count: getFieldMaxSize(field)))
+            UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
         return try? decoder.decode()
     }
 }
@@ -113,7 +91,7 @@ extension BoxTuple: RawRepresentable {
             let tupleEnd = first + size
             first.withMemoryRebound(to: UInt8.self, capacity: size) { pointer in
                 var decoder = MessagePackReader(
-                    InputRawStream(pointer: pointer, count: size))
+                    UnsafeRawInputStream(pointer: pointer, count: size))
                 tuple.append(try! decoder.decode())
             }
 
@@ -124,7 +102,7 @@ extension BoxTuple: RawRepresentable {
                     to: UInt8.self, capacity: fieldSize
                 ) { pointer in
                     var decoder = MessagePackReader(
-                        InputRawStream(pointer: pointer, count: size))
+                        UnsafeRawInputStream(pointer: pointer, count: size))
                     tuple.append(try! decoder.decode())
                 }
             }
@@ -140,7 +118,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = MessagePackReader(
-            InputRawStream(pointer: field, count: getFieldMaxSize(field)))
+            UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
         return try? decoder.decode(Bool.self)
     }
 
@@ -149,7 +127,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = MessagePackReader(
-            InputRawStream(pointer: field, count: getFieldMaxSize(field)))
+            UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
         return try? decoder.decode(Int.self)
     }
 
@@ -158,7 +136,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = MessagePackReader(
-            InputRawStream(pointer: field, count: getFieldMaxSize(field)))
+            UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
         return try? decoder.decode(UInt.self)
     }
 
@@ -167,7 +145,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = MessagePackReader(
-            InputRawStream(pointer: field, count: getFieldMaxSize(field)))
+            UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
         return try? decoder.decode(Float.self)
     }
 
@@ -176,7 +154,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = MessagePackReader(
-            InputRawStream(pointer: field, count: getFieldMaxSize(field)))
+            UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
         return try? decoder.decode(Double.self)
     }
 
@@ -185,7 +163,7 @@ extension BoxTuple {
             return nil
         }
         var decoder = MessagePackReader(
-            InputRawStream(pointer: field, count: getFieldMaxSize(field)))
+            UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
         return try? decoder.decode(String.self)
     }
 }
