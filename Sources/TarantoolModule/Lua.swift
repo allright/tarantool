@@ -9,71 +9,12 @@
  */
 
 import CTarantool
-import MessagePack
 
-public struct LuaError: Error {
-    public let code: Int?
-    public let message: String
-}
-
-extension LuaError {
-    init(message: String) {
-        self.code = nil
-        self.message = message
-    }
-}
-
-extension LuaError {
-    fileprivate init(_ L: OpaquePointer) {
-        // standart lua error
-        if let pointer = _lua_tolstring(L, -1, nil) {
-            self.code = nil
-            self.message = String(cString: pointer)
-            return
-        }
-
-        // tarantool error
-        if let errorPointer = _box_error_last(),
-            let messagePointer = _box_error_message(errorPointer) {
-            self.code = Int(_box_error_code(errorPointer))
-            self.message = String(cString: messagePointer)
-            return
-        }
-
-        self.code = nil
-        self.message = "unknown"
-    }
-}
-
-public struct Lua {
-    public static func call(
-        _ function: String,
-        _ arguments: [MessagePack] = []
-    ) throws -> [MessagePack] {
-        // TODO:
-        throw LuaError(message: "call is not yet implemented")
-    }
-
-    public static func eval(
-        _ expression: String,
-        _ arguments: [MessagePack] = []
-    ) throws -> [MessagePack] {
-        return try withNewStack { L in
-            guard _luaL_loadbuffer(
-                L, expression, expression.utf8.count, "=eval") == 0 else {
-                    throw LuaError(L)
-            }
-            _luaL_checkstack(L, Int32(arguments.count), "eval: out of stack")
-            try push(values: arguments, to: L)
-            guard _luaT_call(L, Int32(arguments.count), LUA_MULTRET) == 0 else {
-                throw LuaError(L)
-            }
-            return try popValues(from: L)
-        }
-    }
-
+extension Lua {
+    // Allocates a new Lua thread on top of Taranool state.
+    // This means that all Tarantool's modules/values are visible from it.
     public static func withNewStack<T>(
-        _ task: (OpaquePointer) throws -> T
+        _ task: (Lua) throws -> T
     ) throws -> T {
         let tarantool_L = _luaT_state()!
         guard let L = _lua_newthread(tarantool_L) else {
@@ -81,121 +22,214 @@ public struct Lua {
         }
         let coro_ref = _luaL_ref(tarantool_L, LUA_REGISTRYINDEX)
         defer { _luaL_unref(tarantool_L, LUA_REGISTRYINDEX, coro_ref) }
-        return try task(L)
+        return try task(Lua(stack: L))
+    }
+}
+
+public struct Lua {
+    public let L: OpaquePointer
+
+    init(stack L: OpaquePointer) {
+        self.L = L
     }
 
-    public static func push(
-        values: [MessagePack],
-        to L: OpaquePointer
+    public var top: Int {
+        get {
+            return Int(_lua_gettop(L))
+        }
+        nonmutating set {
+            _lua_settop(L, Int32(newValue))
+        }
+    }
+
+    public typealias FieldType = Int32
+
+    public func type(at index: Int) -> FieldType {
+        return _lua_type(L, Int32(index))
+    }
+
+    public func pop(count: Int) {
+        top = -(count + 1)
+    }
+
+    public func pushValue(at index: Int) {
+        _lua_pushvalue(L, Int32(index))
+    }
+
+    public func remove(at index: Int) {
+        _lua_remove(L, Int32(index))
+    }
+
+    public func createTable(
+        arrayElementsCount: Int = 0,
+        hashElementsCount: Int = 0
+    ) {
+        _lua_createtable(L, Int32(arrayElementsCount), Int32(hashElementsCount))
+    }
+
+    public func rawGet(fromTableAt index: Int) {
+        _lua_rawget(L, Int32(index))
+    }
+
+    public func rawSet(toTableAt index: Int) {
+        _lua_rawset(L, Int32(index))
+    }
+
+    public func rawGet(fromTableAt index: Int, at offset: Int) {
+        _lua_rawgeti(L, Int32(index), Int32(offset))
+    }
+
+    public func rawSet(toTableAt index: Int, at offset: Int) {
+        _lua_rawseti(L, Int32(index), Int32(offset))
+    }
+
+    public func next(at index: Int) -> Bool {
+        return _lua_next(L, Int32(index)) != 0
+    }
+
+    public func checkStack(size: Int, error: String) {
+        _luaL_checkstack(L, Int32(size), error)
+    }
+
+    public func setField(toTableAt index: Int, name: String) {
+        _lua_setfield(L, Int32(index), name)
+    }
+
+    public func getField(fromTableAt index: Int, name: String) {
+        _lua_getfield(L, Int32(index), name)
+    }
+
+    public func ref(inTableAt table: Int) -> Int {
+        return Int(_luaL_ref(L, Int32(table)))
+    }
+
+    public func unref(inTableAt table: Int, ref: Int) {
+        return _luaL_unref(L, Int32(table), Int32(ref))
+    }
+
+    public func getMetadataField(at index: Int, name: String) -> FieldType {
+        return _luaL_getmetafield(L, Int32(index), name)
+    }
+
+    public func getMetatable(forTableAt index: Int) -> Int {
+        return Int(_lua_getmetatable(L, Int32(index)))
+    }
+
+    public func setMetatable(forTableAt index: Int) {
+        _ = _lua_setmetatable(L, Int32(index))
+    }
+
+    public func load(string: String) throws {
+        guard _luaL_loadstring(L, string) == 0 else {
+            throw LuaError(L)
+        }
+    }
+
+    public func load(string: String, name: String) throws {
+        try string.withCString { pointer in
+            let count = strlen(pointer)
+            guard _luaL_loadbuffer(L, pointer, count, name) == 0 else {
+                throw LuaError(L)
+            }
+        }
+    }
+
+    public func call(
+        argumentsCount: Int,
+        returnCount: Int = Int(LUA_MULTRET)
     ) throws {
-        for value in values {
-            try push(value: value, to: L)
+        guard _luaT_call(L, Int32(argumentsCount), Int32(returnCount)) == 0
+            else {
+                throw LuaError(L)
         }
     }
+}
 
-    public static func push(value: MessagePack, to L: OpaquePointer) throws {
-        switch value {
-        case .nil:
-            _lua_pushnil(L)
-        case .bool(let value):
-            _lua_pushboolean(L, value ? 1 : 0)
-        case .int(let value):
-            _lua_pushnumber(L, Double(value))
-        case .uint(let value):
-            _lua_pushnumber(L, Double(value))
-        case .float(let value):
-            _lua_pushnumber(L, Double(value))
-        case .double(let value):
-            _lua_pushnumber(L, value)
-        case .string(let value):
-            _lua_pushstring(L, value)
-        case .array(let array):
-            let count = Int32(array.count)
-            _lua_createtable(L, count, 0)
-            for i in 1...count {
-                try push(value: value, to: L)
-                _lua_rawseti(L, -2, i)
-            }
-        case .map(let map):
-            let count = Int32(map.count)
-            _lua_createtable(L, 0, count)
-            for (key, value) in map {
-                try push(value: key, to: L)
-                try push(value: value, to: L)
-                _lua_settable(L, -3)
-            }
-        default:
-            throw LuaError(message: "argument type \(value) is not supported")
-        }
+extension Lua {
+    public enum Index: Int {
+        case registry = -10000
+        case environ = -10001
+        case globals = -10002
     }
 
-    public static func popValues(
-        from L: OpaquePointer
-    ) throws -> [MessagePack] {
-        let top = _lua_gettop(L)
-        guard top > 0 else {
-            return []
-        }
-        var result = [MessagePack]()
-        for i in 1...top {
-            result.append(try pop(from: L, at: i))
-        }
-        return result
+    public func getField(from index: Index, name: String) {
+        getField(fromTableAt: index.rawValue, name: name)
     }
 
-    private static func pop(
-        from L: OpaquePointer,
-        at index: Int32
-    ) throws -> MessagePack {
-        let type = _lua_type(L, index)
-        switch type {
-        case LUA_TNIL:
-            return .nil
-        case LUA_TNUMBER:
-            let double = _lua_tonumber(L, index)
-            guard double.truncatingRemainder(dividingBy: 1) != 0 else {
-                return .int(_lua_tointeger(L, index))
-            }
-            return .double(double)
-        case LUA_TBOOLEAN:
-            return .bool(_lua_toboolean(L, index) == 1)
-        case LUA_TSTRING:
-            let pointer = _lua_tolstring(L, index, nil)!
-            return .string(String(cString: pointer))
-        case LUA_TTABLE:
-            var map = Map()
-            _lua_pushnil(L)
-            while _lua_next(L, index) != 0 {
-                _lua_pushvalue(L, -2)
-                let key = try pop(from: L, at: _lua_gettop(L))
-                _lua_settop(L, -2)
-                let value = try pop(from: L, at: _lua_gettop(L))
-                _lua_settop(L, -2)
-                map[key] = value
-            }
-            return .map(map)
-        default:
-            throw LuaError(message: "return type \(type) is not supported")
-        }
+    public func ref(at index: Index) -> Int {
+        return ref(inTableAt: index.rawValue)
     }
 
-    public static func popFirst(from L: OpaquePointer) throws -> MessagePack? {
-        let top = _lua_gettop(L)
-        guard top > 0 else {
-            return nil
-        }
-        let result = try pop(from: L, at: 1)
-        _lua_remove(L, 1)
-        return result
+    public func rawGet(from index: Index) {
+        rawGet(fromTableAt: index.rawValue)
     }
 
-    public static func popLast(from L: OpaquePointer) throws -> MessagePack? {
-        let top = _lua_gettop(L)
-        guard top > 0 else {
-            return nil
-        }
-        let result = try pop(from: L, at: top)
-        _lua_settop(L, -1)
-        return result
+    public func rawSet(to index: Index) {
+        rawSet(toTableAt: index.rawValue)
+    }
+
+    public func rawGet(from index: Index, at offset: Int) {
+        rawGet(fromTableAt: index.rawValue, at: offset)
+    }
+
+    public func rawSet(to index: Index, at offset: Int) {
+        rawSet(toTableAt: index.rawValue, at: offset)
+    }
+}
+
+extension Lua {
+    public func pushNil() {
+        _lua_pushnil(L)
+    }
+
+    public func push(_ value: Bool) {
+        _lua_pushboolean(L, value ? 1 : 0)
+    }
+
+    public func push(_ value: Int) {
+        _lua_pushinteger(L, value)
+    }
+
+    public func push(_ value: UInt) {
+        _lua_pushinteger(L, Int(bitPattern: value))
+    }
+
+    public func push(_ value: Float) {
+        _lua_pushnumber(L, Double(value))
+    }
+
+    public func push(_ value: Double) {
+        _lua_pushnumber(L, value)
+    }
+
+    public func push(_ value: String) {
+        _lua_pushstring(L, value)
+    }
+}
+
+extension Lua {
+    public func get(_ value: Bool.Type, at index: Int) -> Bool {
+        return _lua_toboolean(L, Int32(index)) == 1
+    }
+
+    public func get(_ value: Int.Type, at index: Int) -> Int {
+        return _lua_tointeger(L, Int32(index))
+    }
+
+    public func get(_ value: UInt.Type, at index: Int) -> UInt {
+        return UInt(bitPattern: _lua_tointeger(L, Int32(index)))
+    }
+
+    public func get(_ value: Float.Type, at index: Int) -> Float {
+        return Float(_lua_tonumber(L, Int32(index)))
+    }
+
+    public func get(_ value: Double.Type, at index: Int) -> Double {
+        return _lua_tonumber(L, Int32(index))
+    }
+
+    public func get(_ value: String.Type, at index: Int) -> String {
+        let pointer = _lua_tolstring(L, Int32(index), nil)!
+        return String(cString: pointer)
     }
 }

@@ -19,7 +19,10 @@ class LuaTests: TestCase {
 
     let functions: ContiguousArray<String> = [
         "LuaTests_testEval",
-        "LuaTests_testPushPop"
+        "LuaTests_testPushPop",
+        "LuaTests_testPushPopMany",
+        "LuaTests_testPushPopArray",
+        "LuaTests_testPushPopMap"
     ]
 
     override func setUp() {
@@ -71,7 +74,31 @@ class LuaTests: TestCase {
 
     func testPushPop() {
         do {
-            _ = try iproto.call("LuaTests_testPushPop")
+             _ = try iproto.call("LuaTests_testPushPop")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testPushPopMany() {
+        do {
+            _ = try iproto.call("LuaTests_testPushPopMany")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testPushPopArray() {
+        do {
+            _ = try iproto.call("LuaTests_testPushPopArray")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testPushPopMap() {
+        do {
+            _ = try iproto.call("LuaTests_testPushPopMap")
         } catch {
             fail(String(describing: error))
         }
@@ -81,5 +108,8 @@ class LuaTests: TestCase {
     static var allTests = [
         ("testEval", testEval),
         ("testPushPop", testPushPop),
+        ("testPushPopMany", testPushPopMany),
+        ("testPushPopArray", testPushPopArray),
+        ("testPushPopMap", testPushPopMap),
     ]
 }

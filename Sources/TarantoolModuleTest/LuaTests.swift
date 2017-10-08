@@ -42,24 +42,49 @@ struct LuaTests {
     }
 
     static func testPushPop() throws {
-        try Lua.withNewStack { L in
-            try Lua.push(values: [.int(1), .int(2), .int(3)], to: L)
-            let one2Three = try Lua.popValues(from: L)
-            try assertEqualThrows(one2Three, [.int(1), .int(2), .int(3)])
+        try Lua.withNewStack { lua in
+            try lua.push(.int(1))
+            try lua.push(.int(2))
+            try lua.push(.int(3))
 
-            try Lua.push(value: .int(1), to: L)
-            try Lua.push(value: .int(2), to: L)
-            try Lua.push(value: .int(3), to: L)
-
-            guard let one = try Lua.popFirst(from: L) else {
+            guard let one = try lua.popFirst() else {
                 throw "value not found"
             }
             try assertEqualThrows(one, .int(1))
 
-            guard let three = try Lua.popLast(from: L) else {
+            guard let three = try lua.popLast() else {
                 throw "value not found"
             }
             try assertEqualThrows(three, .int(3))
+        }
+    }
+
+    static func testPushPopMany() throws {
+        try Lua.withNewStack { lua in
+            try lua.push(values: [.int(1), .int(2), .int(3)])
+            let one2Three = try lua.popValues()
+            try assertEqualThrows(one2Three, [.int(1), .int(2), .int(3)])
+        }
+    }
+
+    static func testPushPopArray() throws {
+        try Lua.withNewStack { lua in
+            try lua.push(.array([.int(1), .int(2), .int(3)]))
+            guard let array = try lua.popLast() else {
+                throw "value not found"
+            }
+            try assertEqualThrows(array, .array([.int(1), .int(2), .int(3)]))
+        }
+    }
+
+    static func testPushPopMap() throws {
+        try Lua.withNewStack { lua in
+            try lua.push(.map([.int(1): .int(2), .int(3): .int(4)]))
+            guard let map = try lua.popLast() else {
+                throw "value not found"
+            }
+            try assertEqualThrows(map, .map(
+                [.int(1): .int(2), .int(3): .int(4)]))
         }
     }
 }
@@ -78,6 +103,30 @@ public func LuaTests_testEval(context: BoxContext) -> BoxResult {
 public func LuaTests_testPushPop(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try LuaTests.testPushPop()
+        return [true]
+    }
+}
+
+@_silgen_name("LuaTests_testPushPopMany")
+public func LuaTests_testPushPopMany(context: BoxContext) -> BoxResult {
+    return Box.convertCall(context) {
+        try LuaTests.testPushPopMany()
+        return [true]
+    }
+}
+
+@_silgen_name("LuaTests_testPushPopArray")
+public func LuaTests_testPushPopArray(context: BoxContext) -> BoxResult {
+    return Box.convertCall(context) {
+        try LuaTests.testPushPopArray()
+        return [true]
+    }
+}
+
+@_silgen_name("LuaTests_testPushPopMap")
+public func LuaTests_testPushPopMap(context: BoxContext) -> BoxResult {
+    return Box.convertCall(context) {
+        try LuaTests.testPushPopMap()
         return [true]
     }
 }
