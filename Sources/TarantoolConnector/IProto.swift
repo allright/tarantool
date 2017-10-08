@@ -39,7 +39,7 @@ public class IProto {
         sync: Int? = nil,
         schemaId: Int? = nil
     ) throws -> [MessagePack] {
-        let request = IProto.Message(
+        let request = Message(
             code: code,
             sync: sync,
             schemaId: schemaId,
@@ -49,7 +49,7 @@ public class IProto {
         try request.encode(to: &stream)
         try stream.flush()
 
-        let response = try IProto.Message(from: stream)
+        let response = try Message(from: stream)
 
         return Array(response.body[Message.Key.data]) ?? []
     }

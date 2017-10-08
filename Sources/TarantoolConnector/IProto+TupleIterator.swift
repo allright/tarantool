@@ -18,7 +18,7 @@ extension IProto {
             self.index = 0
         }
 
-        mutating func next() -> IProto.Tuple? {
+        mutating func next() -> Tuple? {
             guard index < tuples.count else {
                 return nil
             }
@@ -26,7 +26,7 @@ extension IProto {
                 return nil
             }
             index += 1
-            return IProto.Tuple(tuple)
+            return Tuple(tuple)
         }
     }
 }
