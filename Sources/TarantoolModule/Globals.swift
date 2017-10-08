@@ -29,7 +29,7 @@ public func syncTask<T>(
     deadline: Date = Date.distantFuture,
     task: @escaping () throws -> T
 ) throws -> T {
-    return try DispatchWrapper.syncTask(
+    return try COIO.syncTask(
         qos: qos,
         deadline: deadline,
         task: task)

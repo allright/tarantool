@@ -34,7 +34,7 @@ public struct AsyncTarantool: Async {
         deadline: Date = Date.distantFuture,
         task: @escaping () throws -> T
     ) throws -> T {
-        return try DispatchWrapper.syncTask(
+        return try COIO.syncTask(
             onQueue: queue, qos: qos, deadline: deadline, task: task)
     }
 

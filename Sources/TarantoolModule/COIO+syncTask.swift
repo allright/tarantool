@@ -14,11 +14,7 @@ import Dispatch
 
 import struct Foundation.Date
 
-public struct DispatchWrapper {
-    var isCanceled: Bool {
-        return false
-    }
-
+extension COIO {
     public static func syncTask<T>(
         onQueue queue: DispatchQueue = DispatchQueue.global(),
         qos: DispatchQoS = .background,
@@ -30,7 +26,7 @@ public struct DispatchWrapper {
 
         let fd = try pipe()
 
-        try COIO.wait(for: fd.1, event: .write, deadline: deadline)
+        try wait(for: fd.1, event: .write, deadline: deadline)
 
         // TODO: allow fibers inside the task
         // cord_create, cord_destroy, ev_run, ev_break
@@ -51,7 +47,7 @@ public struct DispatchWrapper {
 
         queue.async(execute: workItem)
 
-        try COIO.wait(for: fd.0, event: .read, deadline: deadline)
+        try wait(for: fd.0, event: .read, deadline: deadline)
 
         close(fd.0.rawValue)
         close(fd.1.rawValue)
