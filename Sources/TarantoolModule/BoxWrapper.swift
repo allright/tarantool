@@ -41,7 +41,7 @@ struct BoxWrapper {
             spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd) else {
                 throw Box.Error()
         }
-        return AnySequence { BoxIterator(iterator) }
+        return AnySequence { Box.IndexIterator(iterator) }
     }
 
     static func get(
