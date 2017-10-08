@@ -10,9 +10,9 @@
 
 import Stream
 
-fileprivate let headerSize = 64
-fileprivate let saltSize = 44
-fileprivate let size = 128
+private let headerSize = 64
+private let saltSize = 44
+private let size = 128
 
 extension IProto {
     struct Welcome {
@@ -39,7 +39,7 @@ extension IProto {
     }
 }
 
-fileprivate extension String {
+private extension String {
     init(slice: ArraySlice<UInt8>) {
         self = String(cString: Array(slice) + [0])
     }

@@ -12,7 +12,7 @@ import MessagePack
 import TarantoolModule
 
 struct BoxIndexTests {
-    fileprivate static var space: Space<Box> {
+    private static var space: Space<Box> {
         return try! Schema(Box()).spaces["test"]!
     }
 

@@ -61,7 +61,7 @@ extension COIO {
         throw AsyncError.taskCanceled
     }
 
-    fileprivate static func pipe() throws -> (Descriptor, Descriptor) {
+    private static func pipe() throws -> (Descriptor, Descriptor) {
         var fd: (Int32, Int32) = (0, 0)
         let pointer = UnsafeMutableRawPointer(&fd)
             .assumingMemoryBound(to: Int32.self)

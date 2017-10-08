@@ -161,7 +161,7 @@ extension Box {
 }
 
 extension Box.API {
-    fileprivate static let invalid = UInt32(Int32.max)
+    private static let invalid = UInt32(Int32.max)
 
     static func getSpaceIdByName(_ name: [UInt8]) throws -> UInt32 {
         let pointer = UnsafePointer<CChar>(name)

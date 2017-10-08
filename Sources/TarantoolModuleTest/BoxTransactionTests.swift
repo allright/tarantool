@@ -14,11 +14,11 @@ import MessagePack
 import TarantoolModule
 
 struct BoxTransactionTests {
-    fileprivate static var testId: Int = {
+    private static var testId: Int = {
         return try! Schema(Box()).spaces["test"]!.id
     }()
 
-    fileprivate static var space: Space = {
+    private static var space: Space = {
         return Space(id: testId, name: "test", indices: [], source: Box())
     }()
 

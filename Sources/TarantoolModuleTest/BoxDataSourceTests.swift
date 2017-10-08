@@ -12,11 +12,11 @@ import MessagePack
 import TarantoolModule
 
 struct BoxDataSourceTests {
-    fileprivate static var testId: Int {
+    private static var testId: Int {
         return try! Schema(Box()).spaces["test"]!.id
     }
 
-    fileprivate static var source: Box {
+    private static var source: Box {
         return Box()
     }
 

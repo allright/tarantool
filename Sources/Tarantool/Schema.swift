@@ -10,12 +10,12 @@
 
 import MessagePack
 
-fileprivate let _schema: Int = 272
-fileprivate let _space: Int = 280
-fileprivate let _vspace: Int = 281
-fileprivate let _vindex: Int = 289
+private let _schema: Int = 272
+private let _space: Int = 280
+private let _vspace: Int = 281
+private let _vindex: Int = 289
 
-fileprivate let admin: Int = 1
+private let admin: Int = 1
 
 public struct Schema<T: DataSource & LuaScript> {
     let source: T
