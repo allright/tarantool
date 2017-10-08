@@ -25,14 +25,14 @@ struct Welcome {
     init<T: InputStream>(from stream: inout T) throws {
         var buffer = [UInt8](repeating: 0, count: Welcome.packetSize)
         guard try stream.read(to: &buffer) == Welcome.packetSize else {
-            throw IProtoError.invalidWelcome(reason: .invalidSize)
+            throw IProto.Error.invalidWelcome(reason: .invalidSize)
         }
 
         self.header = String(slice: buffer.prefix(upTo: headerSize))
         self.salt = String(slice: buffer[headerSize..<headerSize+saltSize])
 
         guard header.hasPrefix("Tarantool") else {
-            throw IProtoError.invalidWelcome(reason: .invalidHeader)
+            throw IProto.Error.invalidWelcome(reason: .invalidHeader)
         }
     }
 }

@@ -36,7 +36,7 @@ public class IProtoConnection {
         sync: Int? = nil,
         schemaId: Int? = nil
     ) throws -> [MessagePack] {
-        let request = IProtoMessage(
+        let request = IProto.Message(
             code: code,
             sync: sync,
             schemaId: schemaId,
@@ -46,7 +46,7 @@ public class IProtoConnection {
         try request.encode(to: &stream)
         try stream.flush()
 
-        let response = try IProtoMessage(from: stream)
+        let response = try IProto.Message(from: stream)
 
         return Array(response.body[Key.data]) ?? []
     }
@@ -86,7 +86,7 @@ extension IProtoConnection {
     public func auth(username: String, password: String) throws {
         let data = [UInt8](password.utf8)
         guard let salt = Data(base64Encoded: welcome.salt) else {
-            throw IProtoError.invalidSalt
+            throw IProto.Error.invalidSalt
         }
 
         let scramble = data.chapSha1(salt: [UInt8](salt))
