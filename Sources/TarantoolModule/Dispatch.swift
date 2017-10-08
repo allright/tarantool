@@ -11,10 +11,8 @@
 import Async
 import Platform
 import Dispatch
-import CTarantool
 
 import struct Foundation.Date
-import Foundation
 
 public struct DispatchWrapper {
     var isCanceled: Bool {

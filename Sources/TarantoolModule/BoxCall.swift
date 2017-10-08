@@ -8,9 +8,9 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-import CTarantool
 import Stream
 import MessagePack
+import CTarantool
 
 extension Box {
     public typealias Context = OpaquePointer

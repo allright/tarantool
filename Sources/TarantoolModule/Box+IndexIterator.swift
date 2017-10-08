@@ -9,7 +9,6 @@
  */
 
 import CTarantool
-import MessagePack
 
 extension Box {
     class IndexIterator: IteratorProtocol {

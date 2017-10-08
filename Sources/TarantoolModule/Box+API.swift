@@ -9,8 +9,6 @@
  */
 
 import CTarantool
-import MessagePack
-import Foundation
 
 extension Box {
     struct API {
@@ -20,7 +18,7 @@ extension Box {
             _ iterator: Iterator,
             _ keys: [UInt8]
         ) throws -> Int {
-            let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
+            let pKeys = UnsafePointer<CChar>(keys)
             let pKeysEnd = pKeys + keys.count
             let count = _box_index_count(
                 spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd)
@@ -36,8 +34,7 @@ extension Box {
             _ iterator: Iterator,
             _ keys: [UInt8]
         ) throws -> AnySequence<Box.Tuple> {
-            let pKeys = UnsafeRawPointer(keys)
-                .assumingMemoryBound(to: CChar.self)
+            let pKeys = UnsafePointer<CChar>(keys)
             let pKeysEnd = pKeys + keys.count
             guard let iterator = _box_index_iterator(
                 spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd) else {
@@ -50,8 +47,7 @@ extension Box {
             _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
         ) throws -> Box.Tuple? {
             var result: OpaquePointer?
-            let pKeys = UnsafeRawPointer(keys)
-                .assumingMemoryBound(to: CChar.self)
+            let pKeys = UnsafePointer<CChar>(keys)
             guard _box_index_get(
                 spaceId, indexId, pKeys, pKeys+keys.count, &result) == 0 else {
                     throw Box.Error()
@@ -74,8 +70,7 @@ extension Box {
             _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
         ) throws -> Int? {
             var result: OpaquePointer?
-            let pKeys = UnsafeRawPointer(keys)
-                .assumingMemoryBound(to: CChar.self)
+            let pKeys = UnsafePointer<CChar>(keys)
             let pKeysEnd = pKeys + keys.count
             guard _box_index_max(
                 spaceId, indexId, pKeys, pKeysEnd, &result) == 0 else {
@@ -141,8 +136,7 @@ extension Box {
         static func delete(
             _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
         ) throws{
-            let pointer = UnsafeRawPointer(keys)
-                .assumingMemoryBound(to: CChar.self)
+            let pointer = UnsafePointer<CChar>(keys)
             guard _box_delete(
                 spaceId, indexId, pointer, pointer+keys.count, nil) == 0 else {
                     throw Box.Error()
@@ -155,8 +149,8 @@ extension Box.API {
     fileprivate static let invalid = UInt32(Int32.max)
 
     static func getSpaceIdByName(_ name: [UInt8]) throws -> UInt32 {
-        let name = unsafeBitCast(name, to: [CChar].self)
-        let id = _box_space_id_by_name(name, UInt32(name.count))
+        let pointer = UnsafePointer<CChar>(name)
+        let id = _box_space_id_by_name(pointer, UInt32(name.count))
         if id == invalid {
             throw TarantoolError.spaceNotFound
         }
@@ -166,8 +160,8 @@ extension Box.API {
     static func getIndexIdByName(
         _ name: [UInt8], spaceId: UInt32
     ) throws -> UInt32 {
-        let name = unsafeBitCast(name, to: [CChar].self)
-        let id = _box_index_id_by_name(spaceId, name, UInt32(name.count))
+        let pointer = UnsafePointer<CChar>(name)
+        let id = _box_index_id_by_name(spaceId, pointer, UInt32(name.count))
         if id == invalid {
             throw TarantoolError.indexNotFound
         }
@@ -184,5 +178,12 @@ extension Box.API {
         }
         memcpy(buffer, bytes, bytes.count)
         return UnsafeRawPointer(buffer).assumingMemoryBound(to: CChar.self)
+    }
+}
+
+extension UnsafePointer where Pointee == CChar {
+    @inline(__always)
+    init(_ bytes: [UInt8]) {
+        self = UnsafeRawPointer(bytes).assumingMemoryBound(to: CChar.self)
     }
 }

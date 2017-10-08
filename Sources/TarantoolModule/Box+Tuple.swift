@@ -9,7 +9,6 @@
  */
 
 import Stream
-import Tarantool
 import CTarantool
 import MessagePack
 
