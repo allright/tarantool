@@ -15,7 +15,7 @@ import TarantoolConnector
 
 class LuaTests: TestCase {
     var tarantool: TarantoolProcess!
-    var iproto: IProtoConnection!
+    var iproto: IProto!
 
     let functions: ContiguousArray<String> = [
         "LuaTests_testEval",
@@ -49,7 +49,7 @@ class LuaTests: TestCase {
             tarantool = try TarantoolProcess(with: script)
             try tarantool.launch()
 
-            iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
+            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
             fatalError(String(describing: error))
         }

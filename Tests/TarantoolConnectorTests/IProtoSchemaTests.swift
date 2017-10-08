@@ -15,7 +15,7 @@ import AsyncDispatch
 
 class IProtoSchemaTests: TestCase {
     var tarantool: TarantoolProcess!
-    var connection: IProtoConnection!
+    var iproto: IProto!
 
     override func setUp() {
         do {
@@ -26,7 +26,7 @@ class IProtoSchemaTests: TestCase {
                 """)
             try tarantool.launch()
 
-            connection = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
+            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
             fatalError(String(describing: error))
         }
@@ -39,7 +39,7 @@ class IProtoSchemaTests: TestCase {
 
     func testSchema() {
         do {
-            let schema = try Schema(IProto(connection: connection))
+            let schema = try Schema(iproto)
 
             guard schema.spaces.count > 0 else {
                 throw "schema.spaces.count == 0"
@@ -69,8 +69,8 @@ class IProtoSchemaTests: TestCase {
 
     func testCreateSpace() {
         do {
-            try connection.auth(username: "admin", password: "admin")
-            var schema = try Schema(IProto(connection: connection))
+            try iproto.auth(username: "admin", password: "admin")
+            var schema = try Schema(iproto)
 
             try schema.createSpace(name: "new_space")
             guard let newSpace = schema.spaces["new_space"] else {

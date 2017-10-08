@@ -8,136 +8,73 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Stream
+import Network
 import Foundation
-import MessagePack
-import Tarantool
 
-public struct IProto: DataSource, LuaScript {
-    let connection: IProtoConnection
+@_exported import Tarantool
+@_exported import MessagePack
 
-    public init(connection: IProtoConnection) {
-        self.connection = connection
+public class IProto {
+    let socket: Socket
+    var stream: BufferedStream<NetworkStream>
+    let welcome: Welcome
+
+    public init(host: String, port: UInt16 = 3301) throws {
+        socket = try Socket().connect(to: host, port: port)
+        stream = BufferedStream(stream: NetworkStream(socket: socket))
+        welcome = try Welcome(from: &stream)
     }
 
-    // MARK: DataSource
-
-    public func count(
-        _ spaceId: Int,
-        _ indexId: Int,
-        _ iterator: Iterator,
-        _ keys: [MessagePack]
-    ) throws -> Int {
-        let result = try connection.eval(
-            "return box.space[\(spaceId)].index[\(indexId)]:count()")
-
-        guard let count = Int(result.first) else {
-            throw Tarantool.Error.invalidTuple(
-                message: "expected integer, received: \(result)")
-        }
-
-        return count
+    deinit {
+        try? socket.close()
     }
 
-    public func select(
-        _ spaceId: Int,
-        _ indexId: Int,
-        _ iterator: Iterator,
-        _ keys: [MessagePack],
-        _ offset: Int,
-        _ limit: Int
-    ) throws -> AnySequence<Tuple> {
-        let result = try connection.request(code: .select, keys: [
-            .spaceId:  .int(spaceId),
-            .indexId:  .int(indexId),
-            .limit:    .int(limit),
-            .offset:   .int(offset),
-            .iterator: .int(iterator.rawValue),
-            .key:      .array(keys)])
-
-        return AnySequence { TupleIterator(tuples: result) }
-    }
-
-    public func get(
-        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
-    ) throws -> Tuple? {
-        let result = try connection.request(code: .select, keys: [
-            .spaceId:  .int(spaceId),
-            .indexId:  .int(indexId),
-            .limit:    .int(1),
-            .offset:   .int(0),
-            .iterator: .int(Iterator.eq.rawValue),
-            .key:      .array(keys)])
-
-        guard let tuple = [MessagePack]([MessagePack](result).first) else {
-            return nil
-        }
-
-        return Tuple(tuple)
-    }
-
-    public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {
-        _ = try connection.request(code: .insert, keys: [
-            .spaceId: .int(spaceId),
-            .tuple:   .array(tuple)])
-    }
     public typealias Code = Message.Code
     public typealias Key = Message.Key
 
-
-    public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
-        _ = try connection.request(code: .replace, keys: [
-            .spaceId: .int(spaceId),
-            .tuple:   .array(tuple)])
-    }
-
-    public func delete(
-        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
-    ) throws {
-        _ = try connection.request(code: .delete, keys: [
-            .spaceId: .int(spaceId),
-            .indexId: .int(indexId),
-            .key:     .array(keys)])
-    }
-
-    public func update(
-        _ spaceId: Int,
-        _ indexId: Int,
-        _ keys: [MessagePack],
-        _ ops: [MessagePack]
-    ) throws {
-        _ = try connection.request(code: .update, keys: [
-            .spaceId: .int(spaceId),
-            .indexId: .int(indexId),
-            .key:     .array(keys),
-            .tuple:   .array(ops)])
-    }
-
-    public func upsert(
-        _ spaceId: Int,
-        _ indexId: Int,
-        _ tuple: [MessagePack],
-        _ ops: [MessagePack]
-    ) throws {
-        _ = try connection.request(code: .upsert, keys: [
-            .spaceId: .int(spaceId),
-            .indexId: .int(indexId),
-            .tuple:   .array(tuple),
-            .ops:     .array(ops)])
-    }
-
-    // MARK: LuaScript
-
-    public func call(
-        _ function: String,
-        arguments: [MessagePack] = []
+    public func request(
+        code: Code,
+        keys: [Key : MessagePack] = [:],
+        sync: Int? = nil,
+        schemaId: Int? = nil
     ) throws -> [MessagePack] {
-        return try connection.call(function, arguments: arguments)
+        let request = IProto.Message(
+            code: code,
+            sync: sync,
+            schemaId: schemaId,
+            body: keys
+        )
+
+        try request.encode(to: &stream)
+        try stream.flush()
+
+        let response = try IProto.Message(from: stream)
+
+        return Array(response.body[Message.Key.data]) ?? []
+    }
+}
+
+extension IProto {
+    public func ping() throws {
+        _ = try request(code: .ping)
     }
 
-    public func eval(
-        _ expression: String,
-        arguments: [MessagePack] = []
-    ) throws -> [MessagePack] {
-        return try connection.eval(expression, arguments: arguments)
+    public func auth(username: String, password: String) throws {
+        let data = [UInt8](password.utf8)
+        guard let salt = Data(base64Encoded: welcome.salt) else {
+            throw IProto.Error.invalidSalt
+        }
+
+        let scramble = data.chapSha1(salt: [UInt8](salt))
+
+        let keys: [Key : MessagePack] = [
+            .username: .string(username),
+            .tuple: .array([
+                .string("chap-sha1"),
+                .binary(scramble)
+            ])
+        ]
+        _ = try request(code: .auth, keys: keys)
     }
 }

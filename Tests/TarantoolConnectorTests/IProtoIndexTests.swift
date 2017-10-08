@@ -15,7 +15,7 @@ import AsyncDispatch
 
 class IProtoIndexTests: TestCase {
     var tarantool: TarantoolProcess!
-    var connection: IProtoConnection!
+    var iproto: IProto!
     var space: Space<IProto>!
 
     override func setUp() {
@@ -32,11 +32,9 @@ class IProtoIndexTests: TestCase {
                 """)
             try tarantool.launch()
 
-            connection = try IProtoConnection(
+            iproto = try IProto(
                 host: "127.0.0.1",
                 port: tarantool.port)
-
-            let iproto = IProto(connection: connection)
             let schema = try Schema(iproto)
             self.space = schema.spaces["test"]
         } catch {
@@ -51,8 +49,7 @@ class IProtoIndexTests: TestCase {
 
     func testHash() {
         do {
-            try connection.auth(username: "admin", password: "admin")
-            let iproto = IProto(connection: connection)
+            try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_hash")
 
@@ -72,8 +69,7 @@ class IProtoIndexTests: TestCase {
 
     func testTree() {
         do {
-            try connection.auth(username: "admin", password: "admin")
-            let iproto = IProto(connection: connection)
+            try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_tree")
 
@@ -93,8 +89,7 @@ class IProtoIndexTests: TestCase {
 
     func testRTree() {
         do {
-            try connection.auth(username: "admin", password: "admin")
-            let iproto = IProto(connection: connection)
+            try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_rtree")
 
@@ -117,8 +112,7 @@ class IProtoIndexTests: TestCase {
 
     func testBitset() {
         do {
-            try connection.auth(username: "admin", password: "admin")
-            let iproto = IProto(connection: connection)
+            try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_bitset")
 
@@ -141,8 +135,7 @@ class IProtoIndexTests: TestCase {
 
     func testSequence() {
         do {
-            try connection.auth(username: "admin", password: "admin")
-            let iproto = IProto(connection: connection)
+            try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_sequence")
 
@@ -163,8 +156,7 @@ class IProtoIndexTests: TestCase {
 
     func testMany() {
         do {
-            try connection.auth(username: "admin", password: "admin")
-            let iproto = IProto(connection: connection)
+            try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
 
             var space = try schema.createSpace(name: "test_indexes")

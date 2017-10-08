@@ -31,8 +31,7 @@ class IProtoIteratorTests: TestCase {
                 """)
             try tarantool.launch()
 
-            let connection = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
-            source = IProto(connection: connection)
+            source = try IProto(host: "127.0.0.1", port: tarantool.port)
 
             guard let first = try source.eval("return box.space.test.id").first,
                 let testSpaceId = Int(first) else {

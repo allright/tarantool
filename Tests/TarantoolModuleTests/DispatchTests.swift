@@ -15,7 +15,7 @@ import TarantoolConnector
 
 class DispatchTests: TestCase {
     var tarantool: TarantoolProcess!
-    var iproto: IProtoConnection!
+    var iproto: IProto!
 
     let functions: ContiguousArray<String> = [
         "DispatchTests_testSyncTask",
@@ -45,7 +45,7 @@ class DispatchTests: TestCase {
             tarantool = try TarantoolProcess(with: script)
             try tarantool.launch()
 
-            iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
+            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
             fatalError(String(describing: error))
         }

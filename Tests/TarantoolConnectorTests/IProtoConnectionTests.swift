@@ -15,7 +15,7 @@ import AsyncDispatch
 
 class IProtoConnectionTests: TestCase {
     var tarantool: TarantoolProcess!
-    var iproto: IProtoConnection!
+    var iproto: IProto!
     
     override func setUp() {
         do {
@@ -24,7 +24,7 @@ class IProtoConnectionTests: TestCase {
                 "box.schema.user.grant('guest', 'read,write,execute', 'universe')")
             try tarantool.launch()
 
-            iproto = try IProtoConnection(host: "127.0.0.1", port: tarantool.port)
+            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
             fatalError(String(describing: error))
         }
