@@ -17,13 +17,13 @@ public typealias BoxContext = OpaquePointer
 
 public struct Output {
     let context: OpaquePointer
-    
+
     public func append(_ tuple: BoxTuple) throws {
         guard Box.returnTuple(tuple, to: context) == 0 else {
             throw BoxError()
         }
     }
-    
+
     public func append(_ tuple: [MessagePack]) throws {
         guard Box.returnTuple(tuple, to: context) == 0 else {
             throw BoxError()
@@ -46,7 +46,7 @@ extension Box {
             return Box.returnError(code: .procC, message: message)
         }
     }
-    
+
     public static func convertCall(
         _ context: BoxContext,
         _ task: (Output) throws -> Void
@@ -61,7 +61,7 @@ extension Box {
             return Box.returnError(code: .procC, message: message)
         }
     }
-    
+
     public static func convertCall(
         _ context: BoxContext,
         _ arguments: UnsafeRawPointer,
@@ -73,13 +73,13 @@ extension Box {
             try task(arguments, output)
         }
     }
-    
+
     public static func returnTuple(
         _ tuple: BoxTuple, to context: BoxContext
     ) -> Int32 {
         return _box_return_tuple(context, tuple.pointer)
     }
-    
+
     public static func returnTuple(
         _ tuple: [MessagePack], to context: BoxContext
     ) -> Int32 {
@@ -91,14 +91,14 @@ extension Box {
                 code: .invalidMsgpack,
                 message: "encoding of \(tuple) failed")
         }
-        
+
         let bytes = writer.stream.bytes
         let pointer = UnsafeRawPointer(bytes).assumingMemoryBound(to: Int8.self)
         let tuple = _box_tuple_new(
             _box_tuple_format_default(), pointer, pointer+bytes.count)
         return _box_return_tuple(context, tuple)
     }
-    
+
     public static func returnError(
         code: BoxError.Code,
         message: String,
