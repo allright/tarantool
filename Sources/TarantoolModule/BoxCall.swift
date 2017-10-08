@@ -12,25 +12,25 @@ import CTarantool
 import Stream
 import MessagePack
 
-public struct Output {
-    let context: OpaquePointer
-
-    public func append(_ tuple: BoxTuple) throws {
-        guard Box.returnTuple(tuple, to: context) == 0 else {
-            throw Box.Error()
-        }
-    }
-
-    public func append(_ tuple: [MessagePack]) throws {
-        guard Box.returnTuple(tuple, to: context) == 0 else {
-            throw Box.Error()
-        }
-    }
-}
-
 extension Box {
     public typealias Context = OpaquePointer
     public typealias Result = Int32
+
+    public struct Output {
+        let context: Context
+
+        public func append(_ tuple: BoxTuple) throws {
+            guard Box.returnTuple(tuple, to: context) == 0 else {
+                throw Box.Error()
+            }
+        }
+
+        public func append(_ tuple: [MessagePack]) throws {
+            guard Box.returnTuple(tuple, to: context) == 0 else {
+                throw Box.Error()
+            }
+        }
+    }
 
     @inline(__always)
     public // @testable
