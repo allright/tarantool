@@ -47,7 +47,7 @@ struct BoxTupleTests {
 
 @_silgen_name("BoxTupleTests_testUnpackTuple")
 public func BoxTupleTests_testUnpackTuple(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxTupleTests.testUnpackTuple()
     }
 }

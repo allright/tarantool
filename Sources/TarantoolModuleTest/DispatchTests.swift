@@ -51,7 +51,7 @@ struct DispatchTests {
 
 @_silgen_name("DispatchTests_testSyncTask")
 public func DispatchTests_testSyncTask(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try DispatchTests.testSyncTask()
     }
 }

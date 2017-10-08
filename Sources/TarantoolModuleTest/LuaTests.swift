@@ -93,35 +93,35 @@ struct LuaTests {
 
 @_silgen_name("LuaTests_testEval")
 public func LuaTests_testEval(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try LuaTests.testEval()
     }
 }
 
 @_silgen_name("LuaTests_testPushPop")
 public func LuaTests_testPushPop(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try LuaTests.testPushPop()
     }
 }
 
 @_silgen_name("LuaTests_testPushPopMany")
 public func LuaTests_testPushPopMany(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try LuaTests.testPushPopMany()
     }
 }
 
 @_silgen_name("LuaTests_testPushPopArray")
 public func LuaTests_testPushPopArray(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try LuaTests.testPushPopArray()
     }
 }
 
 @_silgen_name("LuaTests_testPushPopMap")
 public func LuaTests_testPushPopMap(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try LuaTests.testPushPopMap()
     }
 }

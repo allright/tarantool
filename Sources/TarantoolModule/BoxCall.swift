@@ -32,10 +32,9 @@ public struct Output {
 }
 
 extension Box {
-    public static func convertCall(
-        _ context: BoxContext,
-        _ task: () throws -> Void
-    ) -> BoxResult {
+    @inline(__always)
+    public // @testable
+    static func execute(_ task: () throws -> Void) -> BoxResult {
         do {
             try task()
             return 0
@@ -51,14 +50,8 @@ extension Box {
         _ context: BoxContext,
         _ task: (Output) throws -> Void
     ) -> BoxResult {
-        do {
+        return execute {
             try task(Output(context: context))
-            return 0
-        } catch let error as BoxError {
-            return Box.returnError(code: error.code, message: error.message)
-        } catch {
-            let message = String(describing: error)
-            return Box.returnError(code: .procC, message: message)
         }
     }
 
@@ -68,9 +61,9 @@ extension Box {
         _ argumentsEnd: UnsafeRawPointer,
         _ task: ([MessagePack], Output) throws -> Void
     ) -> BoxResult {
-        return convertCall(context) { output in
+        return execute {
             let arguments = try [MessagePack](arguments, argumentsEnd)
-            try task(arguments, output)
+            try task(arguments, Output(context: context))
         }
     }
 

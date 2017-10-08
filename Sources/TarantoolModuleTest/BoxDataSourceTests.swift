@@ -101,56 +101,56 @@ struct BoxDataSourceTests {
 
 @_silgen_name("BoxDataSourceTests_testCount")
 public func BoxDataSourceTests_testCount(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxDataSourceTests.testCount()
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testSelect")
 public func BoxDataSourceTests_testSelect(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxDataSourceTests.testSelect()
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testGet")
 public func BoxDataSourceTests_testGet(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxDataSourceTests.testGet()
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testInsert")
 public func BoxDataSourceTests_testInsert(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxDataSourceTests.testInsert()
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testReplace")
 public func BoxDataSourceTests_testReplace(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxDataSourceTests.testReplace()
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testDelete")
 public func BoxDataSourceTests_testDelete(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxDataSourceTests.testDelete()
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testUpdate")
 public func BoxDataSourceTests_testUpdate(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxDataSourceTests.testUpdate()
     }
 }
 
 @_silgen_name("BoxDataSourceTests_testUpsert")
 public func BoxDataSourceTests_testUpsert(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxDataSourceTests.testUpsert()
     }
 }

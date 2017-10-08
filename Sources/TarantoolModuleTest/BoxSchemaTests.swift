@@ -59,14 +59,14 @@ struct BoxSchemaTests {
 
 @_silgen_name("BoxSchemaTests_testSchema")
 public func BoxSchemaTests_testSchema(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxSchemaTests.testSchema()
     }
 }
 
 @_silgen_name("BoxSchemaTests_testCreateSpace")
 public func BoxSchemaTests_testCreateSpace(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxSchemaTests.testCreateSpace()
     }
 }

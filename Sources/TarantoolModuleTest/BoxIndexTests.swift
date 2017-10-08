@@ -256,98 +256,98 @@ struct BoxIndexTests {
 
 @_silgen_name("BoxIndexTests_testHash")
 public func BoxIndexTests_testHash(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testHash()
     }
 }
 
 @_silgen_name("BoxIndexTests_testTree")
 public func BoxIndexTests_testTree(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testTree()
     }
 }
 
 @_silgen_name("BoxIndexTests_testRTree")
 public func BoxIndexTests_testRTree(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testRTree()
     }
 }
 
 @_silgen_name("BoxIndexTests_testBitset")
 public func BoxIndexTests_testBitset(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testBitset()
     }
 }
 
 @_silgen_name("BoxIndexTests_testSequence")
 public func BoxIndexTests_testSequence(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testSequence()
     }
 }
 
 @_silgen_name("BoxIndexTests_testMany")
 public func BoxIndexTests_testMany(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testMany()
     }
 }
 
 @_silgen_name("BoxIndexTests_testCount")
 public func BoxIndexTests_testCount(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testCount()
     }
 }
 
 @_silgen_name("BoxIndexTests_testSelect")
 public func BoxIndexTests_testSelect(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testSelect()
     }
 }
 
 @_silgen_name("BoxIndexTests_testGet")
 public func BoxIndexTests_testGet(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testGet()
     }
 }
 
 @_silgen_name("BoxIndexTests_testInsert")
 public func BoxIndexTests_testInsert(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testInsert()
     }
 }
 
 @_silgen_name("BoxIndexTests_testReplace")
 public func BoxIndexTests_testReplace(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testReplace()
     }
 }
 
 @_silgen_name("BoxIndexTests_testDelete")
 public func BoxIndexTests_testDelete(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testDelete()
     }
 }
 
 @_silgen_name("BoxIndexTests_testUpdate")
 public func BoxIndexTests_testUpdate(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testUpdate()
     }
 }
 
 @_silgen_name("BoxIndexTests_testUpsert")
 public func BoxIndexTests_testUpsert(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxIndexTests.testUpsert()
     }
 }

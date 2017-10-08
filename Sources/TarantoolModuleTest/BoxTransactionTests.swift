@@ -111,28 +111,28 @@ struct BoxTransactionTests {
 
 @_silgen_name("BoxTransactionTests_testCommit")
 public func BoxTransactionTests_testCommit(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxTransactionTests.testTCommit()
     }
 }
 
 @_silgen_name("BoxTransactionTests_testRollback")
 public func BoxTransactionTests_testRollback(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxTransactionTests.testRollback()
     }
 }
 
 @_silgen_name("BoxTransactionTests_testTCommit")
 public func BoxTransactionTests_testTCommit(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxTransactionTests.testTCommit()
     }
 }
 
 @_silgen_name("BoxTransactionTests_testTRollback")
 public func BoxTransactionTests_testTRollback(context: BoxContext) -> BoxResult {
-    return Box.convertCall(context) {
+    return Box.execute {
         try BoxTransactionTests.testTRollback()
     }
 }
