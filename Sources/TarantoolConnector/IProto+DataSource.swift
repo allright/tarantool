@@ -13,8 +13,6 @@ import MessagePack
 import Tarantool
 
 extension IProto: DataSource {
-    // MARK: DataSource
-
     public func count(
         _ spaceId: Int,
         _ indexId: Int,

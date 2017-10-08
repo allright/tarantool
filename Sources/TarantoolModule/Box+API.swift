@@ -120,8 +120,9 @@ extension Box {
                 pOps,
                 pOps+ops.count,
                 0,
-                nil) == 0 else {
-                    throw Error()
+                nil) == 0
+            else {
+                throw Error()
             }
         }
 
@@ -141,8 +142,9 @@ extension Box {
                 pOps,
                 pOps+ops.count,
                 0,
-                nil) == 0 else {
-                    throw Error()
+                nil) == 0
+            else {
+                throw Error()
             }
         }
 
