@@ -80,6 +80,8 @@ public struct IProto: DataSource, LuaScript {
             .spaceId: .int(spaceId),
             .tuple:   .array(tuple)])
     }
+    public typealias Code = Message.Code
+    public typealias Key = Message.Key
 
 
     public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
