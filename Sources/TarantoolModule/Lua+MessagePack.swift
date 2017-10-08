@@ -122,8 +122,7 @@ extension Lua {
         case .string(let value): push(value)
         case .array(let array): try push(array: array)
         case .map(let map): try push(map: map)
-        default: throw LuaError(
-            message: "argument type \(value) is not supported")
+        default: throw Error(message: "argument type \(value) is not supported")
         }
     }
 
@@ -192,11 +191,11 @@ extension Lua {
                 let value = try get(MessagePack.self, at: index + 2)
                 pop(count: 1)
                 guard self.type(at: index + 1) == LUA_TNUMBER else {
-                    throw LuaError(message: "invalid array index type")
+                    throw Error(message: "invalid array index type")
                 }
                 let key = get(Int.self, at: index + 1)
                 guard key - 1 == array.count else {
-                    throw LuaError(message: "invalid array index sequence")
+                    throw Error(message: "invalid array index sequence")
                 }
                 array.append(value)
             }
@@ -222,7 +221,7 @@ extension Lua {
         case LUA_TBOOLEAN: return .bool(get(Bool.self, at: index))
         case LUA_TSTRING: return .string(get(String.self, at: index))
         case LUA_TTABLE: return try getTable(at: index)
-        default: throw LuaError(message: "return type \(type) is not supported")
+        default: throw Error(message: "return type \(type) is not supported")
         }
     }
 

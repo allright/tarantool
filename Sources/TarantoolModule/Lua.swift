@@ -18,7 +18,7 @@ extension Lua {
     ) throws -> T {
         let tarantool_L = _luaT_state()!
         guard let L = _lua_newthread(tarantool_L) else {
-            throw LuaError(tarantool_L)
+            throw Error(tarantool_L)
         }
         let coro_ref = _luaL_ref(tarantool_L, LUA_REGISTRYINDEX)
         defer { _luaL_unref(tarantool_L, LUA_REGISTRYINDEX, coro_ref) }
@@ -121,7 +121,7 @@ public struct Lua {
 
     public func load(string: String) throws {
         guard _luaL_loadstring(L, string) == 0 else {
-            throw LuaError(L)
+            throw Error(L)
         }
     }
 
@@ -129,7 +129,7 @@ public struct Lua {
         try string.withCString { pointer in
             let count = strlen(pointer)
             guard _luaL_loadbuffer(L, pointer, count, name) == 0 else {
-                throw LuaError(L)
+                throw Error(L)
             }
         }
     }
@@ -140,7 +140,7 @@ public struct Lua {
     ) throws {
         guard _luaT_call(L, Int32(argumentsCount), Int32(returnCount)) == 0
             else {
-                throw LuaError(L)
+                throw Error(L)
         }
     }
 }

@@ -10,19 +10,21 @@
 
 import CTarantool
 
-public struct LuaError: Error {
-    public let code: Int?
-    public let message: String
+extension Lua {
+    public struct Error: Swift.Error {
+        public let code: Int?
+        public let message: String
+    }
 }
 
-extension LuaError {
+extension Lua.Error {
     public init(message: String) {
         self.code = nil
         self.message = message
     }
 }
 
-extension LuaError {
+extension Lua.Error {
     init(_ L: OpaquePointer) {
         // standart lua error
         if let pointer = _lua_tolstring(L, -1, nil) {
@@ -41,5 +43,14 @@ extension LuaError {
 
         self.code = nil
         self.message = "unknown"
+    }
+}
+
+extension Lua.Error: CustomStringConvertible {
+    public var description: String {
+        guard let code = code else {
+            return message
+        }
+        return "\(code): \(message)"
     }
 }
