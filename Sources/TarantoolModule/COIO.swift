@@ -14,7 +14,7 @@ import CTarantool
 
 import struct Foundation.Date
 
-public struct COIOWrapper {
+public struct COIO {
     struct Timeout {
         static let infinity: Double = 100*365*24*3600
     }

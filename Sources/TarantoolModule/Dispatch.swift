@@ -30,7 +30,7 @@ public struct DispatchWrapper {
 
         let fd = try pipe()
 
-        try COIOWrapper.wait(for: fd.1, event: .write, deadline: deadline)
+        try COIO.wait(for: fd.1, event: .write, deadline: deadline)
 
         // TODO: allow fibers inside the task
         // cord_create, cord_destroy, ev_run, ev_break
@@ -51,7 +51,7 @@ public struct DispatchWrapper {
 
         queue.async(execute: workItem)
 
-        try COIOWrapper.wait(for: fd.0, event: .read, deadline: deadline)
+        try COIO.wait(for: fd.0, event: .read, deadline: deadline)
 
         close(fd.0.rawValue)
         close(fd.1.rawValue)

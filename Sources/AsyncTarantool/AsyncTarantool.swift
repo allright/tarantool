@@ -43,7 +43,7 @@ public struct AsyncTarantool: Async {
         event: IOEvent,
         deadline: Date = Date.distantFuture
     ) throws {
-        try COIOWrapper.wait(for: descriptor, event: event, deadline: deadline)
+        try COIO.wait(for: descriptor, event: event, deadline: deadline)
     }
 
     public func sleep(until deadline: Date) {
