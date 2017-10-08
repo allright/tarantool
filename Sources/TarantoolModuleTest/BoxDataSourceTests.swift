@@ -103,7 +103,6 @@ struct BoxDataSourceTests {
 public func BoxDataSourceTests_testCount(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxDataSourceTests.testCount()
-        return [true]
     }
 }
 
@@ -111,7 +110,6 @@ public func BoxDataSourceTests_testCount(context: BoxContext) -> BoxResult {
 public func BoxDataSourceTests_testSelect(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxDataSourceTests.testSelect()
-        return [true]
     }
 }
 
@@ -119,7 +117,6 @@ public func BoxDataSourceTests_testSelect(context: BoxContext) -> BoxResult {
 public func BoxDataSourceTests_testGet(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxDataSourceTests.testGet()
-        return [true]
     }
 }
 
@@ -127,7 +124,6 @@ public func BoxDataSourceTests_testGet(context: BoxContext) -> BoxResult {
 public func BoxDataSourceTests_testInsert(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxDataSourceTests.testInsert()
-        return [true]
     }
 }
 
@@ -135,7 +131,6 @@ public func BoxDataSourceTests_testInsert(context: BoxContext) -> BoxResult {
 public func BoxDataSourceTests_testReplace(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxDataSourceTests.testReplace()
-        return [true]
     }
 }
 
@@ -143,7 +138,6 @@ public func BoxDataSourceTests_testReplace(context: BoxContext) -> BoxResult {
 public func BoxDataSourceTests_testDelete(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxDataSourceTests.testDelete()
-        return [true]
     }
 }
 
@@ -151,7 +145,6 @@ public func BoxDataSourceTests_testDelete(context: BoxContext) -> BoxResult {
 public func BoxDataSourceTests_testUpdate(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxDataSourceTests.testUpdate()
-        return [true]
     }
 }
 
@@ -159,6 +152,5 @@ public func BoxDataSourceTests_testUpdate(context: BoxContext) -> BoxResult {
 public func BoxDataSourceTests_testUpsert(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxDataSourceTests.testUpsert()
-        return [true]
     }
 }

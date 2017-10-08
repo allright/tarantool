@@ -53,6 +53,5 @@ struct DispatchTests {
 public func DispatchTests_testSyncTask(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try DispatchTests.testSyncTask()
-        return [true]
     }
 }

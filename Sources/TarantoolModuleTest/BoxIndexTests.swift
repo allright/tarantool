@@ -258,7 +258,6 @@ struct BoxIndexTests {
 public func BoxIndexTests_testHash(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testHash()
-        return [true]
     }
 }
 
@@ -266,7 +265,6 @@ public func BoxIndexTests_testHash(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testTree(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testTree()
-        return [true]
     }
 }
 
@@ -274,7 +272,6 @@ public func BoxIndexTests_testTree(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testRTree(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testRTree()
-        return [true]
     }
 }
 
@@ -282,7 +279,6 @@ public func BoxIndexTests_testRTree(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testBitset(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testBitset()
-        return [true]
     }
 }
 
@@ -290,7 +286,6 @@ public func BoxIndexTests_testBitset(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testSequence(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testSequence()
-        return [true]
     }
 }
 
@@ -298,7 +293,6 @@ public func BoxIndexTests_testSequence(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testMany(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testMany()
-        return [true]
     }
 }
 
@@ -306,7 +300,6 @@ public func BoxIndexTests_testMany(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testCount(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testCount()
-        return [true]
     }
 }
 
@@ -314,7 +307,6 @@ public func BoxIndexTests_testCount(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testSelect(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testSelect()
-        return [true]
     }
 }
 
@@ -322,7 +314,6 @@ public func BoxIndexTests_testSelect(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testGet(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testGet()
-        return [true]
     }
 }
 
@@ -330,7 +321,6 @@ public func BoxIndexTests_testGet(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testInsert(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testInsert()
-        return [true]
     }
 }
 
@@ -338,7 +328,6 @@ public func BoxIndexTests_testInsert(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testReplace(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testReplace()
-        return [true]
     }
 }
 
@@ -346,7 +335,6 @@ public func BoxIndexTests_testReplace(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testDelete(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testDelete()
-        return [true]
     }
 }
 
@@ -354,7 +342,6 @@ public func BoxIndexTests_testDelete(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testUpdate(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testUpdate()
-        return [true]
     }
 }
 
@@ -362,6 +349,5 @@ public func BoxIndexTests_testUpdate(context: BoxContext) -> BoxResult {
 public func BoxIndexTests_testUpsert(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxIndexTests.testUpsert()
-        return [true]
     }
 }

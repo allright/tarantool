@@ -113,7 +113,6 @@ struct BoxTransactionTests {
 public func BoxTransactionTests_testCommit(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxTransactionTests.testTCommit()
-        return [true]
     }
 }
 
@@ -121,7 +120,6 @@ public func BoxTransactionTests_testCommit(context: BoxContext) -> BoxResult {
 public func BoxTransactionTests_testRollback(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxTransactionTests.testRollback()
-        return [true]
     }
 }
 
@@ -129,7 +127,6 @@ public func BoxTransactionTests_testRollback(context: BoxContext) -> BoxResult {
 public func BoxTransactionTests_testTCommit(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxTransactionTests.testTCommit()
-        return [true]
     }
 }
 
@@ -137,6 +134,5 @@ public func BoxTransactionTests_testTCommit(context: BoxContext) -> BoxResult {
 public func BoxTransactionTests_testTRollback(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxTransactionTests.testTRollback()
-        return [true]
     }
 }

@@ -17,7 +17,7 @@ extension Array where Element == [MessagePack] {
     init<T: Tuple>(_ tuples: AnySequence<T>) {
         var result = [[MessagePack]]()
         for tuple in tuples {
-            result.append(tuple.rawValue)
+            result.append(tuple.unpack())
         }
         self = result
     }

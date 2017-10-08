@@ -49,6 +49,5 @@ struct BoxTupleTests {
 public func BoxTupleTests_testUnpackTuple(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxTupleTests.testUnpackTuple()
-        return [true]
     }
 }

@@ -102,7 +102,6 @@ struct BoxSpaceTests {
 public func BoxSpaceTests_testCount(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSpaceTests.testCount()
-        return [true]
     }
 }
 
@@ -110,7 +109,6 @@ public func BoxSpaceTests_testCount(context: BoxContext) -> BoxResult {
 public func BoxSpaceTests_testSelect(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSpaceTests.testSelect()
-        return [true]
     }
 }
 
@@ -118,7 +116,6 @@ public func BoxSpaceTests_testSelect(context: BoxContext) -> BoxResult {
 public func BoxSpaceTests_testGet(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSpaceTests.testGet()
-        return [true]
     }
 }
 
@@ -126,7 +123,6 @@ public func BoxSpaceTests_testGet(context: BoxContext) -> BoxResult {
 public func BoxSpaceTests_testInsert(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSpaceTests.testInsert()
-        return [true]
     }
 }
 
@@ -134,7 +130,6 @@ public func BoxSpaceTests_testInsert(context: BoxContext) -> BoxResult {
 public func BoxSpaceTests_testReplace(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSpaceTests.testReplace()
-        return [true]
     }
 }
 
@@ -142,7 +137,6 @@ public func BoxSpaceTests_testReplace(context: BoxContext) -> BoxResult {
 public func BoxSpaceTests_testDelete(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSpaceTests.testDelete()
-        return [true]
     }
 }
 
@@ -150,7 +144,6 @@ public func BoxSpaceTests_testDelete(context: BoxContext) -> BoxResult {
 public func BoxSpaceTests_testUpdate(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSpaceTests.testUpdate()
-        return [true]
     }
 }
 
@@ -158,6 +151,5 @@ public func BoxSpaceTests_testUpdate(context: BoxContext) -> BoxResult {
 public func BoxSpaceTests_testUpsert(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSpaceTests.testUpsert()
-        return [true]
     }
 }

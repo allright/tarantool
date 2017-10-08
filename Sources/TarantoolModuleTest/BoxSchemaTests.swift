@@ -61,7 +61,6 @@ struct BoxSchemaTests {
 public func BoxSchemaTests_testSchema(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSchemaTests.testSchema()
-        return [true]
     }
 }
 
@@ -69,6 +68,5 @@ public func BoxSchemaTests_testSchema(context: BoxContext) -> BoxResult {
 public func BoxSchemaTests_testCreateSpace(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try BoxSchemaTests.testCreateSpace()
-        return [true]
     }
 }

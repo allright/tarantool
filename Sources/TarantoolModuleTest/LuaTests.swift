@@ -95,7 +95,6 @@ struct LuaTests {
 public func LuaTests_testEval(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try LuaTests.testEval()
-        return [true]
     }
 }
 
@@ -103,7 +102,6 @@ public func LuaTests_testEval(context: BoxContext) -> BoxResult {
 public func LuaTests_testPushPop(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try LuaTests.testPushPop()
-        return [true]
     }
 }
 
@@ -111,7 +109,6 @@ public func LuaTests_testPushPop(context: BoxContext) -> BoxResult {
 public func LuaTests_testPushPopMany(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try LuaTests.testPushPopMany()
-        return [true]
     }
 }
 
@@ -119,7 +116,6 @@ public func LuaTests_testPushPopMany(context: BoxContext) -> BoxResult {
 public func LuaTests_testPushPopArray(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try LuaTests.testPushPopArray()
-        return [true]
     }
 }
 
@@ -127,6 +123,5 @@ public func LuaTests_testPushPopArray(context: BoxContext) -> BoxResult {
 public func LuaTests_testPushPopMap(context: BoxContext) -> BoxResult {
     return Box.convertCall(context) {
         try LuaTests.testPushPopMap()
-        return [true]
     }
 }
