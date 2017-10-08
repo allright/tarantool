@@ -63,9 +63,9 @@ class IProtoDataSourceTests: TestCase {
     func testSelect() {
         do {
             let expected: [IProtoTuple] = [
-                IProtoTuple(rawValue: [1, "foo"]),
-                IProtoTuple(rawValue: [2, "bar"]),
-                IProtoTuple(rawValue: [3, "baz"])
+                IProtoTuple([1, "foo"]),
+                IProtoTuple([2, "bar"]),
+                IProtoTuple([3, "baz"])
             ]
             let result = try source.select(testId, 0, .all, [], 0, 1000)
             assertEqual([IProtoTuple](result), expected)
@@ -81,7 +81,7 @@ class IProtoDataSourceTests: TestCase {
                     fail()
                     return
             }
-            assertEqual(result, IProtoTuple(rawValue: [3, "baz"]))
+            assertEqual(result, IProtoTuple([3, "baz"]))
         } catch {
             fail(String(describing: error))
         }
@@ -95,7 +95,7 @@ class IProtoDataSourceTests: TestCase {
                     fail()
                     return
             }
-            assertEqual(result, IProtoTuple(rawValue: [4, "quux"]))
+            assertEqual(result, IProtoTuple([4, "quux"]))
         } catch {
             fail(String(describing: error))
         }
@@ -109,7 +109,7 @@ class IProtoDataSourceTests: TestCase {
                     fail()
                     return
             }
-            assertEqual(result, IProtoTuple(rawValue: [3, "zab"]))
+            assertEqual(result, IProtoTuple([3, "zab"]))
         } catch {
             fail(String(describing: error))
         }
@@ -132,7 +132,7 @@ class IProtoDataSourceTests: TestCase {
                     fail()
                     return
             }
-            assertEqual(result, IProtoTuple(rawValue: [3, "zab"]))
+            assertEqual(result, IProtoTuple([3, "zab"]))
         } catch {
             fail(String(describing: error))
         }
@@ -148,7 +148,7 @@ class IProtoDataSourceTests: TestCase {
                     fail()
                     return
             }
-            assertEqual(insertResult, IProtoTuple(rawValue: [4, "quux", 42]))
+            assertEqual(insertResult, IProtoTuple([4, "quux", 42]))
 
             try source.upsert(testId, 0, [4, "quux", 42], [["+", 2, 8]])
             guard let updateResult =
@@ -156,7 +156,7 @@ class IProtoDataSourceTests: TestCase {
                     fail()
                     return
             }
-            assertEqual(updateResult, IProtoTuple(rawValue: [4, "quux", 50]))
+            assertEqual(updateResult, IProtoTuple([4, "quux", 50]))
         } catch {
             fail(String(describing: error))
         }

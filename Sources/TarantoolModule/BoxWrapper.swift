@@ -77,10 +77,10 @@ struct BoxWrapper {
             spaceId, indexId, pKeys, pKeysEnd, &result) == 0 else {
                 throw BoxError()
         }
-        guard let pointer = result,
-            let tuple = BoxTuple(pointer) else {
-                return nil
+        guard let pointer = result else {
+            return nil
         }
+        let tuple = BoxTuple(pointer)
         return tuple[0, as: Int.self]
     }
 

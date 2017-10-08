@@ -53,9 +53,9 @@ class IProtoIteratorTests: TestCase {
     func testSelectAll() {
         do {
             let expected: [IProtoTuple] = [
-                IProtoTuple(rawValue: [1, "foo"]),
-                IProtoTuple(rawValue: [2, "bar"]),
-                IProtoTuple(rawValue: [3, "baz"])
+                IProtoTuple([1, "foo"]),
+                IProtoTuple([2, "bar"]),
+                IProtoTuple([3, "baz"])
             ]
             let result = try source.select(testSpaceId, 0, .all, [], 0, 1000)
             assertEqual([IProtoTuple](result), expected)
@@ -67,7 +67,7 @@ class IProtoIteratorTests: TestCase {
     func testSelectEQ() {
         do {
             let expected: [IProtoTuple] = [
-                IProtoTuple(rawValue: [2, "bar"])
+                IProtoTuple([2, "bar"])
             ]
             let result = try source.select(testSpaceId, 0, .eq, [2], 0, 1000)
             assertEqual([IProtoTuple](result), expected)
@@ -80,7 +80,7 @@ class IProtoIteratorTests: TestCase {
     func testSelectGT() {
         do {
             let expected: [IProtoTuple] = [
-                IProtoTuple(rawValue: [3, "baz"])
+                IProtoTuple([3, "baz"])
             ]
             let result = try source.select(testSpaceId, 0, .gt, [2], 0, 1000)
             assertEqual([IProtoTuple](result), expected)
@@ -92,8 +92,8 @@ class IProtoIteratorTests: TestCase {
     func testSelectGE() {
         do {
             let expected: [IProtoTuple] = [
-                IProtoTuple(rawValue: [2, "bar"]),
-                IProtoTuple(rawValue: [3, "baz"])
+                IProtoTuple([2, "bar"]),
+                IProtoTuple([3, "baz"])
             ]
             let result = try source.select(testSpaceId, 0, .ge, [2], 0, 1000)
             assertEqual([IProtoTuple](result), expected)
@@ -105,7 +105,7 @@ class IProtoIteratorTests: TestCase {
     func testSelectLT() {
         do {
             let expected: [IProtoTuple] = [
-                IProtoTuple(rawValue: [1, "foo"])
+                IProtoTuple([1, "foo"])
             ]
             let result = try source.select(testSpaceId, 0, .lt, [2], 0, 1000)
             assertEqual([IProtoTuple](result), expected)
@@ -117,8 +117,8 @@ class IProtoIteratorTests: TestCase {
     func testSelectLE() {
         do {
             let expected: [IProtoTuple] = [
-                IProtoTuple(rawValue: [2, "bar"]),
-                IProtoTuple(rawValue: [1, "foo"])
+                IProtoTuple([2, "bar"]),
+                IProtoTuple([1, "foo"])
             ]
             let result = try source.select(testSpaceId, 0, .le, [2], 0, 1000)
             assertEqual([IProtoTuple](result), expected)

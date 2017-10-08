@@ -174,7 +174,7 @@ struct BoxIndexTests {
             throw "index not found"
         }
         let result = try index.get(keys: [3])
-        guard let tuple = result, tuple.rawValue == [3, "baz"] else {
+        guard let tuple = result, tuple.unpack() == [3, "baz"] else {
             throw "\(String(describing: result)) is not equal to [3, 'baz']"
         }
     }
@@ -185,7 +185,7 @@ struct BoxIndexTests {
         }
         try index.insert([4, "quux"])
         let result = try index.get(keys: [4])
-        guard let tuple = result, tuple.rawValue == [4, "quux"] else {
+        guard let tuple = result, tuple.unpack() == [4, "quux"] else {
             throw "\(String(describing: result))  is not equal to [4, 'quux']"
         }
     }
@@ -196,7 +196,7 @@ struct BoxIndexTests {
         }
         try index.replace([3, "zab"])
         let result = try index.get(keys: [3])
-        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
+        guard let tuple = result, tuple.unpack() == [3, "zab"] else {
             throw "\(String(describing: result))  is not equal to [3, 'zab']"
         }
     }
@@ -218,7 +218,7 @@ struct BoxIndexTests {
         }
         try index.update(keys: [3], operations: [["=", 1, "zab"]])
         let result = try index.get(keys: [3])
-        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
+        guard let tuple = result, tuple.unpack() == [3, "zab"] else {
             throw "\(String(describing: result)) is not equal to [3, 'zab']"
         }
     }
@@ -236,7 +236,7 @@ struct BoxIndexTests {
         let insert = try index.get(keys: [4])
 
         guard let insertResult = insert,
-            insertResult.rawValue == [4, "quux", 42] else {
+            insertResult.unpack() == [4, "quux", 42] else {
                 throw String(describing: insert) +
                 " is not equal to [4, 'quux', 42]"
         }
@@ -245,7 +245,7 @@ struct BoxIndexTests {
         let update = try index.get(keys: [4])
 
         guard let updateResult = update,
-            updateResult.rawValue == [4, "quux", 50] else {
+            updateResult.unpack() == [4, "quux", 50] else {
                 throw String(describing: update) +
                     " is not equal to [4, 'quux', 50]"
         }

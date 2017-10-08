@@ -14,8 +14,8 @@ import MessagePack
 public struct IProtoTuple: Tuple {
     var tuple: [MessagePack]
 
-    public init() {
-        tuple = []
+    public init(_ tuple: [MessagePack]) {
+        self.tuple = tuple
     } 
 
     public var startIndex: Int {
@@ -31,13 +31,9 @@ public struct IProtoTuple: Tuple {
     }
 }
 
-extension IProtoTuple: RawRepresentable {
-    public init(rawValue: [MessagePack]) {
-        self.tuple = rawValue
-    }
-
-    public var rawValue: [MessagePack] {
-        return self.tuple
+extension IProtoTuple {
+    public func unpack() -> [MessagePack] {
+        return tuple
     }
 }
 

@@ -38,7 +38,7 @@ struct BoxDataSourceTests {
 
     static func testGet() throws {
         let result = try source.get(testId, 0, [3])
-        guard let tuple = result, tuple.rawValue == [3, "baz"] else {
+        guard let tuple = result, tuple.unpack() == [3, "baz"] else {
             throw "\(String(describing: result)) is not equal to [3, 'baz']"
         }
     }
@@ -46,7 +46,7 @@ struct BoxDataSourceTests {
     static func testInsert() throws {
         try source.insert(testId, [4, "quux"])
         let result = try source.get(testId, 0, [4])
-        guard let tuple = result, tuple.rawValue == [4, "quux"] else {
+        guard let tuple = result, tuple.unpack() == [4, "quux"] else {
             throw "\(String(describing: result))  is not equal to [4, 'quux']"
         }
     }
@@ -54,7 +54,7 @@ struct BoxDataSourceTests {
     static func testReplace() throws {
         try source.replace(testId, [3, "zab"])
         let result = try source.get(testId, 0, [3])
-        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
+        guard let tuple = result, tuple.unpack() == [3, "zab"] else {
             throw "\(String(describing: result))  is not equal to [3, 'zab']"
         }
     }
@@ -70,7 +70,7 @@ struct BoxDataSourceTests {
     static func testUpdate() throws {
         try source.update(testId, 0, [3], [["=", 1, "zab"]])
         let result = try source.get(testId, 0, [3])
-        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
+        guard let tuple = result, tuple.unpack()  == [3, "zab"] else {
             throw "\(String(describing: result)) is not equal to [3, 'zab']"
         }
     }
@@ -84,14 +84,14 @@ struct BoxDataSourceTests {
         try source.upsert(testId, 0, [4, "quux", 42], [["+", 2, 8]])
         let insert = try source.get(testId, 0, [4])
 
-        guard let insertResult = insert, insertResult.rawValue == [4, "quux", 42] else {
+        guard let insertResult = insert, insertResult.unpack() == [4, "quux", 42] else {
                 throw "\(String(describing: insert)) is not equal to [4, 'quux', 42]"
         }
 
         try source.upsert(testId, 0, [4, "quux", 42], [["+", 2, 8]])
         let update = try source.get(testId, 0, [4])
 
-        guard let updateResult = update, updateResult.rawValue == [4, "quux", 50] else {
+        guard let updateResult = update, updateResult.unpack() == [4, "quux", 50] else {
             throw "\(String(describing: update)) is not equal to [4, 'quux', 50]"
         }
     }

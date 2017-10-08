@@ -89,7 +89,7 @@ public struct IProto: DataSource, LuaScript {
                 throw TarantoolError.invalidTuple(
                     message: "expected array, received: \(row)")
             }
-            tuples.append(IProtoTuple(rawValue: items))
+            tuples.append(IProtoTuple(items))
         }
 
         // TODO: read and parse from socket lazily
@@ -112,7 +112,7 @@ public struct IProto: DataSource, LuaScript {
             return nil
         }
 
-        return IProtoTuple(rawValue: tuple)
+        return IProtoTuple(tuple)
     }
 
     public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {

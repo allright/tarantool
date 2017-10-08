@@ -34,7 +34,7 @@ struct BoxSpaceTests {
 
     static func testGet() throws {
         let result = try space.get(keys: [3])
-        guard let tuple = result, tuple.rawValue == [3, "baz"] else {
+        guard let tuple = result, tuple.unpack() == [3, "baz"] else {
             throw "\(String(describing: result)) is not equal to [3, 'baz']"
         }
     }
@@ -42,7 +42,7 @@ struct BoxSpaceTests {
     static func testInsert() throws {
         try space.insert([4, "quux"])
         let result = try space.get(keys: [4])
-        guard let tuple = result, tuple.rawValue == [4, "quux"] else {
+        guard let tuple = result, tuple.unpack() == [4, "quux"] else {
             throw "\(String(describing: result))  is not equal to [4, 'quux']"
         }
     }
@@ -50,7 +50,7 @@ struct BoxSpaceTests {
     static func testReplace() throws {
         try space.replace([3, "zab"])
         let result = try space.get(keys: [3])
-        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
+        guard let tuple = result, tuple.unpack() == [3, "zab"] else {
             throw "\(String(describing: result))  is not equal to [3, 'zab']"
         }
     }
@@ -66,7 +66,7 @@ struct BoxSpaceTests {
     static func testUpdate() throws {
         try space.update(keys: [3], operations: [["=", 1, "zab"]])
         let result = try space.get(keys: [3])
-        guard let tuple = result, tuple.rawValue == [3, "zab"] else {
+        guard let tuple = result, tuple.unpack() == [3, "zab"] else {
             throw "\(String(describing: result)) is not equal to [3, 'zab']"
         }
     }
@@ -81,7 +81,7 @@ struct BoxSpaceTests {
         let insert = try space.get(keys: [4])
 
         guard let insertResult = insert,
-            insertResult.rawValue == [4, "quux", 42] else {
+            insertResult.unpack() == [4, "quux", 42] else {
             throw String(describing: insert) +
                 " is not equal to [4, 'quux', 42]"
         }
@@ -89,7 +89,7 @@ struct BoxSpaceTests {
         try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
         let update = try space.get(keys: [4])
 
-        guard let updateResult = update, updateResult.rawValue == [4, "quux", 50] else {
+        guard let updateResult = update, updateResult.unpack() == [4, "quux", 50] else {
             throw String(describing: update) +
                 " is not equal to [4, 'quux', 50]"
         }

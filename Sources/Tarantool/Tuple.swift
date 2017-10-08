@@ -10,16 +10,15 @@
 
 import MessagePack
 
-public protocol Tuple
-: RandomAccessCollection, RawRepresentable, CustomStringConvertible {
-    init()
-    var rawValue: [MessagePack] { get }
+public protocol Tuple: RandomAccessCollection, CustomStringConvertible {
+    var count: Int { get }
+    func unpack() -> [MessagePack]
     subscript(index: Int) -> MessagePack? { get }
 }
 
 extension Tuple {
     public var description: String {
-        return rawValue.description
+        return unpack().description
     }
 }
 

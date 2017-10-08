@@ -35,8 +35,8 @@ struct BoxTupleTests {
         ]
 
         let expected: [MessagePack] = [42, "Answer to the Ultimate Question of Life, The Universe, and Everything"]
-        let boxTuple = BoxTuple(OpaquePointer(bytes))!
-        let unpacked = boxTuple.rawValue
+        let boxTuple = BoxTuple(OpaquePointer(bytes))
+        let unpacked = boxTuple.unpack()
         guard unpacked == expected else {
             throw "\(unpacked) is not equal to \(expected)"
         }

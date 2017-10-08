@@ -30,7 +30,7 @@ public struct Schema<T: DataSource & LuaScript> {
         let indices = try indicesView.select(iterator: .all)
             .reduce(into: [Int : [Index<T>]]()) { (result, row) in
                 guard let index =
-                    Index(from: row.rawValue, source: source) else {
+                    Index(from: row, source: source) else {
                         throw TarantoolError.invalidIndex
                 }
                 result[index.spaceId, default: []].append(index)
@@ -69,7 +69,7 @@ public struct Schema<T: DataSource & LuaScript> {
 }
 
 extension Index {
-    init?(from messagePack: [MessagePack], source: T) {
+    init?<M: Tuple>(from messagePack: M, source: T) {
         guard messagePack.count >= 5,
             let spaceId = Int(messagePack[0]),
             let id = Int(messagePack[1]),

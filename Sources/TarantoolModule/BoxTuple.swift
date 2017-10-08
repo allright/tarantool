@@ -13,24 +13,12 @@ import Tarantool
 import CTarantool
 import MessagePack
 
-public final class BoxTuple: Tuple {
+public struct BoxTuple: Tuple {
     let pointer: OpaquePointer
 
-    public convenience init() {
-        self.init(rawValue: [])!
-    }
-
-    // FIXME: should be internal, but needed for TarantoolModuleTest
-    // currently we can't build the module in release mode using @testable
-    public init?(_ pointer: OpaquePointer) {
+    public // @testable
+    init(_ pointer: OpaquePointer) {
         self.pointer = pointer
-        guard _box_tuple_ref(pointer) == 0 else {
-            return nil
-        }
-    }
-
-    deinit {
-        _box_tuple_unref(pointer)
     }
 
     var size: Int {
@@ -60,23 +48,8 @@ public final class BoxTuple: Tuple {
     }
 }
 
-extension BoxTuple: RawRepresentable {
-    public convenience init?(rawValue: [MessagePack]) {
-        var encoder = MessagePackWriter(OutputByteStream())
-        guard let _ = try? encoder.encode(rawValue) else {
-            return nil
-        }
-        let bytes = encoder.stream.bytes
-        let pointer = UnsafeRawPointer(bytes).assumingMemoryBound(to: Int8.self)
-        let format = _box_tuple_format_default()
-        guard let tuple =
-            _box_tuple_new(format, pointer, pointer+bytes.count) else {
-                return nil
-        }
-        self.init(tuple)
-    }
-
-    public var rawValue: [MessagePack] {
+extension BoxTuple {
+    public func unpack() -> [MessagePack] {
         let size = self.size
         guard size > 0 else {
             return []
