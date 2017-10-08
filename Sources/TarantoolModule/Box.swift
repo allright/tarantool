@@ -25,7 +25,7 @@ public struct Box: DataSource, LuaScript {
         _ keys: [MessagePack]
     ) throws -> Int {
         let keys = try MessagePack.encode(.array(keys))
-        return try BoxWrapper.count(
+        return try Box.API.count(
             UInt32(spaceId), UInt32(indexId), iterator, keys)
     }
 
@@ -36,34 +36,34 @@ public struct Box: DataSource, LuaScript {
         _ keys: [MessagePack],
         _ offset: Int,
         _ limit: Int
-    ) throws -> AnySequence<BoxTuple> {
+    ) throws -> AnySequence<Tuple> {
         let keys = try MessagePack.encode(.array(keys))
-        return try BoxWrapper.select(
+        return try Box.API.select(
             numericCast(spaceId), numericCast(indexId), iterator, keys)
     }
 
     public func get(
         _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
-    ) throws -> BoxTuple? {
+    ) throws -> Tuple? {
         let keys = try MessagePack.encode(.array(keys))
-        return try BoxWrapper.get(UInt32(spaceId), UInt32(indexId), keys)
+        return try Box.API.get(UInt32(spaceId), UInt32(indexId), keys)
     }
 
     public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         let tuple = try MessagePack.encode(.array(tuple))
-        try BoxWrapper.insert(UInt32(spaceId), tuple)
+        try Box.API.insert(UInt32(spaceId), tuple)
     }
 
     public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         let tuple = try MessagePack.encode(.array(tuple))
-        try BoxWrapper.replace(UInt32(spaceId), tuple)
+        try Box.API.replace(UInt32(spaceId), tuple)
     }
 
     public func delete(
         _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
     ) throws {
         let keys = try MessagePack.encode(.array(keys))
-        try BoxWrapper.delete(UInt32(spaceId), UInt32(indexId), keys)
+        try Box.API.delete(UInt32(spaceId), UInt32(indexId), keys)
     }
 
     public func update(
@@ -74,7 +74,7 @@ public struct Box: DataSource, LuaScript {
     ) throws {
         let keys = try MessagePack.encode(.array(keys))
         let ops = try MessagePack.encode(.array(ops))
-        try BoxWrapper.update(UInt32(spaceId), UInt32(indexId), keys, ops)
+        try Box.API.update(UInt32(spaceId), UInt32(indexId), keys, ops)
     }
 
     public func upsert(
@@ -85,7 +85,7 @@ public struct Box: DataSource, LuaScript {
     ) throws {
         let tuple = try MessagePack.encode(.array(tuple))
         let ops = try MessagePack.encode(.array(ops))
-        try BoxWrapper.upsert(UInt32(spaceId), UInt32(indexId), tuple, ops)
+        try Box.API.upsert(UInt32(spaceId), UInt32(indexId), tuple, ops)
     }
 
     // MARK: LuaScript

@@ -19,7 +19,7 @@ extension Box {
     public struct Output {
         let context: Context
 
-        public func append(_ tuple: BoxTuple) throws {
+        public func append(_ tuple: Tuple) throws {
             guard Box.returnTuple(tuple, to: context) == 0 else {
                 throw Box.Error()
             }
@@ -68,7 +68,7 @@ extension Box {
     }
 
     public static func returnTuple(
-        _ tuple: BoxTuple, to context: Context
+        _ tuple: Tuple, to context: Context
     ) -> Result {
         return _box_return_tuple(context, tuple.pointer)
     }

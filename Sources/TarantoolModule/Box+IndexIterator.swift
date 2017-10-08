@@ -23,13 +23,13 @@ extension Box {
             _box_iterator_free(iterator)
         }
 
-        func next() -> BoxTuple? {
+        func next() -> Tuple? {
             var result: OpaquePointer?
             guard _box_iterator_next(iterator, &result) == 0,
                 let pointer = result else {
                     return nil
             }
-            return BoxTuple(pointer)
+            return Tuple(pointer)
         }
     }
 }

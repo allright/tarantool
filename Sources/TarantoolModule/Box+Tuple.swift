@@ -13,42 +13,44 @@ import Tarantool
 import CTarantool
 import MessagePack
 
-public struct BoxTuple: Tuple {
-    let pointer: OpaquePointer
+extension Box {
+    public struct Tuple: Tarantool.Tuple {
+        let pointer: OpaquePointer
 
-    public // @testable
-    init(_ pointer: OpaquePointer) {
-        self.pointer = pointer
-    }
-
-    var size: Int {
-        return _box_tuple_bsize(pointer)
-    }
-
-    public var startIndex: Int {
-        return 0
-    }
-
-    public var endIndex: Int {
-        return Int(_box_tuple_field_count(pointer))
-    }
-
-    @inline(__always)
-    func getFieldMaxSize(_ field: UnsafePointer<Int8>) -> Int {
-        return size - (UnsafePointer<Int8>(pointer) - field)
-    }
-
-    public subscript(index: Int) -> MessagePack? {
-        guard let field = _box_tuple_field(pointer, numericCast(index)) else {
-            return nil
+        public // @testable
+        init(_ pointer: OpaquePointer) {
+            self.pointer = pointer
         }
-        var decoder = MessagePackReader(
-            UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
-        return try? decoder.decode()
+
+        var size: Int {
+            return _box_tuple_bsize(pointer)
+        }
+
+        public var startIndex: Int {
+            return 0
+        }
+
+        public var endIndex: Int {
+            return Int(_box_tuple_field_count(pointer))
+        }
+
+        @inline(__always)
+        func getFieldMaxSize(_ field: UnsafePointer<Int8>) -> Int {
+            return size - (UnsafePointer<Int8>(pointer) - field)
+        }
+
+        public subscript(index: Int) -> MessagePack? {
+            guard let field = _box_tuple_field(pointer, numericCast(index)) else {
+                return nil
+            }
+            var decoder = MessagePackReader(
+                UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
+            return try? decoder.decode()
+        }
     }
 }
 
-extension BoxTuple {
+extension Box.Tuple {
     public func unpack() -> [MessagePack] {
         let size = self.size
         guard size > 0 else {
@@ -85,7 +87,7 @@ extension BoxTuple {
     }
 }
 
-extension BoxTuple {
+extension Box.Tuple {
     public subscript(index: Int, as type: Bool.Type) -> Bool? {
         guard let field = _box_tuple_field(pointer, numericCast(index)) else {
             return nil

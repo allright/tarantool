@@ -10,7 +10,7 @@
 
 import CTarantool
 
-extension BoxWrapper {
+extension Box.API {
     struct Transaction {
         @inline(__always)
         fileprivate static func begin() throws {
@@ -39,14 +39,14 @@ extension Box {
     public static func transaction<T>(
         _ closure: () throws -> T
     ) throws -> T {
-        try BoxWrapper.Transaction.begin()
+        try Box.API.Transaction.begin()
 
         do {
             let result = try closure()
-            try BoxWrapper.Transaction.commit()
+            try Box.API.Transaction.commit()
             return result
         } catch {
-            try BoxWrapper.Transaction.rollback()
+            try Box.API.Transaction.rollback()
             throw error
         }
     }
