@@ -10,13 +10,13 @@
 
 import MessagePack
 
-public protocol Tuple: RandomAccessCollection, CustomStringConvertible {
+public protocol TupleProtocol: RandomAccessCollection, CustomStringConvertible {
     var count: Int { get }
     func unpack() -> [MessagePack]
     subscript(index: Int) -> MessagePack? { get }
 }
 
-extension Tuple {
+extension TupleProtocol {
     public var description: String {
         return unpack().description
     }

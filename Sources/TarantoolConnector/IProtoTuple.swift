@@ -11,7 +11,7 @@
 import Tarantool
 import MessagePack
 
-public struct IProtoTuple: Tuple {
+public struct IProtoTuple: Tarantool.Tuple {
     var tuple: [MessagePack]
 
     public init(_ tuple: [MessagePack]) {

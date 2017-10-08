@@ -31,7 +31,7 @@ public struct Schema<T: DataSource & LuaScript> {
             .reduce(into: [Int : [Index<T>]]()) { (result, row) in
                 guard let index =
                     Index(from: row, source: source) else {
-                        throw TarantoolError.invalidIndex
+                        throw Tarantool.Error.invalidIndex
                 }
                 result[index.spaceId, default: []].append(index)
             }
@@ -43,7 +43,7 @@ public struct Schema<T: DataSource & LuaScript> {
             .reduce(into: [String : Space<T>]()) { (result, row) in
                 guard let id = Int(row[0]),
                     let name = String(row[2]) else {
-                        throw TarantoolError.invalidSchema
+                        throw Tarantool.Error.invalidSchema
                 }
                 result[name] = Space(
                     id: id,
@@ -60,7 +60,7 @@ public struct Schema<T: DataSource & LuaScript> {
         let result = try source.eval(script, arguments: [])
         guard result.count == 1, let id = Int(result[0]) else {
             let message = "[integer] expected, got \(result)"
-            throw TarantoolError.invalidTuple(message: message)
+            throw Tarantool.Error.invalidTuple(message: message)
         }
         let space = Space(id: id, name: name, indices: [], source: source)
         spaces[name] = space
@@ -69,7 +69,7 @@ public struct Schema<T: DataSource & LuaScript> {
 }
 
 extension Index {
-    init?<M: Tuple>(from messagePack: M, source: T) {
+    init?<M: Tarantool.Tuple>(from messagePack: M, source: T) {
         guard messagePack.count >= 5,
             let spaceId = Int(messagePack[0]),
             let id = Int(messagePack[1]),

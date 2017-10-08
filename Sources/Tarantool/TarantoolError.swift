@@ -8,12 +8,16 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-public enum TarantoolError: Error {
-    case spaceNotFound
-    case indexNotFound
-    case invalidSchema
-    case invalidIndex
-    case invalidTuple(message: String)
-    case notEnoughMemory
-    case unexpected(message: String)
+public struct Tarantool {
+    public typealias Tuple = TupleProtocol
+
+    public enum Error: Swift.Error {
+        case spaceNotFound
+        case indexNotFound
+        case invalidSchema
+        case invalidIndex
+        case invalidTuple(message: String)
+        case notEnoughMemory
+        case unexpected(message: String)
+    }
 }

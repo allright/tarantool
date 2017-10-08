@@ -11,7 +11,7 @@
 import MessagePack
 
 public protocol DataSource {
-    associatedtype Row: Tuple
+    associatedtype Row: Tarantool.Tuple
 
     func count(
         _ spaceId: Int,

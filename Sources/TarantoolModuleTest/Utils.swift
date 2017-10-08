@@ -14,7 +14,7 @@ import MessagePack
 extension String: Error {}
 
 extension Array where Element == [MessagePack] {
-    init<T: Tuple>(_ tuples: AnySequence<T>) {
+    init<T: Tarantool.Tuple>(_ tuples: AnySequence<T>) {
         var result = [[MessagePack]]()
         for tuple in tuples {
             result.append(tuple.unpack())

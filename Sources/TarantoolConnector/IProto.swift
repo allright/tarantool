@@ -60,7 +60,7 @@ public struct IProto: DataSource, LuaScript {
             "return box.space[\(spaceId)].index[\(indexId)]:count()")
 
         guard let count = Int(result.first) else {
-            throw TarantoolError.invalidTuple(
+            throw Tarantool.Error.invalidTuple(
                 message: "expected integer, received: \(result)")
         }
 
@@ -86,7 +86,7 @@ public struct IProto: DataSource, LuaScript {
         var tuples: [IProtoTuple] = []
         for row in [MessagePack](result) {
             guard let items = [MessagePack](row) else {
-                throw TarantoolError.invalidTuple(
+                throw Tarantool.Error.invalidTuple(
                     message: "expected array, received: \(row)")
             }
             tuples.append(IProtoTuple(items))

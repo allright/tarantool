@@ -165,7 +165,7 @@ extension Box.API {
         let pointer = UnsafePointer<CChar>(name)
         let id = _box_space_id_by_name(pointer, UInt32(name.count))
         if id == invalid {
-            throw TarantoolError.spaceNotFound
+            throw Tarantool.Error.spaceNotFound
         }
         return id
     }
@@ -176,7 +176,7 @@ extension Box.API {
         let pointer = UnsafePointer<CChar>(name)
         let id = _box_index_id_by_name(spaceId, pointer, UInt32(name.count))
         if id == invalid {
-            throw TarantoolError.indexNotFound
+            throw Tarantool.Error.indexNotFound
         }
         return id
     }
@@ -187,7 +187,7 @@ extension Box.API {
         _ bytes: [UInt8]
     ) throws -> UnsafePointer<CChar> {
         guard let buffer = _box_txn_alloc(bytes.count) else {
-            throw TarantoolError.notEnoughMemory
+            throw Tarantool.Error.notEnoughMemory
         }
         memcpy(buffer, bytes, bytes.count)
         return UnsafeRawPointer(buffer).assumingMemoryBound(to: CChar.self)

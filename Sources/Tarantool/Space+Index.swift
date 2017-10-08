@@ -28,7 +28,7 @@ extension Space {
             let table = Map(result[0]),
             let id = Int(table["id"]) else {
                 let message = "[map] expected, got \(result)"
-                throw TarantoolError.invalidTuple(message: message)
+                throw Tarantool.Error.invalidTuple(message: message)
         }
         let unique = Bool(table["unique"]) ?? false
         let sequenceId = Int(table["sequence_id"])
