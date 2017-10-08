@@ -8,7 +8,45 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-extension BoxError {
+import CTarantool
+
+extension Box {
+    public struct Error: Swift.Error {
+        public let code: Code
+        public let message: String
+
+        public init(code: Code, message: String) {
+            self.code = code
+            self.message = message
+        }
+
+        init() {
+            guard let error = _box_error_last() else {
+                self.code = .unknown
+                self.message = "success"
+                return
+            }
+
+            guard let code = Code(rawValue: _box_error_code(error)),
+                let message = _box_error_message(error) else {
+                    self.code = .unknown
+                    self.message = "error"
+                    return
+            }
+
+            self.code = code
+            self.message = String(cString: message)
+        }
+    }
+}
+
+extension Box.Error: CustomStringConvertible {
+    public var description: String {
+        return "code: \(code) message: \(message)"
+    }
+}
+
+extension Box.Error {
     public enum Code: UInt32 {
         case unknown
         case illegalParams

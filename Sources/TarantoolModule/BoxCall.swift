@@ -17,13 +17,13 @@ public struct Output {
 
     public func append(_ tuple: BoxTuple) throws {
         guard Box.returnTuple(tuple, to: context) == 0 else {
-            throw BoxError()
+            throw Box.Error()
         }
     }
 
     public func append(_ tuple: [MessagePack]) throws {
         guard Box.returnTuple(tuple, to: context) == 0 else {
-            throw BoxError()
+            throw Box.Error()
         }
     }
 }
@@ -38,7 +38,7 @@ extension Box {
         do {
             try task()
             return 0
-        } catch let error as BoxError {
+        } catch let error as Box.Error {
             return Box.returnError(code: error.code, message: error.message)
         } catch {
             let message = String(describing: error)
@@ -93,7 +93,7 @@ extension Box {
     }
 
     public static func returnError(
-        code: BoxError.Code,
+        code: Box.Error.Code,
         message: String,
         file: String = #file,
         line: Int = #line

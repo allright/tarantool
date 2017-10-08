@@ -24,7 +24,7 @@ struct BoxWrapper {
         let count = _box_index_count(
             spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd)
         guard count >= 0 else {
-            throw BoxError()
+            throw Box.Error()
         }
         return count
     }
@@ -39,7 +39,7 @@ struct BoxWrapper {
         let pKeysEnd = pKeys + keys.count
         guard let iterator = _box_index_iterator(
             spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd) else {
-                throw BoxError()
+                throw Box.Error()
         }
         return AnySequence { BoxIterator(iterator) }
     }
@@ -51,7 +51,7 @@ struct BoxWrapper {
         let pKeys = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
         guard _box_index_get(
             spaceId, indexId, pKeys, pKeys+keys.count, &result) == 0 else {
-                throw BoxError()
+                throw Box.Error()
         }
         guard let tuple = result else {
             return nil
@@ -63,7 +63,7 @@ struct BoxWrapper {
         let pointer = try copyToInternalMemory(tuple)
         guard _box_insert(
             spaceId, pointer, pointer+tuple.count, nil) == 0 else {
-                throw BoxError()
+                throw Box.Error()
         }
     }
 
@@ -75,7 +75,7 @@ struct BoxWrapper {
         let pKeysEnd = pKeys + keys.count
         guard _box_index_max(
             spaceId, indexId, pKeys, pKeysEnd, &result) == 0 else {
-                throw BoxError()
+                throw Box.Error()
         }
         guard let pointer = result else {
             return nil
@@ -88,7 +88,7 @@ struct BoxWrapper {
         let pointer = try copyToInternalMemory(tuple)
         guard _box_replace(
             spaceId, pointer, pointer+tuple.count, nil) == 0 else {
-                throw BoxError()
+                throw Box.Error()
         }
     }
 
@@ -109,7 +109,7 @@ struct BoxWrapper {
             pOps+ops.count,
             0,
             nil) == 0 else {
-                throw BoxError()
+                throw Box.Error()
         }
     }
 
@@ -130,7 +130,7 @@ struct BoxWrapper {
             pOps+ops.count,
             0,
             nil) == 0 else {
-                throw BoxError()
+                throw Box.Error()
         }
     }
 
@@ -140,7 +140,7 @@ struct BoxWrapper {
         let pointer = UnsafeRawPointer(keys).assumingMemoryBound(to: CChar.self)
         guard _box_delete(
             spaceId, indexId, pointer, pointer+keys.count, nil) == 0 else {
-                throw BoxError()
+                throw Box.Error()
         }
     }
 }
