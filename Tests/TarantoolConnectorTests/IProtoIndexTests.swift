@@ -226,17 +226,17 @@ class IProtoIndexTests: TestCase {
 
     func testSelect() {
         do {
-            let expected: [IProtoTuple] = [
-                IProtoTuple([1, "foo"]),
-                IProtoTuple([2, "bar"]),
-                IProtoTuple([3, "baz"])
+            let expected: [IProto.Tuple] = [
+                IProto.Tuple([1, "foo"]),
+                IProto.Tuple([2, "bar"]),
+                IProto.Tuple([3, "baz"])
             ]
             guard let index = space[index: 0] else {
                 fail("index not found")
                 return
             }
             let result = try index.select(iterator: .all)
-            assertEqual([IProtoTuple](result), expected)
+            assertEqual([IProto.Tuple](result), expected)
         } catch {
             fail(String(describing: error))
         }
@@ -252,7 +252,7 @@ class IProtoIndexTests: TestCase {
                 fail("tuple not found")
                 return
             }
-            assertEqual(result, IProtoTuple([3, "baz"]))
+            assertEqual(result, IProto.Tuple([3, "baz"]))
         } catch {
             fail(String(describing: error))
         }
@@ -269,7 +269,7 @@ class IProtoIndexTests: TestCase {
                 fail("tuple not found")
                 return
             }
-            assertEqual(result, IProtoTuple([4, "quux"]))
+            assertEqual(result, IProto.Tuple([4, "quux"]))
         } catch {
             fail(String(describing: error))
         }
@@ -286,7 +286,7 @@ class IProtoIndexTests: TestCase {
                 fail("tuple not found")
                 return
             }
-            assertEqual(result, IProtoTuple([3, "zab"]))
+            assertEqual(result, IProto.Tuple([3, "zab"]))
         } catch {
             fail(String(describing: error))
         }
@@ -316,7 +316,7 @@ class IProtoIndexTests: TestCase {
                 fail("tuple not found")
                 return
             }
-            assertEqual(result, IProtoTuple([3, "zab"]))
+            assertEqual(result, IProto.Tuple([3, "zab"]))
         } catch {
             fail(String(describing: error))
         }
@@ -335,14 +335,14 @@ class IProtoIndexTests: TestCase {
                 fail("tuple not found")
                 return
             }
-            assertEqual(insertResult, IProtoTuple([4, "quux", 42]))
+            assertEqual(insertResult, IProto.Tuple([4, "quux", 42]))
 
             try index.upsert([4, "quux", 42], operations: [["+", 2, 8]])
             guard let updateResult = try index.get(keys: [4]) else {
                 fail("tuple not found")
                 return
             }
-            assertEqual(updateResult, IProtoTuple([4, "quux", 50]))
+            assertEqual(updateResult, IProto.Tuple([4, "quux", 50]))
         } catch {
             fail(String(describing: error))
         }

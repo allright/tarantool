@@ -12,35 +12,6 @@ import Foundation
 import MessagePack
 import Tarantool
 
-//struct TupleSequence: Sequence {
-//    let tuples: [UInt8]
-//    init(tuples: [UInt8]) {
-//        self.tuples = tuples
-//    }
-//
-//    func makeIterator() -> TupleIterator {
-//        return TupleIterator(tuples: tuples)
-//    }
-//}
-//
-//struct TupleIterator: IteratorProtocol {
-//    let tuples: [UInt8]
-//    var decoder: UnsafeMessagePackDecoder
-//    init(tuples: [UInt8]) {
-//        self.tuples = tuples
-//        self.decoder = UnsafeMessagePackDecoder(
-//            bytes: tuples, count: tuples.count)
-//    }
-//
-//    mutating func next() -> IProtoTuple? {
-//        try decoder.decodeArrayItemsCount()
-//    }
-//
-//    typealias Element = IProtoTuple
-//
-//
-//}
-
 public struct IProto: DataSource, LuaScript {
     let connection: IProtoConnection
 
@@ -74,7 +45,7 @@ public struct IProto: DataSource, LuaScript {
         _ keys: [MessagePack],
         _ offset: Int,
         _ limit: Int
-    ) throws -> AnySequence<IProtoTuple> {
+    ) throws -> AnySequence<Tuple> {
         let result = try connection.request(code: .select, keys: [
             .spaceId:  .int(spaceId),
             .indexId:  .int(indexId),
@@ -83,23 +54,12 @@ public struct IProto: DataSource, LuaScript {
             .iterator: .int(iterator.rawValue),
             .key:      .array(keys)])
 
-        var tuples: [IProtoTuple] = []
-        for row in [MessagePack](result) {
-            guard let items = [MessagePack](row) else {
-                throw Tarantool.Error.invalidTuple(
-                    message: "expected array, received: \(row)")
-            }
-            tuples.append(IProtoTuple(items))
-        }
-
-        // TODO: read and parse from socket lazily
-
-        return AnySequence { tuples.makeIterator() }
+        return AnySequence { TupleIterator(tuples: result) }
     }
 
     public func get(
         _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
-    ) throws -> IProtoTuple? {
+    ) throws -> Tuple? {
         let result = try connection.request(code: .select, keys: [
             .spaceId:  .int(spaceId),
             .indexId:  .int(indexId),
@@ -112,7 +72,7 @@ public struct IProto: DataSource, LuaScript {
             return nil
         }
 
-        return IProtoTuple(tuple)
+        return Tuple(tuple)
     }
 
     public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {

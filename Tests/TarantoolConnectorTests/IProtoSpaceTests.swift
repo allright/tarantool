@@ -56,13 +56,13 @@ class IProtoSpaceTests: TestCase {
 
     func testSelect() {
         do {
-            let expected: [IProtoTuple] = [
-                IProtoTuple([1, "foo"]),
-                IProtoTuple([2, "bar"]),
-                IProtoTuple([3, "baz"])
+            let expected: [IProto.Tuple] = [
+                IProto.Tuple([1, "foo"]),
+                IProto.Tuple([2, "bar"]),
+                IProto.Tuple([3, "baz"])
             ]
             let result = try space.select(iterator: .all)
-            assertEqual([IProtoTuple](result), expected)
+            assertEqual([IProto.Tuple](result), expected)
         } catch {
             fail(String(describing: error))
         }
@@ -74,7 +74,7 @@ class IProtoSpaceTests: TestCase {
                 fail()
                 return
             }
-            assertEqual(result, IProtoTuple([3, "baz"]))
+            assertEqual(result, IProto.Tuple([3, "baz"]))
         } catch {
             fail(String(describing: error))
         }
@@ -87,7 +87,7 @@ class IProtoSpaceTests: TestCase {
                 fail()
                 return
             }
-            assertEqual(result, IProtoTuple([4, "quux"]))
+            assertEqual(result, IProto.Tuple([4, "quux"]))
         } catch {
             fail(String(describing: error))
         }
@@ -100,7 +100,7 @@ class IProtoSpaceTests: TestCase {
                 fail()
                 return
             }
-            assertEqual(result, IProtoTuple([3, "zab"]))
+            assertEqual(result, IProto.Tuple([3, "zab"]))
         } catch {
             fail(String(describing: error))
         }
@@ -122,7 +122,7 @@ class IProtoSpaceTests: TestCase {
                 fail()
                 return
             }
-            assertEqual(result, IProtoTuple([3, "zab"]))
+            assertEqual(result, IProto.Tuple([3, "zab"]))
         } catch {
             fail(String(describing: error))
         }
@@ -137,14 +137,14 @@ class IProtoSpaceTests: TestCase {
                 fail()
                 return
             }
-            assertEqual(insertResult, IProtoTuple([4, "quux", 42]))
+            assertEqual(insertResult, IProto.Tuple([4, "quux", 42]))
 
             try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
             guard let updateResult = try space.get(keys: [4]) else {
                 fail()
                 return
             }
-            assertEqual(updateResult, IProtoTuple([4, "quux", 50]))
+            assertEqual(updateResult, IProto.Tuple([4, "quux", 50]))
         } catch {
             fail(String(describing: error))
         }
