@@ -18,12 +18,14 @@ extension Box {
             _ iterator: Iterator,
             _ keys: [UInt8]
         ) throws -> Int {
-            let pKeys = UnsafePointer<CChar>(keys)
-            let pKeysEnd = pKeys + keys.count
             let count = _box_index_count(
-                spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd)
+                spaceId,
+                indexId,
+                Int32(iterator.rawValue),
+                UnsafePointer<CChar>(keys),
+                UnsafePointer<CChar>(keys) + keys.count)
             guard count >= 0 else {
-                throw Box.Error()
+                throw Error()
             }
             return count
         }
@@ -34,11 +36,14 @@ extension Box {
             _ iterator: Iterator,
             _ keys: [UInt8]
         ) throws -> AnySequence<Box.Tuple> {
-            let pKeys = UnsafePointer<CChar>(keys)
-            let pKeysEnd = pKeys + keys.count
             guard let iterator = _box_index_iterator(
-                spaceId, indexId, Int32(iterator.rawValue), pKeys, pKeysEnd) else {
-                    throw Box.Error()
+                spaceId,
+                indexId,
+                Int32(iterator.rawValue),
+                UnsafePointer<CChar>(keys),
+                UnsafePointer<CChar>(keys) + keys.count)
+            else {
+                throw Error()
             }
             return AnySequence { Box.IndexIterator(iterator) }
         }
@@ -47,22 +52,30 @@ extension Box {
             _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
         ) throws -> Box.Tuple? {
             var result: OpaquePointer?
-            let pKeys = UnsafePointer<CChar>(keys)
             guard _box_index_get(
-                spaceId, indexId, pKeys, pKeys+keys.count, &result) == 0 else {
-                    throw Box.Error()
+                spaceId,
+                indexId,
+                UnsafePointer<CChar>(keys),
+                UnsafePointer<CChar>(keys)+keys.count,
+                &result) == 0
+            else {
+                throw Error()
             }
             guard let tuple = result else {
                 return nil
             }
-            return Box.Tuple(tuple)
+            return Tuple(tuple)
         }
 
         static func insert(_ spaceId: UInt32, _ tuple: [UInt8]) throws {
             let pointer = try copyToInternalMemory(tuple)
             guard _box_insert(
-                spaceId, pointer, pointer+tuple.count, nil) == 0 else {
-                    throw Box.Error()
+                spaceId,
+                pointer,
+                pointer+tuple.count,
+                nil) == 0
+            else {
+                throw Error()
             }
         }
 
@@ -74,12 +87,12 @@ extension Box {
             let pKeysEnd = pKeys + keys.count
             guard _box_index_max(
                 spaceId, indexId, pKeys, pKeysEnd, &result) == 0 else {
-                    throw Box.Error()
+                    throw Error()
             }
             guard let pointer = result else {
                 return nil
             }
-            let tuple = Box.Tuple(pointer)
+            let tuple = Tuple(pointer)
             return tuple[0, as: Int.self]
         }
 
@@ -87,7 +100,7 @@ extension Box {
             let pointer = try copyToInternalMemory(tuple)
             guard _box_replace(
                 spaceId, pointer, pointer+tuple.count, nil) == 0 else {
-                    throw Box.Error()
+                    throw Error()
             }
         }
 
@@ -108,7 +121,7 @@ extension Box {
                 pOps+ops.count,
                 0,
                 nil) == 0 else {
-                    throw Box.Error()
+                    throw Error()
             }
         }
 
@@ -129,7 +142,7 @@ extension Box {
                 pOps+ops.count,
                 0,
                 nil) == 0 else {
-                    throw Box.Error()
+                    throw Error()
             }
         }
 
@@ -139,7 +152,7 @@ extension Box {
             let pointer = UnsafePointer<CChar>(keys)
             guard _box_delete(
                 spaceId, indexId, pointer, pointer+keys.count, nil) == 0 else {
-                    throw Box.Error()
+                    throw Error()
             }
         }
     }
