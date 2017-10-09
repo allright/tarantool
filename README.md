@@ -30,34 +30,32 @@ You can find this code and more in [examples](https://github.com/tris-foundation
 ```swift
 import TarantoolConnector
 
-let connection = try IProtoConnection(host: "127.0.0.1")
-try connection.auth(username: "tester", password: "tester")
+let iproto = try IProto(host: "127.0.0.1")
+try iproto.auth(username: "tester", password: "tester")
 
-let source = IProto(connection: connection)
-let schema = try Schema(source)
+var schema = try Schema(iproto)
 
 guard let test = schema.spaces["test"] else {
     print("space test not found")
-    exit(0)
+    exit(1)
 }
 
-// prints: [[3, "baz"]]
+// select by key
 let equal = try test.select(.eq, keys: [3])
 equal.forEach { print($0) }
 
-// first run: [[1, "foo"], [2, "bar"], [3, "baz"]]
-// second run: [[42, "Answer to the Ultimate Question of Life, The Universe, and Everything"], [1, "foo"], ...]
+// select all
 let all = try test.select(.all)
 all.forEach { print($0) }
 
-// prints: [42, "Answer to the Ultimate Question of Life, The Universe, and Everything"]
+// replace
 try test.replace([42, "Answer to the Ultimate Question of Life, The Universe, and Everything"])
 if let answer = try test.get([42]) {
     print(answer)
 }
 ```
 
-### Tarantool Module
+### Tarantool in-memory module
 
 #### Server-side
 
@@ -69,38 +67,59 @@ struct ModuleError: Error, CustomStringConvertible {
     let description: String
 }
 
-func helloSwift() -> MessagePack {
-    return "hello from swift"
+@_silgen_name("hello_swift")
+public func helloSwift(context: Box.Context) -> Box.Result {
+    return Box.convertCall(context) { output in
+        try output.append(["hello"])
+        try output.append(["from"])
+        try output.append(["swift"])
+    }
 }
 
-func getFoo() throws -> MessagePack {
-    let schema = try Schema(Box())
+@_silgen_name("get_foo")
+public func getFoo(context: Box.Context) -> Box.Result {
+    return Box.convertCall(context) { output in
+        guard let space = schema.spaces["data"] else {
+            throw Box.Error(code: .noSuchSpace, message: "space: 'data'")
+        }
 
-    guard let space = schema.spaces["data"] else {
-        throw BoxError(code: .noSuchSpace, message: "space 'data' not found")
+        try space.replace(["foo", "bar"])
+
+        guard let result = try space.get(keys: ["foo"]) else {
+            throw Box.Error(code: .tupleNotFound, message: "keys: foo")
+        }
+        try output.append(result)
+        try output.append(result)
     }
-
-    try space.replace(["foo", "bar"])
-
-    guard let result = try space.get(["foo"]) else {
-        throw BoxError(code: .tupleNotFound, message: "foo not found")
-    }
-    return .array(result.rawValue)
 }
 
-func getCount(args: [MessagePack]) throws -> MessagePack {
-    let schema = try Schema(Box())
+@_silgen_name("get_count")
+public func getCount(
+    context: Box.Context,
+    start: UnsafePointer<UInt8>,
+    end: UnsafePointer<UInt8>
+) -> Box.Result {
+    return Box.convertCall(context, start, end) { arguments, output in
+        guard let name = String(arguments.first) else {
+            throw ModuleError(description: "incorrect space name argument")
+        }
 
-    guard let first = args.first, let spaceName = String(first) else {
-        throw ModuleError(description: "incorrect space name argument")
+        guard let space = schema.spaces[name] else {
+            throw Box.Error(code: .noSuchSpace, message: "space: '\(name)'")
+        }
+
+        let count = try space.count()
+        try output.append([.int(count)])
     }
+}
 
-    guard let space = schema.spaces[spaceName] else {
-        throw BoxError(code: .noSuchSpace, message: "space '\(spaceName)' not found")
+@_silgen_name("eval_lua")
+public func evalLuaScript(context: Box.Context) -> Box.Result {
+    return Box.convertCall(context) { output in
+        var result = try Lua.eval("return 40 + 2")
+        result.insert("eval result", at: 0)
+        try output.append(result)
     }
-
-    let count = try space.count()
-    return .int(count)
 }
 ```
 
@@ -109,11 +128,12 @@ func getCount(args: [MessagePack]) throws -> MessagePack {
 ```swift
 import TarantoolConnector
 
-let iproto = try IProtoConnection(host: "127.0.0.1")
+let iproto = try IProto(host: "127.0.0.1")
 
-print(try iproto.call("helloSwift"))
-print(try iproto.call("getFoo"))
-print(try iproto.call("getCount", arguments: ["test"]))
+print(try iproto.call("hello_swift"))
+print(try iproto.call("get_foo"))
+print(try iproto.call("get_count", arguments: ["test"]))
+print(try iproto.call("eval_lua"))
 ```
 
 ### Run tests
