@@ -7,11 +7,15 @@ Key features:
 * ACID transactions
 * Secondary indices
 * Onboard Lua scripting
-* Asynchronous master-slave and master-master replication
+* Asynchronous master-master replication
 
-#### This package includes two modules:
-1. TarantoolConnector: allows you to communicate with remote tarantool instance.
-2. TarantoolModule: allows you to write server logic (stored procedures) in swift.
+#### The package includes three main modules:
+* Tarantool: common protocols to work with schema, spaces and indices.
+* TarantoolModule: an implementation to run your code (stored procedures) inside a tarantool process.
+* TarantoolConnector: an implementation which can run the same code by communicating with a remote instance.
+
+#### And the one that allows us run the code in different environments:
+AsyncTarantool: an implementation of our [Async](https://github.com/tris-foundation/async) protocol to switch over different cooperative multitasking [systems](https://github.com/tris-foundation/fiber).
 
 Follow the examples link below to see how to use it all together.
 
@@ -109,7 +113,6 @@ public func getFoo(context: Box.Context) -> Box.Result {
             throw Box.Error(code: .tupleNotFound, message: "keys: foo")
         }
         try output.append(result)
-        try output.append(result)
     }
 }
 
@@ -136,7 +139,7 @@ public func getCount(
 @_silgen_name("eval_lua")
 public func evalLuaScript(context: Box.Context) -> Box.Result {
     return Box.convertCall(context) { output in
-        var result = try Lua.eval("return 40 + 2")
+        var result = try Lua.eval("return 3 + 0.14")
         result.insert("eval result", at: 0)
         try output.append(result)
     }
@@ -156,11 +159,10 @@ print(try iproto.call("get_count", arguments: ["test"]))
 print(try iproto.call("eval_lua"))
 ```
 
-### Run tests
+### Tests
 
-You can launch tests with custom `tarantool` binary file use:
+You can also run the tests with a custom path to `tarantool` executable by setting TARANTOOL_BIN variable:
 
 ```bash
 TARANTOOL_BIN=/path/to/bin/tarantool swift test
 ```
-
