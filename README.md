@@ -1,6 +1,6 @@
 # Tarantool
 
-A few words about [Tarantool](https://tarantool.org): Tarantool is a NoSQL database with in-memory and disk-based storage engines.
+A few words about [Tarantool](https://tarantool.org): Tarantool is a (No)SQL database with in-memory and disk-based storage engines.
 
 Key features:
 * Fast as hell
