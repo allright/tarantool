@@ -10,12 +10,12 @@ Key features:
 * Asynchronous master-master replication
 
 #### The package includes three main modules:
-* Tarantool: common protocols to work with schema, spaces and indices.
-* TarantoolModule: an implementation to run your code (stored procedures) inside a tarantool process.
-* TarantoolConnector: an implementation which can run the same code by communicating with a remote instance.
+* **Tarantool**: common protocols to work with schema, spaces and indices.
+* **TarantoolModule**: an implementation to run your code (stored procedures) inside a tarantool process.
+* **TarantoolConnector**: an implementation which can run the same code by communicating with a remote instance.
 
-#### And the one that allows us run the code in different environments:
-AsyncTarantool: an implementation of our [Async](https://github.com/tris-foundation/async) protocol to switch over different cooperative multitasking [systems](https://github.com/tris-foundation/fiber).
+And the one that allows us run the code in different environments:
+* **AsyncTarantool**: an implementation of our [Async](https://github.com/tris-foundation/async) protocol to switch over different cooperative multitasking [systems](https://github.com/tris-foundation/fiber).
 
 Follow the examples link below to see how to use it all together.
 
