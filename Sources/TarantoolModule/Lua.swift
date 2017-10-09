@@ -208,28 +208,30 @@ extension Lua {
 }
 
 extension Lua {
-    public func get(_ value: Bool.Type, at index: Int) -> Bool {
+    public func get(_ type: Bool.Type, at index: Int) -> Bool {
         return _lua_toboolean(L, Int32(index)) == 1
     }
 
-    public func get(_ value: Int.Type, at index: Int) -> Int {
+    public func get(_ type: Int.Type, at index: Int) -> Int {
         return _lua_tointeger(L, Int32(index))
     }
 
-    public func get(_ value: UInt.Type, at index: Int) -> UInt {
+    public func get(_ type: UInt.Type, at index: Int) -> UInt {
         return UInt(bitPattern: _lua_tointeger(L, Int32(index)))
     }
 
-    public func get(_ value: Float.Type, at index: Int) -> Float {
+    public func get(_ type: Float.Type, at index: Int) -> Float {
         return Float(_lua_tonumber(L, Int32(index)))
     }
 
-    public func get(_ value: Double.Type, at index: Int) -> Double {
+    public func get(_ type: Double.Type, at index: Int) -> Double {
         return _lua_tonumber(L, Int32(index))
     }
 
-    public func get(_ value: String.Type, at index: Int) -> String {
-        let pointer = _lua_tolstring(L, Int32(index), nil)!
+    public func get(_ type: String.Type, at index: Int) -> String? {
+        guard let pointer = _lua_tolstring(L, Int32(index), nil) else {
+            return nil
+        }
         return String(cString: pointer)
     }
 }

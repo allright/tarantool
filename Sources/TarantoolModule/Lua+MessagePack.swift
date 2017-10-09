@@ -65,12 +65,9 @@ extension Lua {
             return nil
         }
         defer { pop(count: 1) }
-        guard type(at: -1) == LUA_TSTRING else {
-            return nil
-        }
-        let hint = get(String.self, at: -1)
-        guard let tableType = TableType(rawValue: hint) else {
-            return nil
+        guard let hint = get(String.self, at: -1),
+            let tableType = TableType(rawValue: hint) else {
+                return nil
         }
         return tableType
     }
@@ -219,7 +216,7 @@ extension Lua {
         case LUA_TNIL: return .nil
         case LUA_TNUMBER: return getNumber(at: index)
         case LUA_TBOOLEAN: return .bool(get(Bool.self, at: index))
-        case LUA_TSTRING: return .string(get(String.self, at: index))
+        case LUA_TSTRING: return .string(get(String.self, at: index)!)
         case LUA_TTABLE: return try getTable(at: index)
         default: throw Error(message: "return type \(type) is not supported")
         }
