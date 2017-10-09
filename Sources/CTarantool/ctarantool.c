@@ -319,11 +319,16 @@ void resolve_lua(void *handle) {
     resolve(handle, "luaL_newstate", (void**)&_luaL_newstate);
     resolve(handle, "luaL_gsub", (void**)&_luaL_gsub);
     resolve(handle, "luaL_findtable", (void**)&_luaL_findtable);
+    // /* From Lua 5.2. */
     resolve(handle, "luaL_fileresult", (void**)&_luaL_fileresult);
     resolve(handle, "luaL_execresult", (void**)&_luaL_execresult);
     resolve(handle, "luaL_loadfilex", (void**)&_luaL_loadfilex);
     resolve(handle, "luaL_loadbufferx", (void**)&_luaL_loadbufferx);
     resolve(handle, "luaL_traceback", (void**)&_luaL_traceback);
+    resolve(handle, "luaL_setfuncs", (void**)&_luaL_setfuncs);
+    resolve(handle, "luaL_pushmodule", (void**)&_luaL_pushmodule);
+    resolve(handle, "luaL_testudata", (void**)&_luaL_testudata);
+    resolve(handle, "luaL_setmetatable", (void**)&_luaL_setmetatable);
 
     resolve(handle, "luaL_buffinit", (void**)&_luaL_buffinit);
     // FIXME: crash

@@ -119,6 +119,21 @@ public struct Lua {
         _ = _lua_setmetatable(L, Int32(index))
     }
 
+    public func setFuncs(
+        _ reg: UnsafePointer<luaL_Reg>,
+        upValuesCount: Int = 0)
+    {
+        _luaL_setfuncs(L, reg, Int32(upValuesCount))
+    }
+
+    public func getGlobal(name: String) {
+        getField(from: .globals, name: name)
+    }
+
+    public func setGlobal(name: String) {
+        setField(to: .globals, name: name)
+    }
+
     public func load(string: String) throws {
         guard _luaL_loadstring(L, string) == 0 else {
             throw Error(L)
@@ -152,8 +167,16 @@ extension Lua {
         case globals = -10002
     }
 
+    public func upValueIndex(_ index: Int) -> Int {
+        return Index.globals.rawValue - index
+    }
+
     public func getField(from index: Index, name: String) {
         getField(fromTableAt: index.rawValue, name: name)
+    }
+
+    public func setField(to index: Index, name: String) {
+        setField(toTableAt: index.rawValue, name: name)
     }
 
     public func ref(at index: Index) -> Int {
@@ -205,6 +228,13 @@ extension Lua {
     public func push(_ value: String) {
         _lua_pushstring(L, value)
     }
+
+    public func push(
+        _ function: @escaping lua_CFunction,
+        upValuesCount: Int = 0
+    ) {
+        _lua_pushcclosure(L, function, Int32(upValuesCount))
+    }
 }
 
 extension Lua {
@@ -233,5 +263,12 @@ extension Lua {
             return nil
         }
         return String(cString: pointer)
+    }
+
+    public func get(
+        _ type: lua_CFunction.Type,
+        at index: Int
+    ) -> lua_CFunction? {
+        return _lua_tocfunction(L, Int32(index))
     }
 }

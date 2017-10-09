@@ -84,6 +84,11 @@ int (*_luaL_loadbufferx) (lua_State *L, const char *buff, size_t sz,
 				   const char *name, const char *mode);
 void (*_luaL_traceback) (lua_State *L, lua_State *L1, const char *msg,
 				int level);
+void (*_luaL_setfuncs) (lua_State *L, const luaL_Reg *l, int nup);
+void (*_luaL_pushmodule) (lua_State *L, const char *modname,
+                                   int sizehint);
+void *(*_luaL_testudata) (lua_State *L, int ud, const char *tname);
+void (*_luaL_setmetatable) (lua_State *L, const char *tname);
 
 
 /*
