@@ -60,6 +60,7 @@ class IProtoIndexTests: TestCase {
                 name: "hash",
                 type: .hash,
                 unique: true,
+                parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(hash, expected)
         } catch {
@@ -80,6 +81,7 @@ class IProtoIndexTests: TestCase {
                 name: "tree",
                 type: .tree,
                 unique: true,
+                parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(tree, expected)
         } catch {
@@ -103,6 +105,7 @@ class IProtoIndexTests: TestCase {
                 id: 1,
                 name: "rtree",
                 type: .rtree,
+                parts: [Index.Part(field: 2, type: .array)],
                 source: iproto)
             assertEqual(rtree, expected)
         } catch {
@@ -126,6 +129,7 @@ class IProtoIndexTests: TestCase {
                 id: 1,
                 name: "bitset",
                 type: .bitset,
+                parts: [Index.Part(field: 2, type: .unsigned)],
                 source: iproto)
             assertEqual(rtree, expected)
         } catch {
@@ -147,6 +151,7 @@ class IProtoIndexTests: TestCase {
                 type: .hash,
                 sequenceId: 1,
                 unique: true,
+                parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(primary, expected)
         } catch {
@@ -168,6 +173,7 @@ class IProtoIndexTests: TestCase {
                 name: "hash",
                 type: .hash,
                 unique: true,
+                parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(hash, expected0)
 
@@ -178,6 +184,7 @@ class IProtoIndexTests: TestCase {
                 name: "tree",
                 type: .tree,
                 unique: true,
+                parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(tree, expected1)
 
@@ -187,6 +194,7 @@ class IProtoIndexTests: TestCase {
                 id: 2,
                 name: "rtree",
                 type: .rtree,
+                parts: [Index.Part(field: 2, type: .array)],
                 source: iproto)
             assertEqual(rtree, expected2)
 
@@ -196,6 +204,7 @@ class IProtoIndexTests: TestCase {
                 id: 3,
                 name: "non_unique",
                 type: .tree,
+                parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(nonUnique, expected3)
         } catch {

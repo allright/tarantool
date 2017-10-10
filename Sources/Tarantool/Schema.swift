@@ -31,7 +31,7 @@ public struct Schema<T: DataSource & LuaScript> {
             .reduce(into: [Int : [Index<T>]]()) { (result, row) in
                 guard let index =
                     Index(from: row, source: source) else {
-                        throw Tarantool.Error.invalidIndex
+                        throw Tarantool.Error.invalidIndex(message: "\(row)")
                 }
                 result[index.spaceId, default: []].append(index)
             }
@@ -65,30 +65,5 @@ public struct Schema<T: DataSource & LuaScript> {
         let space = Space(id: id, name: name, indices: [], source: source)
         spaces[name] = space
         return space
-    }
-}
-
-extension Index {
-    // FIXME
-    typealias IndexType = Index.`Type`
-    
-    init?<M: Tarantool.Tuple>(from messagePack: M, source: T) {
-        guard messagePack.count >= 5,
-            let spaceId = Int(messagePack[0]),
-            let id = Int(messagePack[1]),
-            let name = String(messagePack[2]),
-            let typeString = String(messagePack[3]),
-            let type = IndexType(rawValue: typeString),
-            let options = [MessagePack : MessagePack](messagePack[4]),
-            let unique = Bool(options["unique"]) else {
-                return nil
-        }
-        self = Index(
-            spaceId: spaceId,
-            id: id,
-            name: name,
-            type: type,
-            unique: unique,
-            source: source)
     }
 }

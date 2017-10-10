@@ -15,7 +15,7 @@ public struct Tarantool {
         case spaceNotFound
         case indexNotFound
         case invalidSchema
-        case invalidIndex
+        case invalidIndex(message: String)
         case invalidTuple(message: String)
         case notEnoughMemory
         case unexpected(message: String)

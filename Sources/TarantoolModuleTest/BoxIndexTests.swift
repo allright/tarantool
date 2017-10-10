@@ -28,6 +28,7 @@ struct BoxIndexTests {
             name: "hash",
             type: .hash,
             unique: true,
+            parts: [Index.Part(field: 1, type: .unsigned)],
             source: box)
         try assertEqualThrows(hash, expected)
     }
@@ -44,6 +45,7 @@ struct BoxIndexTests {
             name: "tree",
             type: .tree,
             unique: true,
+            parts: [Index.Part(field: 1, type: .unsigned)],
             source: box)
         try assertEqualThrows(tree, expected)
     }
@@ -63,6 +65,7 @@ struct BoxIndexTests {
             id: 1,
             name: "rtree",
             type: .rtree,
+            parts: [Index.Part(field: 2, type: .array)],
             source: box)
         try assertEqualThrows(rtree, expected)
     }
@@ -82,6 +85,7 @@ struct BoxIndexTests {
             id: 1,
             name: "bitset",
             type: .bitset,
+            parts: [Index.Part(field: 2, type: .unsigned)],
             source: box)
         try assertEqualThrows(rtree, expected)
     }
@@ -99,6 +103,7 @@ struct BoxIndexTests {
             type: .hash,
             sequenceId: 1,
             unique: true,
+            parts: [Index.Part(field: 1, type: .unsigned)],
             source: box)
         try assertEqualThrows(primary, expected)
     }
@@ -115,6 +120,7 @@ struct BoxIndexTests {
             name: "hash",
             type: .hash,
             unique: true,
+            parts: [Index.Part(field: 1, type: .unsigned)],
             source: box)
         try assertEqualThrows(hash, expected0)
 
@@ -125,6 +131,7 @@ struct BoxIndexTests {
             name: "tree",
             type: .tree,
             unique: true,
+            parts: [Index.Part(field: 1, type: .unsigned)],
             source: box)
         try assertEqualThrows(tree, expected1)
 
@@ -134,6 +141,7 @@ struct BoxIndexTests {
             id: 2,
             name: "rtree",
             type: .rtree,
+            parts: [Index.Part(field: 2, type: .array)],
             source: box)
         try assertEqualThrows(rtree, expected2)
 
@@ -143,6 +151,7 @@ struct BoxIndexTests {
             id: 3,
             name: "non_unique",
             type: .tree,
+            parts: [Index.Part(field: 1, type: .unsigned)],
             source: box)
         try assertEqualThrows(nonUnique, expected3)
     }

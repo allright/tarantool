@@ -20,11 +20,21 @@ extension Index {
 }
 
 extension Index {
-    public enum PartType: String {
-        case unsigned
-        case integer
-        case string
-        case array
+    public struct Part {
+        let field: Int
+        let type: Type
+
+        public init(field: Int, type: Type) {
+            self.field = field
+            self.type = type
+        }
+
+        public enum `Type`: String {
+            case unsigned
+            case integer
+            case string
+            case array
+        }
     }
 }
 
@@ -35,6 +45,7 @@ public struct Index<T: DataSource> {
     public let type: Type
     public let sequenceId: Int?
     public let isUnique: Bool
+    public let parts: [Part]
 
     private let source: T
 
@@ -49,6 +60,7 @@ public struct Index<T: DataSource> {
         type: Type,
         sequenceId: Int? = nil,
         unique: Bool = false,
+        parts: [Part],
         source: T
     ) {
         self.spaceId = spaceId
@@ -58,6 +70,7 @@ public struct Index<T: DataSource> {
         self.sequenceId = sequenceId
         self.isUnique = unique
         self.source = source
+        self.parts = parts
     }
 }
 
@@ -113,6 +126,97 @@ extension Index: Equatable {
             lhs.name == rhs.name &&
             lhs.type == rhs.type &&
             lhs.sequenceId == rhs.sequenceId &&
-            lhs.isUnique == rhs.isUnique
+            lhs.isUnique == rhs.isUnique &&
+            lhs.parts == rhs.parts
+    }
+}
+
+extension Index.Part: Equatable {
+    public static func ==(lhs: Index<T>.Part, rhs: Index<T>.Part) -> Bool {
+        return lhs.field == rhs.field && lhs.type == rhs.type
+    }
+}
+
+// Decoding from MessagePack
+
+extension Index {
+    // FIXME
+    typealias IndexType = Index.`Type`
+
+    init?<M: Tarantool.Tuple>(from messagePack: M, source: T) {
+        guard messagePack.count >= 6,
+            let spaceId = Int(messagePack[0]),
+            let id = Int(messagePack[1]),
+            let name = String(messagePack[2]),
+            let typeString = String(messagePack[3]),
+            let type = IndexType(rawValue: typeString),
+            let options = [MessagePack : MessagePack](messagePack[4]),
+            let partsArray = [MessagePack](messagePack[5]),
+            let parts = Index.Part.parseMany(from: partsArray),
+            let unique = Bool(options["unique"]) else {
+                return nil
+        }
+        self = Index(
+            spaceId: spaceId,
+            id: id,
+            name: name,
+            type: type,
+            unique: unique,
+            parts: parts,
+            source: source)
+    }
+}
+
+extension Index.Part {
+    // TODO: extension Array where Element == Index.Part
+    static func parseMany(from array: [MessagePack]) -> [Index.Part]? {
+        var parts = [Index.Part]()
+        for item in array {
+            switch item {
+            case .map(let map):
+                if let value = Index.Part(map) {
+                    parts.append(value)
+                }
+            case .array(let array):
+                if let value = Index.Part(array) {
+                    parts.append(value)
+                }
+            default:
+                continue
+            }
+        }
+        guard parts.count == array.count else {
+            return nil
+        }
+        return parts
+    }
+
+    init?(_ array: [MessagePack]) {
+        guard array.count >= 2,
+            let field = Int(array[0]),
+            let rawType = String(array[1]),
+            let type = Type(rawValue: rawType) else {
+                return nil
+        }
+        self.field = field
+        self.type = type
+    }
+
+    init?(_ map: [MessagePack : MessagePack]) {
+        guard map.count >= 2,
+            let rawType = String(map["type"]),
+            let type = Type(rawValue: rawType) else {
+                return nil
+        }
+
+        if let field = Int(map["field"]) {
+            self.field = field
+        } else if let field = Int(map["fieldno"]) {
+            self.field = field
+        } else {
+            return nil
+        }
+
+        self.type = type
     }
 }
