@@ -69,6 +69,9 @@ public struct Schema<T: DataSource & LuaScript> {
 }
 
 extension Index {
+    // FIXME
+    typealias IndexType = Index.`Type`
+    
     init?<M: Tarantool.Tuple>(from messagePack: M, source: T) {
         guard messagePack.count >= 5,
             let spaceId = Int(messagePack[0]),

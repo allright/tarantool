@@ -10,25 +10,29 @@
 
 import MessagePack
 
-public enum IndexType: String {
-    case hash
-    case tree
-    case bitset
-    case rtree
+extension Index {
+    public enum `Type`: String {
+        case hash
+        case tree
+        case bitset
+        case rtree
+    }
 }
 
-public enum IndexFieldType: String {
-    case unsigned
-    case integer
-    case string
-    case array
+extension Index {
+    public enum PartType: String {
+        case unsigned
+        case integer
+        case string
+        case array
+    }
 }
 
 public struct Index<T: DataSource> {
     public let spaceId: Int
     public let id: Int
     public let name: String
-    public let type: IndexType
+    public let type: Type
     public let sequenceId: Int?
     public let isUnique: Bool
 
@@ -42,7 +46,7 @@ public struct Index<T: DataSource> {
         spaceId: Int,
         id: Int,
         name: String,
-        type: IndexType,
+        type: Type,
         sequenceId: Int? = nil,
         unique: Bool = false,
         source: T

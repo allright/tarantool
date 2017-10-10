@@ -12,10 +12,10 @@ extension Space {
     @discardableResult
     public mutating func createIndex(
         name: String,
-        type: IndexType = .tree,
+        type: Index<T>.`Type` = .tree,
         sequence: Bool? = nil,
         unique: Bool? = nil,
-        parts: [Int: IndexFieldType]? = nil
+        parts: [Int: Index<T>.PartType]? = nil
     ) throws -> Index<T> {
         let arguments = buildArguments(
             type: type, sequence: sequence, unique: unique, parts: parts)
@@ -43,10 +43,10 @@ extension Space {
     }
 
     private func buildArguments(
-        type: IndexType,
+        type: Index<T>.`Type`,
         sequence: Bool?,
         unique: Bool?,
-        parts: [Int: IndexFieldType]?
+        parts: [Int: Index<T>.PartType]?
     ) -> String {
         var arguments = [String]()
 
