@@ -173,7 +173,10 @@ extension Lua {
 
         func getTable(at index: Int) throws -> MessagePack {
             guard let type = try getTypeHint(forTableAt: index) else {
-                return try getMap(at: index)
+                guard let array = try? getArray(at: index) else {
+                    return try getMap(at: index)
+                }
+                return array
             }
             switch type {
             case .array: return try getArray(at: index)
@@ -182,6 +185,7 @@ extension Lua {
         }
 
         func getArray(at index: Int) throws -> MessagePack {
+            defer { top = index }
             var array = [MessagePack]()
             pushNil() // first key
             while next(at: index) {
@@ -200,6 +204,7 @@ extension Lua {
         }
 
         func getMap(at index: Int) throws -> MessagePack {
+            defer { top = index }
             var map = [MessagePack : MessagePack]()
             pushNil() // first key
             while next(at: index) {
