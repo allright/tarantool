@@ -191,22 +191,5 @@ extension IProto.Message {
             bytes[4] = UInt8(truncatingIfNeeded: value)
             return bytes
         }
-
-        static func unpack(bytes: [UInt8]) throws -> Int {
-            guard bytes[0] == 0xce else {
-                throw MessagePackError.invalidData
-            }
-            guard bytes.count >= 5 else {
-                throw MessagePackError.insufficientData
-            }
-
-            // FIXME: expression was too complex
-            let byte1 = Int(bytes[1]) << 24
-            let byte2 = Int(bytes[2]) << 16
-            let byte3 = Int(bytes[3]) << 8
-            let byte4 = Int(bytes[4])
-
-            return byte1 | byte2 | byte3 | byte4
-        }
     }
 }
