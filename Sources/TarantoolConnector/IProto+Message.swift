@@ -96,7 +96,7 @@ extension IProto.Message {
 extension IProto.Message {
     func encode<T: OutputStream>(to stream: inout T) throws {
         // header
-        var header: Map = [:]
+        var header = [MessagePack : MessagePack]()
         header[Key.code.rawValue] = code.rawValue
         if let sync = sync {
             header[Key.sync.rawValue] = .int(sync)
@@ -106,7 +106,7 @@ extension IProto.Message {
         }
 
         //body
-        var body: Map = [:]
+        var body = [MessagePack : MessagePack]()
         for (key, value) in self.body {
             body[key.rawValue] = value
         }

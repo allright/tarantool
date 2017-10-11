@@ -10,16 +10,11 @@
 
 import MessagePack
 
-public protocol TupleProtocol: RandomAccessCollection, CustomStringConvertible {
+public struct Tarantool {
+    public typealias Tuple = TupleProtocol
+}
+
+public protocol TupleProtocol: RandomAccessCollection {
     var count: Int { get }
-    func unpack() -> [MessagePack]
     subscript(index: Int) -> MessagePack? { get }
 }
-
-extension TupleProtocol {
-    public var description: String {
-        return unpack().description
-    }
-}
-
-public typealias Map = [MessagePack : MessagePack]

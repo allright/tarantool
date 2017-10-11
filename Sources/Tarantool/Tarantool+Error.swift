@@ -8,9 +8,7 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
-public struct Tarantool {
-    public typealias Tuple = TupleProtocol
-
+extension Tarantool {
     public enum Error: Swift.Error {
         case spaceNotFound
         case indexNotFound
