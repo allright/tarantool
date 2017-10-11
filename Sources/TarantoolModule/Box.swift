@@ -21,9 +21,9 @@ public struct Box: DataSource, LuaScript {
         _ spaceId: Int,
         _ indexId: Int,
         _ iterator: Iterator,
-        _ keys: [MessagePack]
+        _ keys: [IndexKey]
     ) throws -> Int {
-        let keys = try MessagePack.encode(.array(keys))
+        let keys = try keys.encode()
         return try Box.API.count(
             UInt32(spaceId), UInt32(indexId), iterator, keys)
     }
@@ -32,19 +32,19 @@ public struct Box: DataSource, LuaScript {
         _ spaceId: Int,
         _ indexId: Int,
         _ iterator: Iterator,
-        _ keys: [MessagePack],
+        _ keys: [IndexKey],
         _ offset: Int,
         _ limit: Int
     ) throws -> AnySequence<Tuple> {
-        let keys = try MessagePack.encode(.array(keys))
+        let keys = try keys.encode()
         return try Box.API.select(
             numericCast(spaceId), numericCast(indexId), iterator, keys)
     }
 
     public func get(
-        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
+        _ spaceId: Int, _ indexId: Int, _ keys: [IndexKey]
     ) throws -> Tuple? {
-        let keys = try MessagePack.encode(.array(keys))
+        let keys = try keys.encode()
         return try Box.API.get(UInt32(spaceId), UInt32(indexId), keys)
     }
 
@@ -59,19 +59,19 @@ public struct Box: DataSource, LuaScript {
     }
 
     public func delete(
-        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
+        _ spaceId: Int, _ indexId: Int, _ keys: [IndexKey]
     ) throws {
-        let keys = try MessagePack.encode(.array(keys))
+        let keys = try keys.encode()
         try Box.API.delete(UInt32(spaceId), UInt32(indexId), keys)
     }
 
     public func update(
         _ spaceId: Int,
         _ indexId: Int,
-        _ keys: [MessagePack],
+        _ keys: [IndexKey],
         _ ops: [MessagePack]
     ) throws {
-        let keys = try MessagePack.encode(.array(keys))
+        let keys = try keys.encode()
         let ops = try MessagePack.encode(.array(ops))
         try Box.API.update(UInt32(spaceId), UInt32(indexId), keys, ops)
     }

@@ -77,21 +77,21 @@ public struct Index<T: DataSource> {
 extension Index {
     public func count(
         iterator: Iterator,
-        keys: [MessagePack] = []
+        keys: [IndexKey] = []
     ) throws -> Int {
         return try source.count(spaceId, id, iterator, keys)
     }
 
     public func select(
         iterator: Iterator,
-        keys: [MessagePack] = [],
+        keys: [IndexKey] = [],
         offset: Int = 0,
         limit: Int = Int.max
     ) throws -> AnySequence<T.Row> {
         return try source.select(spaceId, id, iterator, keys, offset, limit)
     }
 
-    public func get(keys: [MessagePack]) throws -> T.Row? {
+    public func get(keys: [IndexKey]) throws -> T.Row? {
         return try source.get(spaceId, id, keys)
     }
 
@@ -103,11 +103,11 @@ extension Index {
         return try source.replace(spaceId, tuple)
     }
 
-    public func delete(keys: [MessagePack]) throws {
+    public func delete(keys: [IndexKey]) throws {
         try source.delete(spaceId, id, keys)
     }
 
-    public func update(keys: [MessagePack], operations: [MessagePack]) throws {
+    public func update(keys: [IndexKey], operations: [MessagePack]) throws {
         try source.update(spaceId, id, keys, operations)
     }
 

@@ -17,7 +17,7 @@ extension IProto: DataSource {
         _ spaceId: Int,
         _ indexId: Int,
         _ iterator: Iterator,
-        _ keys: [MessagePack]
+        _ keys: [IndexKey]
     ) throws -> Int {
         let result = try eval(
             "return box.space[\(spaceId)].index[\(indexId)]:count()")
@@ -34,7 +34,7 @@ extension IProto: DataSource {
         _ spaceId: Int,
         _ indexId: Int,
         _ iterator: Iterator,
-        _ keys: [MessagePack],
+        _ keys: [IndexKey],
         _ offset: Int,
         _ limit: Int
     ) throws -> AnySequence<Tuple> {
@@ -44,13 +44,13 @@ extension IProto: DataSource {
             .limit:    .int(limit),
             .offset:   .int(offset),
             .iterator: .int(iterator.rawValue),
-            .key:      .array(keys)])
+            .key:      .array(keys.rawValue)])
 
         return AnySequence { TupleIterator(tuples: result) }
     }
 
     public func get(
-        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
+        _ spaceId: Int, _ indexId: Int, _ keys: [IndexKey]
     ) throws -> Tuple? {
         let result = try request(code: .select, keys: [
             .spaceId:  .int(spaceId),
@@ -58,7 +58,7 @@ extension IProto: DataSource {
             .limit:    .int(1),
             .offset:   .int(0),
             .iterator: .int(Iterator.eq.rawValue),
-            .key:      .array(keys)])
+            .key:      .array(keys.rawValue)])
 
         guard let tuple = [MessagePack]([MessagePack](result).first) else {
             return nil
@@ -81,24 +81,24 @@ extension IProto: DataSource {
     }
 
     public func delete(
-        _ spaceId: Int, _ indexId: Int, _ keys: [MessagePack]
+        _ spaceId: Int, _ indexId: Int, _ keys: [IndexKey]
     ) throws {
         _ = try request(code: .delete, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
-            .key:     .array(keys)])
+            .key:     .array(keys.rawValue)])
     }
 
     public func update(
         _ spaceId: Int,
         _ indexId: Int,
-        _ keys: [MessagePack],
+        _ keys: [IndexKey],
         _ ops: [MessagePack]
     ) throws {
         _ = try request(code: .update, keys: [
             .spaceId: .int(spaceId),
             .indexId: .int(indexId),
-            .key:     .array(keys),
+            .key:     .array(keys.rawValue),
             .tuple:   .array(ops)])
     }
 

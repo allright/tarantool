@@ -17,14 +17,14 @@ public protocol DataSource {
         _ spaceId: Int,
         _ indexId: Int,
         _ iterator: Iterator,
-        _ keys: [MessagePack]
+        _ keys: [IndexKey]
     ) throws -> Int
 
     func select(
         _ spaceId: Int,
         _ indexId: Int,
         _ iterator: Iterator,
-        _ keys: [MessagePack],
+        _ keys: [IndexKey],
         _ offset: Int,
         _ limit: Int
     ) throws -> AnySequence<Row>
@@ -32,7 +32,7 @@ public protocol DataSource {
     func get(
         _ spaceId: Int,
         _ indexId: Int,
-        _ keys: [MessagePack]
+        _ keys: [IndexKey]
     ) throws -> Row?
 
     func insert(
@@ -48,13 +48,13 @@ public protocol DataSource {
     func delete(
         _ spaceId: Int,
         _ indexId: Int,
-        _ keys: [MessagePack]
+        _ keys: [IndexKey]
     ) throws
 
     func update(
         _ spaceId: Int,
         _ indexId: Int,
-        _ keys: [MessagePack],
+        _ keys: [IndexKey],
         _ ops: [MessagePack]
     ) throws
 
