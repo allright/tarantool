@@ -14,7 +14,16 @@ extension Box {
     class IndexIterator: IteratorProtocol {
         let iterator: OpaquePointer
 
-        init(_ iterator: OpaquePointer) {
+        init?(_ spaceId: UInt32,
+              _ indexId: UInt32,
+              _ iterator: Int32,
+              _ keys: UnsafePointer<CChar>,
+              _ keysEnd: UnsafePointer<CChar>)
+        {
+            guard let iterator = _box_index_iterator(
+                spaceId, indexId, iterator, keys, keysEnd) else {
+                    return nil
+            }
             self.iterator = iterator
         }
 

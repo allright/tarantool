@@ -36,7 +36,7 @@ extension Box {
             _ iterator: Iterator,
             _ keys: [UInt8]
         ) throws -> AnySequence<Box.Tuple> {
-            guard let iterator = _box_index_iterator(
+            guard let iterator = Box.IndexIterator(
                 spaceId,
                 indexId,
                 Int32(iterator.rawValue),
@@ -45,7 +45,7 @@ extension Box {
             else {
                 throw Error()
             }
-            return AnySequence { Box.IndexIterator(iterator) }
+            return AnySequence { iterator }
         }
 
         static func get(
