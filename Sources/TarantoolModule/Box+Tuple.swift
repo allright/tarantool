@@ -33,6 +33,16 @@ extension Box {
             return Int(_box_tuple_field_count(pointer))
         }
 
+        public func index(before i: Int) -> Int {
+            precondition(i > startIndex)
+            return i - 1
+        }
+
+        public func index(after i: Int) -> Int {
+            precondition(i < endIndex)
+            return i + 1
+        }
+
         @inline(__always)
         func getFieldMaxSize(_ field: UnsafePointer<Int8>) -> Int {
             return size - (UnsafePointer<Int8>(pointer) - field)

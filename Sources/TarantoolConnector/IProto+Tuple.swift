@@ -27,6 +27,14 @@ extension IProto {
             return tuple.endIndex
         }
 
+        public func index(before i: Int) -> Int {
+            return tuple.index(before: i)
+        }
+
+        public func index(after i: Int) -> Int {
+            return tuple.index(after: i)
+        }
+
         public subscript(index: Int) -> MessagePack? {
             return tuple[index]
         }
