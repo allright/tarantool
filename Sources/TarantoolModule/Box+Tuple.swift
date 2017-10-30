@@ -49,11 +49,12 @@ extension Box {
         }
 
         public subscript(index: Int) -> MessagePack? {
-            guard let field = _box_tuple_field(pointer, numericCast(index)) else {
-                return nil
+            guard let field =
+                _box_tuple_field(pointer, numericCast(index)) else {
+                    return nil
             }
-            var decoder = MessagePackReader(
-                UnsafeRawInputStream(pointer: field, count: getFieldMaxSize(field)))
+            var decoder = MessagePackReader(UnsafeRawInputStream(
+                pointer: field, count: getFieldMaxSize(field)))
             return try? decoder.decode()
         }
     }
