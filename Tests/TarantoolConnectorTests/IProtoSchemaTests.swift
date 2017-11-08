@@ -87,7 +87,7 @@ class IProtoSchemaTests: TestCase {
 
             let vinyl = try schema.createSpace(name: "vinyl", engine: .vinyl)
             assertEqual(vinyl.id, 514)
-            assertEqual(vinyl.name, "vinyl_space")
+            assertEqual(vinyl.name, "vinyl")
             assertEqual(vinyl.engine, .vinyl)
         } catch {
             fail(String(describing: error))
