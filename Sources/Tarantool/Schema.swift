@@ -10,12 +10,27 @@
 
 import MessagePack
 
-private let _schema: Int = 272
-private let _space: Int = 280
-private let _vspace: Int = 281
-private let _vindex: Int = 289
-
 private let admin: Int = 1
+
+extension Schema {
+    var _vspace: Space<T> {
+        return Space(
+            id: 281,
+            name: "_vspace",
+            engine: .sysview,
+            indices: [],
+            source: source)
+    }
+
+    var _vindex: Space<T> {
+        return Space(
+            id: 289,
+            name: "_vindex",
+            engine: .sysview,
+            indices: [],
+            source: source)
+    }
+}
 
 public struct Schema<T: DataSource & LuaScript> {
     let source: T
@@ -23,11 +38,9 @@ public struct Schema<T: DataSource & LuaScript> {
 
     public init(_ source: T) throws {
         self.source = source
+        self.spaces = [:]
 
-        let indicesView =
-            Space(id: _vindex, name: "_vindex", indices: [], source: source)
-
-        let indices = try indicesView.select(iterator: .all)
+        let indices = try _vindex.select(iterator: .all)
             .reduce(into: [Int : [Index<T>]]()) { (result, row) in
                 guard let index =
                     Index(from: row, source: source) else {
@@ -36,10 +49,7 @@ public struct Schema<T: DataSource & LuaScript> {
                 result[index.spaceId, default: []].append(index)
             }
 
-        let spacesView =
-            Space(id: _vspace, name: "_vspace", indices: [], source: source)
-
-        let spaces = try spacesView.select(iterator: .all)
+        self.spaces = try _vspace.select(iterator: .all)
             .reduce(into: [String : Space<T>]()) { (result, row) in
                 guard let id = Int(row[0]),
                     let name = String(row[2]),
@@ -54,7 +64,6 @@ public struct Schema<T: DataSource & LuaScript> {
                     indices: indices[id, default: []],
                     source: source)
             }
-        self.spaces = spaces
     }
 
     @discardableResult
