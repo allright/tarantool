@@ -14,12 +14,8 @@ import MessagePack
 import TarantoolModule
 
 struct BoxTransactionTests {
-    private static var testId: Int = {
-        return try! Schema(Box()).spaces["test"]!.id
-    }()
-
     private static var space: Space = {
-        return Space(id: testId, name: "test", indices: [], source: Box())
+        return try! Schema(Box()).spaces["test"]!
     }()
 
     static func testCommit() throws {
