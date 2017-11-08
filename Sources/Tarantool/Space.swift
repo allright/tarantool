@@ -11,18 +11,34 @@
 import Foundation
 import MessagePack
 
+extension Space {
+    public enum Engine: String {
+        case sysview
+        case memtx
+        case vinyl
+    }
+}
+
 public struct Space<T: DataSource & LuaScript> {
     public let id: Int
     public let name: String
+    public let engine: Engine
     public var indices: [Index<T>]
 
     let source: T
 
     private let primaryIndex = 0
 
-    public init(id: Int, name: String, indices: [Index<T>], source: T) {
+    public init(
+        id: Int,
+        name: String,
+        engine: Engine,
+        indices: [Index<T>],
+        source: T
+    ) {
         self.id = id
         self.name = name
+        self.engine = engine
         self.indices = indices
         self.source = source
     }

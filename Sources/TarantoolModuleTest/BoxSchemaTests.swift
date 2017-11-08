@@ -48,10 +48,17 @@ struct BoxSchemaTests {
         }
         try assertEqualThrows(newSpace.id, 512)
         try assertEqualThrows(newSpace.name, "new_space")
+        try assertEqualThrows(newSpace.engine, .memtx)
 
         let anotherSpace = try schema.createSpace(name: "another_space")
         try assertEqualThrows(anotherSpace.id, 513)
         try assertEqualThrows(anotherSpace.name, "another_space")
+        try assertEqualThrows(anotherSpace.engine, .memtx)
+
+        let vinyl = try schema.createSpace(name: "vinyl",engine: .vinyl)
+        try assertEqualThrows(vinyl.id, 514)
+        try assertEqualThrows(vinyl.name, "vinyl")
+        try assertEqualThrows(vinyl.engine, .vinyl)
     }
 }
 

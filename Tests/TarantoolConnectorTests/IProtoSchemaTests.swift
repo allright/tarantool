@@ -78,10 +78,17 @@ class IProtoSchemaTests: TestCase {
             }
             assertEqual(newSpace.id, 512)
             assertEqual(newSpace.name, "new_space")
+            assertEqual(newSpace.engine, .memtx)
 
             let anotherSpace = try schema.createSpace(name: "another_space")
             assertEqual(anotherSpace.id, 513)
             assertEqual(anotherSpace.name, "another_space")
+            assertEqual(anotherSpace.engine, .memtx)
+
+            let vinyl = try schema.createSpace(name: "vinyl", engine: .vinyl)
+            assertEqual(vinyl.id, 514)
+            assertEqual(vinyl.name, "vinyl_space")
+            assertEqual(vinyl.engine, .vinyl)
         } catch {
             fail(String(describing: error))
         }

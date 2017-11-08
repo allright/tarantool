@@ -13,6 +13,7 @@ extension Tarantool {
         case spaceNotFound
         case indexNotFound
         case invalidSchema
+        case invalidEngine
         case invalidIndex(message: String)
         case invalidTuple(message: String)
         case notEnoughMemory
