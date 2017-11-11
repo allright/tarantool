@@ -55,7 +55,7 @@ struct BoxSchemaTests {
         try assertEqualThrows(anotherSpace.name, "another_space")
         try assertEqualThrows(anotherSpace.engine, .memtx)
 
-        let vinyl = try schema.createSpace(name: "vinyl",engine: .vinyl)
+        let vinyl = try schema.createSpace(name: "vinyl", engine: .vinyl)
         try assertEqualThrows(vinyl.id, 514)
         try assertEqualThrows(vinyl.name, "vinyl")
         try assertEqualThrows(vinyl.engine, .vinyl)
