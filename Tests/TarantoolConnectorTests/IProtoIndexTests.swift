@@ -546,6 +546,40 @@ class IProtoIndexTests: TestCase {
         }
     }
 
+    func testUppercased() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+
+            _ = try iproto.eval("local temp=box.schema.space.create('temp');" +
+                "temp:create_index('primary', {type = 'TREE'})")
+
+            let schema = try Schema(iproto)
+            guard let space = schema.spaces["temp"] else {
+                fail()
+                return
+            }
+
+            guard let index = space[index: "primary"] else {
+                fail()
+                return
+            }
+
+            let expected = Index(
+                spaceId: space.id,
+                id: 0,
+                name: "primary",
+                type: .tree,
+                unique: true,
+                parts: [Index.Part(field: 0, type: .unsigned)],
+                source: iproto)
+
+            assertEqual(index, expected)
+
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
 
     static var allTests = [
         ("testHash", testHash),

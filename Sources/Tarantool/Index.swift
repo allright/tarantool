@@ -152,7 +152,7 @@ extension Index {
             let id = Int(messagePack[1]),
             let name = String(messagePack[2]),
             let typeString = String(messagePack[3]),
-            let type = IndexType(rawValue: typeString),
+            let type = IndexType(rawValue: typeString.lowercased()),
             let options = [MessagePack : MessagePack](messagePack[4]),
             let partsArray = [MessagePack](messagePack[5]),
             let parts = Index.Part.parseMany(from: partsArray),
