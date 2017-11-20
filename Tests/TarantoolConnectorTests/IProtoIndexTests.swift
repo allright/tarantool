@@ -32,9 +32,7 @@ class IProtoIndexTests: TestCase {
                 """)
             try tarantool.launch()
 
-            iproto = try IProto(
-                host: "127.0.0.1",
-                port: tarantool.port)
+            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
             let schema = try Schema(iproto)
             self.space = schema.spaces["test"]
         } catch {
@@ -349,6 +347,205 @@ class IProtoIndexTests: TestCase {
         }
     }
 
+    func testUnsignedPartType() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+
+            var schema = try Schema(iproto)
+            var space = try schema.createSpace(name: "temp")
+
+            let index = try space.createIndex(
+                name: "unsigned",
+                type: .tree,
+                parts: [Index.Part(field: 1, type: .unsigned)])
+
+            let expected = Index(
+                spaceId: space.id,
+                id: 0,
+                name: "unsigned",
+                type: .tree,
+                unique: true,
+                parts: [Index.Part(field: 1, type: .unsigned)],
+                source: iproto)
+
+            assertEqual(index, expected)
+
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testIntegerPartType() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+
+            var schema = try Schema(iproto)
+            var space = try schema.createSpace(name: "temp")
+
+            let index = try space.createIndex(
+                name: "integer",
+                type: .tree,
+                parts: [Index.Part(field: 1, type: .integer)])
+
+            let expected = Index(
+                spaceId: space.id,
+                id: 0,
+                name: "integer",
+                type: .tree,
+                unique: true,
+                parts: [Index.Part(field: 1, type: .integer)],
+                source: iproto)
+
+            assertEqual(index, expected)
+
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testNumberPartType() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+
+            var schema = try Schema(iproto)
+            var space = try schema.createSpace(name: "temp")
+
+            let index = try space.createIndex(
+                name: "number",
+                type: .tree,
+                parts: [Index.Part(field: 1, type: .number)])
+
+            let expected = Index(
+                spaceId: space.id,
+                id: 0,
+                name: "number",
+                type: .tree,
+                unique: true,
+                parts: [Index.Part(field: 1, type: .number)],
+                source: iproto)
+
+            assertEqual(index, expected)
+
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testStringPartType() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+
+            var schema = try Schema(iproto)
+            var space = try schema.createSpace(name: "temp")
+
+            let index = try space.createIndex(
+                name: "string",
+                type: .tree,
+                parts: [Index.Part(field: 1, type: .string)])
+
+            let expected = Index(
+                spaceId: space.id,
+                id: 0,
+                name: "string",
+                type: .tree,
+                unique: true,
+                parts: [Index.Part(field: 1, type: .string)],
+                source: iproto)
+
+            assertEqual(index, expected)
+
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testBooleanPartType() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+
+            var schema = try Schema(iproto)
+            var space = try schema.createSpace(name: "temp")
+
+            let index = try space.createIndex(
+                name: "boolean",
+                type: .tree,
+                parts: [Index.Part(field: 1, type: .boolean)])
+
+            let expected = Index(
+                spaceId: space.id,
+                id: 0,
+                name: "boolean",
+                type: .tree,
+                unique: true,
+                parts: [Index.Part(field: 1, type: .boolean)],
+                source: iproto)
+
+            assertEqual(index, expected)
+
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testArrayPartType() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+
+            var schema = try Schema(iproto)
+            var space = try schema.createSpace(name: "temp")
+
+            try space.createIndex(name: "primary")
+
+            let index = try space.createIndex(
+                name: "array",
+                type: .rtree,
+                unique: false,
+                parts: [Index.Part(field: 2, type: .array)])
+
+            let expected = Index(
+                spaceId: space.id,
+                id: 1,
+                name: "array",
+                type: .rtree,
+                unique: false,
+                parts: [Index.Part(field: 2, type: .array)],
+                source: iproto)
+
+            assertEqual(index, expected)
+
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
+    func testScalarPartType() {
+        do {
+            try iproto.auth(username: "admin", password: "admin")
+
+            var schema = try Schema(iproto)
+            var space = try schema.createSpace(name: "temp")
+
+            let index = try space.createIndex(
+                name: "scalar",
+                type: .tree,
+                parts: [Index.Part(field: 1, type: .scalar)])
+
+            let expected = Index(
+                spaceId: space.id,
+                id: 0,
+                name: "scalar",
+                type: .tree,
+                unique: true,
+                parts: [Index.Part(field: 1, type: .scalar)],
+                source: iproto)
+
+            assertEqual(index, expected)
+
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
 
     static var allTests = [
         ("testHash", testHash),
@@ -365,5 +562,12 @@ class IProtoIndexTests: TestCase {
         ("testDelete", testDelete),
         ("testUpdate", testUpdate),
         ("testUpsert", testUpsert),
+        ("testUnsignedPartType", testUnsignedPartType),
+        ("testIntegerPartType", testIntegerPartType),
+        ("testNumberPartType", testNumberPartType),
+        ("testStringPartType", testStringPartType),
+        ("testBooleanPartType", testBooleanPartType),
+        ("testArrayPartType", testArrayPartType),
+        ("testScalarPartType", testScalarPartType),
     ]
 }

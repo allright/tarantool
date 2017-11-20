@@ -32,8 +32,11 @@ extension Index {
         public enum `Type`: String {
             case unsigned
             case integer
+            case number
             case string
+            case boolean
             case array
+            case scalar
         }
     }
 }
