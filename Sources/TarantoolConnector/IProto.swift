@@ -20,7 +20,7 @@ public class IProto {
     var stream: BufferedStream<NetworkStream>
     let welcome: Welcome
 
-    public init(host: String, port: UInt16 = 3301) throws {
+    public init(host: String, port: Int = 3301) throws {
         socket = try Socket().connect(to: host, port: port)
         stream = BufferedStream(stream: NetworkStream(socket: socket))
         welcome = try Welcome(from: &stream)

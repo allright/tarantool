@@ -16,10 +16,10 @@ extension String: Error {}
 
 class TarantoolProcess {
     let process = Process()
-    let port: UInt16
+    let port: Int
     let script: String
 
-    private let syncPort: UInt16
+    private let syncPort: Int
 
     var temp: URL = {
         return URL(fileURLWithPath: NSTemporaryDirectory())
@@ -44,8 +44,8 @@ class TarantoolProcess {
     }
 
     init(with script: String = "") throws {
-        self.syncPort = UInt16(arc4random_uniform(64_000)) + 1_500
-        self.port = UInt16(arc4random_uniform(64_000)) + 1_500
+        self.syncPort = Int(arc4random_uniform(64_000)) + 1_500
+        self.port = Int(arc4random_uniform(64_000)) + 1_500
         self.script = script
     }
 
