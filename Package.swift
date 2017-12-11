@@ -21,71 +21,56 @@ let package = Package(
         .library(
             name: "TarantoolModuleTest",
             type: .dynamic,
-            targets: ["TarantoolModuleTest"]
-        )
+            targets: ["TarantoolModuleTest"])
     ],
     dependencies: [
         .package(
             url: "https://github.com/tris-foundation/platform.git",
-            from: "0.4.0"
-        ),
+            .branch("master")),
         .package(
             url: "https://github.com/tris-foundation/async.git",
-            from: "0.4.0"
-        ),
+            .branch("master")),
         .package(
             url: "https://github.com/tris-foundation/crypto.git",
-            from: "0.4.0"
-        ),
+            .branch("master")),
         .package(
             url: "https://github.com/tris-foundation/network.git",
-            from: "0.4.0"
-        ),
+            .branch("master")),
         .package(
             url: "https://github.com/tris-foundation/messagepack.git",
-            from: "0.4.0"
-        ),
+            .branch("master")),
         .package(
             url: "https://github.com/tris-foundation/test.git",
-            from: "0.4.0"
-        )
+            .branch("master"))
     ],
     targets: [
         .target(name: "CTarantool"),
         .target(name: "Tarantool", dependencies: ["MessagePack"]),
         .target(
             name: "TarantoolConnector",
-            dependencies: ["Tarantool", "Network", "Crypto"]
-        ),
+            dependencies: ["Tarantool", "Network", "Crypto"]),
         .target(
             name: "TarantoolModule",
-            dependencies: ["CTarantool", "Tarantool", "Async"]
-        ),
+            dependencies: ["CTarantool", "Tarantool", "Async"]),
         .target(
             name: "AsyncTarantool",
-            dependencies: ["TarantoolModule"]
-        ),
+            dependencies: ["TarantoolModule"]),
         .target(
             name: "TarantoolModuleTest",
-            dependencies: ["TarantoolModule"]
-        ),
+            dependencies: ["TarantoolModule"]),
         .target(
             name: "TestUtils",
-            dependencies: ["Platform", "Network"]
-        ),
+            dependencies: ["Platform", "Network"]),
         .testTarget(
             name: "TarantoolModuleTests",
             dependencies: [
                 "TarantoolModule", "TarantoolConnector", "Test", "AsyncDispatch"
-            ]
-        ),
+            ]),
         .testTarget(
             name: "TarantoolConnectorTests",
-            dependencies: ["TarantoolConnector", "Test", "AsyncDispatch"]
-        ),
+            dependencies: ["TarantoolConnector", "Test", "AsyncDispatch"]),
         .testTarget(
             name: "TestUtilsTests",
-            dependencies: ["TestUtils", "Test", "AsyncDispatch"]
-        )
+            dependencies: ["TestUtils", "Test", "AsyncDispatch"])
     ]
 )
