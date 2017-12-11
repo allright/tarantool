@@ -22,7 +22,7 @@ Follow the examples link below to see how to use it all together.
 ## Package.swift
 
 ```swift
-.package(url: "https://github.com/tris-foundation/tarantool.git", from: "0.4.0")
+.package(url: "https://github.com/tris-foundation/tarantool.git", .branch("master"))
 ```
 
 ## Usage
