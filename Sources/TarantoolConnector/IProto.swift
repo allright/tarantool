@@ -22,7 +22,7 @@ public class IProto {
 
     public init(host: String, port: Int = 3301) throws {
         socket = try Socket().connect(to: host, port: port)
-        stream = BufferedStream(stream: NetworkStream(socket: socket))
+        stream = BufferedStream(baseStream: NetworkStream(socket: socket))
         welcome = try Welcome(from: &stream)
     }
 
