@@ -16,6 +16,10 @@ struct BoxSpaceTests {
         return try! Schema(Box()).spaces["test"]!
     }
 
+    private static var seq: Space<Box> {
+        return try! Schema(Box()).spaces["seq"]!
+    }
+
     static func testCount() throws {
         let result = try space.count(.all)
         guard result == 3 else {
@@ -94,6 +98,23 @@ struct BoxSpaceTests {
                 " is not equal to [4, 'quux', 50]"
         }
     }
+
+    static func testSequence() throws {
+        var id = try seq.insert([nil, "foo"])
+        guard id == 1 else {
+            throw "\(id) is not equal to 1"
+        }
+
+        id = try seq.insert([nil, "bar"])
+        guard id == 2 else {
+            throw "\(id) is not equal to 2"
+        }
+
+        let result = try space.get(keys: [id])
+        guard let tuple = result, tuple.unpack() == [2, "bar"] else {
+            throw "\(String(describing: result)) is not equal to [2, 'bar']"
+        }
+    }
 }
 
 // C API Wrappers
@@ -151,5 +172,12 @@ public func BoxSpaceTests_testUpdate(context: Box.Context) -> Box.Result {
 public func BoxSpaceTests_testUpsert(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testUpsert()
+    }
+}
+
+@_silgen_name("BoxSpaceTests_testSequence")
+public func BoxSpaceTests_testSequence(context: Box.Context) -> Box.Result {
+    return Box.execute {
+        try BoxSpaceTests.testSequence()
     }
 }

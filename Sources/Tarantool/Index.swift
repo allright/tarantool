@@ -98,7 +98,8 @@ extension Index {
         return try source.get(spaceId, id, keys)
     }
 
-    public func insert(_ tuple: [MessagePack]) throws {
+    @discardableResult
+    public func insert(_ tuple: [MessagePack]) throws -> MessagePack {
         return try source.insert(spaceId, tuple)
     }
 

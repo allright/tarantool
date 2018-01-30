@@ -75,8 +75,9 @@ public struct Space<T: DataSource & LuaScript> {
         return try source.get(id, primaryIndex, keys)
     }
 
-    public func insert(_ tuple: [MessagePack]) throws {
-        try source.insert(id, tuple)
+    @discardableResult
+    public func insert(_ tuple: [MessagePack]) throws -> MessagePack {
+        return try source.insert(id, tuple)
     }
 
     public func replace(_ tuple: [MessagePack]) throws {

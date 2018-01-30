@@ -48,9 +48,17 @@ public struct Box: DataSource, LuaScript {
         return try Box.API.get(UInt32(spaceId), UInt32(indexId), keys)
     }
 
-    public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {
+    @discardableResult
+    public func insert(
+        _ spaceId: Int,
+        _ tuple: [MessagePack]
+    ) throws -> MessagePack {
         let tuple = try MessagePack.encode(.array(tuple))
-        try Box.API.insert(UInt32(spaceId), tuple)
+        let result = try Box.API.insert(UInt32(spaceId), tuple)
+        guard let index = result[0] else {
+            throw Error.init(code: .invalidMsgpack, message: "Box.insert")
+        }
+        return index
     }
 
     public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {

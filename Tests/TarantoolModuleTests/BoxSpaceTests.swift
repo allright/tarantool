@@ -25,7 +25,8 @@ class BoxSpaceTests: TestCase {
         "BoxSpaceTests_testReplace",
         "BoxSpaceTests_testDelete",
         "BoxSpaceTests_testUpdate",
-        "BoxSpaceTests_testUpsert"
+        "BoxSpaceTests_testUpsert",
+        "BoxSpaceTests_testSequence"
     ]
 
     override func setUp() {
@@ -46,6 +47,9 @@ class BoxSpaceTests: TestCase {
                 test:replace({1, 'foo'})
                 test:replace({2, 'bar'})
                 test:replace({3, 'baz'})
+
+                local seq = box.schema.space.create('seq')
+                seq:create_index('primary', {sequence=true})
                 """ +
                 functions.reduce("") {
                     """
@@ -132,6 +136,14 @@ class BoxSpaceTests: TestCase {
         }
     }
 
+    func testSequence() {
+        do {
+            _ = try iproto.call("BoxSpaceTests_testSequence")
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
 
     static var allTests = [
         ("testCount", testCount),
@@ -142,5 +154,6 @@ class BoxSpaceTests: TestCase {
         ("testDelete", testDelete),
         ("testUpdate", testUpdate),
         ("testUpsert", testUpsert),
+        ("testSequence", testSequence),
     ]
 }

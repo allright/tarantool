@@ -16,6 +16,7 @@ import AsyncDispatch
 class IProtoSpaceTests: TestCase {
     var tarantool: TarantoolProcess!
     var space: Space<IProto>!
+    var seq: Space<IProto>!
 
     override func setUp() {
         do {
@@ -27,6 +28,9 @@ class IProtoSpaceTests: TestCase {
                 test:replace({1, 'foo'})
                 test:replace({2, 'bar'})
                 test:replace({3, 'baz'})
+
+                local seq = box.schema.space.create('seq')
+                seq:create_index('primary', {sequence=true})
                 """)
             try tarantool.launch()
 
@@ -34,6 +38,7 @@ class IProtoSpaceTests: TestCase {
             let schema = try Schema(iproto)
 
             self.space = schema.spaces["test"]
+            self.seq = schema.spaces["seq"]
         } catch {
             fatalError(String(describing: error))
         }
@@ -149,6 +154,22 @@ class IProtoSpaceTests: TestCase {
         }
     }
 
+    func testSequence() {
+        do {
+            var id = try seq.insert([nil, "foo"])
+            assertEqual(id, 1)
+
+            id = try seq.insert([nil, "bar"])
+            assertEqual(id, 2)
+
+            let result = try seq.get(keys: [id])
+            assertEqual(result, IProto.Tuple([2, "bar"]))
+
+        } catch {
+            fail(String(describing: error))
+        }
+    }
+
 
     static var allTests = [
         ("testCount", testCount),
@@ -159,5 +180,6 @@ class IProtoSpaceTests: TestCase {
         ("testDelete", testDelete),
         ("testUpdate", testUpdate),
         ("testUpsert", testUpsert),
+        ("testSequence", testSequence),
     ]
 }

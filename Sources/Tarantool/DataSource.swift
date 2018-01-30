@@ -38,7 +38,7 @@ public protocol DataSource {
     func insert(
         _ spaceId: Int,
         _ tuple: [MessagePack]
-    ) throws
+    ) throws -> MessagePack
 
     func replace(
         _ spaceId: Int,

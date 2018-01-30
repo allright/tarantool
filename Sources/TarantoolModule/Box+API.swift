@@ -67,16 +67,24 @@ extension Box {
             return Tuple(tuple)
         }
 
-        static func insert(_ spaceId: UInt32, _ tuple: [UInt8]) throws {
+        static func insert(
+            _ spaceId: UInt32,
+            _ tuple: [UInt8]
+        ) throws -> Box.Tuple {
             let pointer = try copyToInternalMemory(tuple)
+            var result: OpaquePointer?
             guard _box_insert(
                 spaceId,
                 pointer,
                 pointer+tuple.count,
-                nil) == 0
+                &result) == 0
             else {
                 throw Error()
             }
+            guard let tuple = result else {
+                throw Error(code: .unknown, message: "box_insert result is nil")
+            }
+            return Tuple(tuple)
         }
 
         static func max(
@@ -183,7 +191,7 @@ extension Box.API {
         return id
     }
 
-    // will be deallocated after transaction finished.
+    // will be deallocated after transaction is finished.
     // every insert, update, etc is a single statement transaction.
     static func copyToInternalMemory(
         _ bytes: [UInt8]

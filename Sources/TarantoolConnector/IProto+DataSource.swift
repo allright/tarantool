@@ -67,12 +67,20 @@ extension IProto: DataSource {
         return Tuple(tuple)
     }
 
-    public func insert(_ spaceId: Int, _ tuple: [MessagePack]) throws {
-        _ = try request(code: .insert, keys: [
+    @discardableResult
+    public func insert(
+        _ spaceId: Int,
+        _ tuple: [MessagePack]
+    ) throws -> MessagePack {
+        let result = try request(code: .insert, keys: [
             .spaceId: .int(spaceId),
             .tuple:   .array(tuple)])
+        guard let first = [MessagePack](result).first,
+            let index = [MessagePack](first)?.first else {
+                throw Error.invalidPacket(reason: .invalidBody)
+        }
+        return index
     }
-
 
     public func replace(_ spaceId: Int, _ tuple: [MessagePack]) throws {
         _ = try request(code: .replace, keys: [
