@@ -9,7 +9,8 @@
  */
 
 import Test
-import Async
+import AsyncDispatch
+@testable import Async
 import TarantoolConnector
 @testable import TestUtils
 
@@ -26,7 +27,7 @@ class BoxTransactionTests: TestCase {
 
     override func setUp() {
         do {
-            async.setUp()
+            async.setUp(Dispatch.self)
             guard let module = Module("TarantoolModuleTest").path else {
                 fail("can't find swift module")
                 return

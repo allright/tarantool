@@ -10,17 +10,14 @@
 
 import Test
 import AsyncDispatch
+@testable import Async
 @testable import TestUtils
 
 import class Foundation.FileManager
 
 class TestUtilsTests: TestCase {
-    static var once: Void = {
-        async.use(Dispatch.self)
-    }()
-
     override func setUp() {
-        _ = TestUtilsTests.once
+        async.setUp(Dispatch.self)
     }
 
     func testTarantoolProcess() {

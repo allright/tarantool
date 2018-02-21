@@ -9,7 +9,8 @@
  */
 
 import Test
-import Async
+import AsyncDispatch
+@testable import Async
 @testable import TestUtils
 @testable import TarantoolConnector
 
@@ -19,7 +20,7 @@ class IProtoSchemaTests: TestCase {
 
     override func setUp() {
         do {
-            async.setUp()
+            async.setUp(Dispatch.self)
             tarantool = try TarantoolProcess(with: """
                 box.schema.user.grant('guest', 'read,write,execute', 'universe')
                 box.schema.user.passwd('admin', 'admin')
