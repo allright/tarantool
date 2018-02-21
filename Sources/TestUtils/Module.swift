@@ -33,13 +33,16 @@ struct Module {
     }
 
     private var swiftPMModuleUrl: String? {
-    #if os(macOS)
-        let xctest = CommandLine.arguments[1]
-    #else
-        let xctest = CommandLine.arguments[0]
-    #endif
-        guard var url = URL(string: xctest) else {
-            return nil
+        var url = URL(fileURLWithPath: #file)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .appendingPathComponent(".build")
+            .appendingPathComponent("debug")
+
+        switch _isDebugAssertConfiguration() {
+        case true: url.appendPathComponent("debug")
+        case false: url.appendPathComponent("release")
         }
         url.deleteLastPathComponent()
         url.appendPathComponent("lib\(name)")

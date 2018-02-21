@@ -13,6 +13,9 @@ import Platform
 import Dispatch
 
 import struct Foundation.Date
+#if os(Linux)
+import class Foundation.Thread
+#endif
 
 extension COIO {
     public static func syncTask<T>(
@@ -30,7 +33,7 @@ extension COIO {
 
         // TODO: allow fibers inside the task
         // cord_create, cord_destroy, ev_run, ev_break
-        let workItem = DispatchWorkItem(qos: qos) {
+        let closure = {
             // fiber {
             // ...
             //}
@@ -45,7 +48,13 @@ extension COIO {
             write(fd.1.rawValue, &done, 1)
         }
 
+        // FIXME: Doesn't work on Linux anymore
+        #if os(macOS)
+        let workItem = DispatchWorkItem(qos: qos, block: closure)
         queue.async(execute: workItem)
+        #else
+        Thread(block: closure).start()
+        #endif
 
         try wait(for: fd.0, event: .read, deadline: deadline)
 
