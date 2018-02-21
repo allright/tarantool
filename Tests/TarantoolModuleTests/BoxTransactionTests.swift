@@ -92,12 +92,4 @@ class BoxTransactionTests: TestCase {
             fail(String(describing: error))
         }
     }
-
-
-    static var allTests = [
-        ("testCommit", testCommit),
-        ("testRollback", testRollback),
-        ("testTCommit", testTCommit),
-        ("testTRollback", testTRollback),
-    ]
 }

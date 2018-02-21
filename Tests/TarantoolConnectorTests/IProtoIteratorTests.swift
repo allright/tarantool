@@ -125,14 +125,4 @@ class IProtoIteratorTests: TestCase {
             fail(String(describing: error))
         }
     }
-
-
-    static var allTests = [
-        ("testSelectAll", testSelectAll),
-        ("testSelectEQ", testSelectEQ),
-        ("testSelectGT", testSelectGT),
-        ("testSelectGE", testSelectGE),
-        ("testSelectLT", testSelectLT),
-        ("testSelectLE", testSelectLE),
-    ]
 }

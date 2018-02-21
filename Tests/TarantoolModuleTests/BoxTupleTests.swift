@@ -63,9 +63,4 @@ class BoxTupleTests: TestCase {
             fail(String(describing: error))
         }
     }
-
-
-    static var allTests = [
-        ("testUnpackTuple", testUnpackTuple),
-    ]
 }

@@ -58,11 +58,4 @@ class TestUtilsTests: TestCase {
         }
         assertTrue(FileManager.default.fileExists(atPath: path))
     }
-
-
-    static var allTests = [
-        ("testTarantoolProcess", testTarantoolProcess),
-        ("testTempFolder", testTempFolder),
-        ("testModulePath", testModulePath),
-    ]
 }

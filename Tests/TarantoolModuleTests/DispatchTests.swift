@@ -63,9 +63,4 @@ class DispatchTests: TestCase {
             fail(String(describing: error))
         }
     }
-
-
-    static var allTests = [
-        ("testSyncTask", testSyncTask)
-    ]
 }

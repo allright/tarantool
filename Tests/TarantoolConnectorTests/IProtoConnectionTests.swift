@@ -95,13 +95,4 @@ class IProtoConnectionTests: TestCase {
             fail(String(describing: error))
         }
     }
-
-
-    static var allTests = [
-        ("testPing", testPing),
-        ("testEval", testEval),
-        ("testCall", testCall),
-        ("testAuth", testAuth),
-        ("testRequest", testRequest),
-    ]
 }

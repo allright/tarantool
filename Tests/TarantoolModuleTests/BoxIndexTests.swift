@@ -193,22 +193,4 @@ class BoxIndexTests: TestCase {
             fail(String(describing: error))
         }
     }
-
-
-    static var allTests = [
-        ("testHash", testHash),
-        ("testTree", testTree),
-        ("testRTree", testRTree),
-        ("testBitset", testBitset),
-        ("testSequence", testSequence),
-        ("testMany", testMany),
-        ("testCount", testCount),
-        ("testSelect", testSelect),
-        ("testGet", testGet),
-        ("testInsert", testInsert),
-        ("testReplace", testReplace),
-        ("testDelete", testDelete),
-        ("testUpdate", testUpdate),
-        ("testUpsert", testUpsert),
-    ]
 }

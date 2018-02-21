@@ -93,10 +93,4 @@ class IProtoSchemaTests: TestCase {
             fail(String(describing: error))
         }
     }
-
-
-    static var allTests = [
-        ("testSchema", testSchema),
-        ("testCreateSpace", testCreateSpace)
-    ]
 }

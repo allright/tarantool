@@ -103,13 +103,4 @@ class LuaTests: TestCase {
             fail(String(describing: error))
         }
     }
-
-
-    static var allTests = [
-        ("testEval", testEval),
-        ("testPushPop", testPushPop),
-        ("testPushPopMany", testPushPopMany),
-        ("testPushPopArray", testPushPopArray),
-        ("testPushPopMap", testPushPopMap),
-    ]
 }

@@ -28,9 +28,4 @@ class CHAPSHA1Tests: TestCase {
         let result = data.chapSha1(salt: salt)
         assertEqual(expected, result)
     }
-
-
-    static var allTests = [
-        ("testCHAPSHA1", testCHAPSHA1),
-    ]
 }

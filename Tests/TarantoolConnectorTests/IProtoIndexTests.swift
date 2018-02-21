@@ -579,29 +579,4 @@ class IProtoIndexTests: TestCase {
             fail(String(describing: error))
         }
     }
-
-
-    static var allTests = [
-        ("testHash", testHash),
-        ("testTree", testTree),
-        ("testRTree", testRTree),
-        ("testBitset", testBitset),
-        ("testSequence", testSequence),
-        ("testMany", testMany),
-        ("testCount", testCount),
-        ("testSelect", testSelect),
-        ("testGet", testGet),
-        ("testInsert", testInsert),
-        ("testReplace", testReplace),
-        ("testDelete", testDelete),
-        ("testUpdate", testUpdate),
-        ("testUpsert", testUpsert),
-        ("testUnsignedPartType", testUnsignedPartType),
-        ("testIntegerPartType", testIntegerPartType),
-        ("testNumberPartType", testNumberPartType),
-        ("testStringPartType", testStringPartType),
-        ("testBooleanPartType", testBooleanPartType),
-        ("testArrayPartType", testArrayPartType),
-        ("testScalarPartType", testScalarPartType),
-    ]
 }
