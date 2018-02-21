@@ -16,7 +16,6 @@ let package = Package(
     products: [
         .library(name: "TarantoolConnector", targets: ["TarantoolConnector"]),
         .library(name: "TarantoolModule", targets: ["TarantoolModule"]),
-        .library(name: "AsyncTarantool", targets: ["AsyncTarantool"]),
         // used by TarantoolModuleTests
         .library(
             name: "TarantoolModuleTest",
@@ -52,9 +51,6 @@ let package = Package(
         .target(
             name: "TarantoolModule",
             dependencies: ["CTarantool", "Tarantool", "Async"]),
-        .target(
-            name: "AsyncTarantool",
-            dependencies: ["TarantoolModule"]),
         .target(
             name: "TarantoolModuleTest",
             dependencies: ["TarantoolModule"]),

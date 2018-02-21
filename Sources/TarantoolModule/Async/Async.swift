@@ -12,7 +12,6 @@
 
 import Platform
 import CTarantool
-import TarantoolModule
 
 import struct Foundation.Date
 import struct Dispatch.DispatchQoS
