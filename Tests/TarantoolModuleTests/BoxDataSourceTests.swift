@@ -9,7 +9,7 @@
  */
 
 import Test
-import AsyncDispatch
+import Async
 import TarantoolConnector
 @testable import TestUtils
 
@@ -30,7 +30,7 @@ class BoxDataSourceTests: TestCase {
 
     override func setUp() {
         do {
-            AsyncDispatch().registerGlobal()
+            async.setUp()
             guard let module = Module("TarantoolModuleTest").path else {
                 fail("can't find swift module")
                 return

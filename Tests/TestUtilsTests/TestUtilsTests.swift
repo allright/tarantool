@@ -15,9 +15,16 @@ import AsyncDispatch
 import class Foundation.FileManager
 
 class TestUtilsTests: TestCase {
+    static var once: Void = {
+        async.use(Dispatch.self)
+    }()
+
+    override func setUp() {
+        _ = TestUtilsTests.once
+    }
+
     func testTarantoolProcess() {
         do {
-            AsyncDispatch().registerGlobal()
             let tarantool = try TarantoolProcess()
             assertEqual(tarantool.isRunning, false)
             
