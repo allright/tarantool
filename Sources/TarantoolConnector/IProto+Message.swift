@@ -138,7 +138,7 @@ extension IProto.Message {
             try? decoder.decode([MessagePack : MessagePack].self),
             header.count == 3,
             let packedCode = header[Key.code.rawValue],
-            let unpackedCode = Int(packedCode),
+            let unpackedCode = packedCode.integerValue,
             let sync = header[Key.sync.rawValue],
             let schemaId = header[Key.schemaId.rawValue] else {
                 throw IProto.Error.invalidPacket(reason: .invalidHeader)
@@ -160,8 +160,8 @@ extension IProto.Message {
         }
 
         self.code = code
-        self.sync = Int(sync)
-        self.schemaId = Int(schemaId)
+        self.sync = sync.integerValue
+        self.schemaId = schemaId.integerValue
 
         // empty body e.g. ping response
         guard body.count > 0 else {

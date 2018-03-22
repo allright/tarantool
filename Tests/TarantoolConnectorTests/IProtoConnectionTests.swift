@@ -47,12 +47,7 @@ class IProtoConnectionTests: TestCase {
     func testEval() {
         do {
             let result = try iproto.eval("return 'he'..'l'..'lo'")
-            guard let first = result.first,
-                let answer = String(first) else {
-                    fail()
-                    return
-            }
-            assertEqual(answer, "hello")
+            assertEqual(result.first?.stringValue, "hello")
         } catch {
             fail(String(describing: error))
         }
@@ -77,12 +72,7 @@ class IProtoConnectionTests: TestCase {
                 end
                 """)
             let result = try iproto.call("hello")
-            guard let first = result.first,
-                let answer = String(first) else {
-                    fail()
-                    return
-            }
-            assertEqual(answer, "hey there!")
+            assertEqual(result.first?.stringValue, "hey there!")
         } catch {
             fail(String(describing: error))
         }

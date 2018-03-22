@@ -51,7 +51,7 @@ public class IProto {
 
         let response = try Message(from: stream)
 
-        return Array(response.body[Message.Key.data]) ?? []
+        return response.body[Message.Key.data]?.arrayValue ?? []
     }
 }
 

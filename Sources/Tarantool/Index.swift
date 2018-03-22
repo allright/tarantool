@@ -149,13 +149,13 @@ extension Index {
 
     init?<M: Tarantool.Tuple>(from messagePack: M, source: T) {
         guard messagePack.count >= 6,
-            let spaceId = Int(messagePack[0]),
-            let id = Int(messagePack[1]),
-            let name = String(messagePack[2]),
-            let typeString = String(messagePack[3]),
+            let spaceId = messagePack[0]?.integerValue,
+            let id = messagePack[1]?.integerValue,
+            let name = messagePack[2]?.stringValue,
+            let typeString = messagePack[3]?.stringValue,
             let type = IndexType(rawValue: typeString.lowercased()),
-            let options = [MessagePack : MessagePack](messagePack[4]),
-            let partsArray = [MessagePack](messagePack[5]),
+            let options = messagePack[4]?.dictionaryValue,
+            let partsArray = messagePack[5]?.arrayValue,
             let parts = Index.Part.parseMany(from: partsArray),
             let unique = Bool(options["unique"]) else {
                 return nil
@@ -197,8 +197,8 @@ extension Index.Part {
 
     init?(_ array: [MessagePack]) {
         guard array.count >= 2,
-            let field = Int(array[0]),
-            let rawType = String(array[1]),
+            let field = array[0].integerValue,
+            let rawType = array[1].stringValue,
             let type = Type(rawValue: rawType) else {
                 return nil
         }

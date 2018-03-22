@@ -60,7 +60,7 @@ extension IProto: DataSource {
             .iterator: .int(Iterator.eq.rawValue),
             .key:      .array(keys.rawValue)])
 
-        guard let tuple = [MessagePack]([MessagePack](result).first) else {
+        guard let tuple = result.first?.arrayValue else {
             return nil
         }
 
@@ -75,9 +75,8 @@ extension IProto: DataSource {
         let result = try request(code: .insert, keys: [
             .spaceId: .int(spaceId),
             .tuple:   .array(tuple)])
-        guard let first = [MessagePack](result).first,
-            let index = [MessagePack](first)?.first else {
-                throw Error.invalidPacket(reason: .invalidBody)
+        guard let index = result.first?.arrayValue?.first else {
+            throw Error.invalidPacket(reason: .invalidBody)
         }
         return index
     }

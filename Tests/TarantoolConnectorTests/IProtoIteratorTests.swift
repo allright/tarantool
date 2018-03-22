@@ -34,10 +34,10 @@ class IProtoIteratorTests: TestCase {
 
             source = try IProto(host: "127.0.0.1", port: tarantool.port)
 
-            guard let first = try source.eval("return box.space.test.id").first,
-                let testSpaceId = Int(first) else {
-                    fail()
-                    return
+            let result = try source.eval("return box.space.test.id")
+            guard let testSpaceId = result.first?.integerValue else {
+                fail()
+                return
             }
             self.testSpaceId = testSpaceId
         } catch {

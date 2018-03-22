@@ -79,7 +79,7 @@ public struct Schema<T: DataSource & LuaScript> {
         }
         let script = "return box.schema.space.create('\(name)', \(options)).id"
         let result = try source.eval(script, arguments: [])
-        guard result.count == 1, let id = Int(result[0]) else {
+        guard result.count == 1, let id = result[0].integerValue else {
             let message = "[integer] expected, got \(result)"
             throw Tarantool.Error.invalidTuple(message: message)
         }

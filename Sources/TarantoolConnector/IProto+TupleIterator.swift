@@ -22,7 +22,7 @@ extension IProto {
             guard index < tuples.count else {
                 return nil
             }
-            guard let tuple = [MessagePack](tuples[index]) else {
+            guard let tuple = tuples[index].arrayValue else {
                 return nil
             }
             index += 1

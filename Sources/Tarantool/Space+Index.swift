@@ -28,14 +28,13 @@ extension Space {
             "box.space.\(self.name):create_index('\(name)', {\(arguments)})"
 
         let result = try source.eval(script, arguments: [])
-        guard result.count == 1,
-            let table = [MessagePack : MessagePack](result[0]) else {
-                throw Error.invalidTuple(message: "[index] \(result)")
+        guard result.count == 1, let table = result[0].dictionaryValue else {
+            throw Error.invalidTuple(message: "[index] \(result)")
         }
-        guard let id = Int(table["id"]) else {
+        guard let id = table["id"]?.integerValue else {
             throw Error.invalidIndex(message: "invalid 'id' in \(table)")
         }
-        guard let partsArray = [MessagePack](table["parts"]) else {
+        guard let partsArray = table["parts"]?.arrayValue else {
             throw Error.invalidIndex(message: "invalid 'parts' in \(table)")
         }
         guard let parts = Index<T>.Part.parseMany(from: partsArray) else {

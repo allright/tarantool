@@ -34,10 +34,10 @@ class IProtoDataSourceTests: TestCase {
 
             source = try IProto(host: "127.0.0.1", port: tarantool.port)
 
-            guard let first = try source.eval("return box.space.test.id").first,
-                let testId = Int(first) else {
-                    fail()
-                    return
+            let result = try source.eval("return box.space.test.id")
+            guard let testId = result.first?.integerValue else {
+                fail()
+                return
             }
             self.testId = testId
         } catch {
@@ -76,11 +76,7 @@ class IProtoDataSourceTests: TestCase {
 
     func testGet() {
         do {
-            guard let result =
-                try source.get(testId, 0, [3]) else {
-                    fail()
-                    return
-            }
+            let result = try source.get(testId, 0, [3])
             assertEqual(result, IProto.Tuple([3, "baz"]))
         } catch {
             fail(String(describing: error))
@@ -90,11 +86,7 @@ class IProtoDataSourceTests: TestCase {
     func testInsert() {
         do {
             try source.insert(testId, [4, "quux"])
-            guard let result =
-                try source.get(testId, 0, [4]) else {
-                    fail()
-                    return
-            }
+            let result = try source.get(testId, 0, [4])
             assertEqual(result, IProto.Tuple([4, "quux"]))
         } catch {
             fail(String(describing: error))
@@ -104,11 +96,7 @@ class IProtoDataSourceTests: TestCase {
     func testReplace() {
         do {
             try source.replace(testId, [3, "zab"])
-            guard let result =
-                try source.get(testId, 0, [3]) else {
-                    fail()
-                    return
-            }
+            let result = try source.get(testId, 0, [3])
             assertEqual(result, IProto.Tuple([3, "zab"]))
         } catch {
             fail(String(describing: error))
@@ -127,11 +115,7 @@ class IProtoDataSourceTests: TestCase {
     func testUpdate() {
         do {
             try source.update(testId, 0, [3], [["=", 1, "zab"]])
-            guard let result =
-                try source.get(testId, 0, [3]) else {
-                    fail()
-                    return
-            }
+            let result = try source.get(testId, 0, [3])
             assertEqual(result, IProto.Tuple([3, "zab"]))
         } catch {
             fail(String(describing: error))
@@ -143,19 +127,11 @@ class IProtoDataSourceTests: TestCase {
             assertNil(try source.get(testId, 0, [4]))
 
             try source.upsert(testId, 0, [4, "quux", 42], [["+", 2, 8]])
-            guard let insertResult =
-                try source.get(testId, 0, [4]) else {
-                    fail()
-                    return
-            }
+            let insertResult = try source.get(testId, 0, [4])
             assertEqual(insertResult, IProto.Tuple([4, "quux", 42]))
 
             try source.upsert(testId, 0, [4, "quux", 42], [["+", 2, 8]])
-            guard let updateResult =
-                try source.get(testId, 0, [4]) else {
-                    fail()
-                    return
-            }
+            let updateResult = try source.get(testId, 0, [4])
             assertEqual(updateResult, IProto.Tuple([4, "quux", 50]))
         } catch {
             fail(String(describing: error))
