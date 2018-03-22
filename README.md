@@ -79,7 +79,7 @@ let newResult = try newSpace.select(iterator: .all)
 newResult.forEach { print($0) }
 ```
 
-### Tarantool in-memory module
+### Tarantool module
 
 #### Server-side
 
