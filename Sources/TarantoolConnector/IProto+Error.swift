@@ -14,7 +14,6 @@ extension IProto {
         case invalidSalt
         case invalidPacket(reason: PacketError)
         case badRequest(code: Int, message: String)
-        case streamWriteFailed
     }
 
     public enum PacketError {

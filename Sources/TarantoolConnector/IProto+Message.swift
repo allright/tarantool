@@ -94,7 +94,7 @@ extension IProto.Message {
 //                            MP_MAP
 
 extension IProto.Message {
-    func encode<T: OutputStream>(to stream: inout T) throws {
+    func encode<T: StreamWriter>(to stream: T) throws {
         // header
         var header = [MessagePack : MessagePack]()
         header[Key.code.rawValue] = code.rawValue
@@ -118,15 +118,13 @@ extension IProto.Message {
         // body + header size
         let packet = encoder.stream.bytes
         let size = try Length.pack(packet.count)
-        guard try stream.write(size) == size.count,
-            try stream.write(packet) == packet.count else {
-                throw IProto.Error.streamWriteFailed
-        }
+        try stream.write(size)
+        try stream.write(packet)
     }
 }
 
 extension IProto.Message {
-    init<T: InputStream>(from stream: T) throws {
+    init<T: StreamReader>(from stream: T) throws {
         var decoder = MessagePackReader(stream)
         let size = try decoder.decode(Int.self)
         // we don't actually need the size because of stream

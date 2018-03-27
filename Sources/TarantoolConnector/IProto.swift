@@ -16,18 +16,20 @@ import Foundation
 @_exported import MessagePack
 
 public class IProto {
-    let socket: Socket
-    var stream: BufferedStream<NetworkStream>
     let welcome: Welcome
-
-    public init(host: String, port: Int = 3301) throws {
-        socket = try Socket().connect(to: host, port: port)
-        stream = BufferedStream(baseStream: NetworkStream(socket: socket))
-        welcome = try Welcome(from: &stream)
-    }
-
-    deinit {
-        try? socket.close()
+    var inputStream: BufferedInputStream<NetworkStream>
+    var outputStream: BufferedOutputStream<NetworkStream>
+    
+    public init(host: String, port: Int = 3301, bufferSize: Int = 4096) throws {
+        let socket = try Socket().connect(to: host, port: port)
+        let networkStream = NetworkStream(socket: socket)
+        inputStream = BufferedInputStream(
+            baseStream: networkStream,
+            capacity: bufferSize)
+        outputStream = BufferedOutputStream(
+            baseStream: networkStream,
+            capacity: bufferSize)
+        welcome = try Welcome(from: &inputStream)
     }
 
     public typealias Code = Message.Code
@@ -46,10 +48,10 @@ public class IProto {
             body: keys
         )
 
-        try request.encode(to: &stream)
-        try stream.flush()
+        try request.encode(to: outputStream)
+        try outputStream.flush()
 
-        let response = try Message(from: stream)
+        let response = try Message(from: inputStream)
 
         return response.body[Message.Key.data]?.arrayValue ?? []
     }
