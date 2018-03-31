@@ -9,6 +9,7 @@
  */
 
 import Time
+import File
 import Network
 import Platform
 import Foundation
@@ -22,13 +23,14 @@ class TarantoolProcess {
 
     private let syncPort: Int
 
-    var temp: URL = {
-        return URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent("TarantoolTemp\(arc4random())")
-    }()
+    let temp = Path(string: "/tmp/TarantoolTemp\(arc4random())")
 
-    var lock: URL {
-        return temp.appendingPathComponent("lock")
+    var lock: File {
+        return File(name: "lock", at: temp)
+    }
+
+    var logFile: File {
+        return File(name: "tarantool.log", at: temp)
     }
 
     var isRunning: Bool {
@@ -36,12 +38,10 @@ class TarantoolProcess {
     }
 
     var log: String? {
-        let logUrl = temp.appendingPathComponent("tarantool.log")
-        guard let data = try? Data(contentsOf: logUrl),
-            let log = String(data: data, encoding: .utf8) else {
-                return nil
-        }
-        return log
+        return try? logFile
+            .open(flags: .read)
+            .inputStream
+            .readUntilEnd(as: String.self)
     }
 
     init(with script: String = "") throws {
@@ -50,19 +50,14 @@ class TarantoolProcess {
         self.script = script
     }
 
-    deinit {
-        cleanup()
-    }
-
     func launch() throws {
-        let config = temp.appendingPathComponent("init.lua")
         let script = """
             box.cfg{
               listen=\(port),
-              log='\(temp.path)/tarantool.log',
-              memtx_dir='\(temp.path)',
-              wal_dir='\(temp.path)',
-              vinyl_dir='\(temp.path)',
+              log='\(logFile.path.string)',
+              memtx_dir='\(temp.string)',
+              wal_dir='\(temp.string)',
+              vinyl_dir='\(temp.string)',
               memtx_memory=100000000
             }
             \(self.script)
@@ -76,10 +71,13 @@ class TarantoolProcess {
             os.exit(0)
             """
 
-        try FileManager.default.createDirectory(
-            at: temp, withIntermediateDirectories: true)
-        _ = FileManager.default.createFile(atPath: lock.path, contents: nil)
-        try script.write(to: config, atomically: true, encoding: .utf8)
+        try Directory.create(at: temp)
+        try lock.create()
+
+        let config = File(name: "init.lua", at: temp)
+        let stream = try config.open(flags: [.create, .truncate, .write])
+        try stream.write(script)
+        try stream.flush()
 
         if let env_bin = ProcessInfo.processInfo.environment["TARANTOOL_BIN"] {
             process.launchPath = env_bin
@@ -91,7 +89,7 @@ class TarantoolProcess {
         #endif
         }
 
-        process.arguments = [config.path]
+        process.arguments = [config.path.string]
 
         guard FileManager.default.fileExists(atPath: process.launchPath!) else {
             throw "\(process.launchPath!) doesn't exist"
@@ -117,13 +115,10 @@ class TarantoolProcess {
         if process.isRunning {
             // not yet implemented
             // process.terminate()
-            try? FileManager.default.removeItem(at: lock)
+            try? lock.remove()
             process.waitUntilExit()
+            try? Directory.remove(at: temp)
         }
         return Int(process.terminationStatus)
-    }
-
-    func cleanup() {
-        try? FileManager.default.removeItem(at: temp)
     }
 }
