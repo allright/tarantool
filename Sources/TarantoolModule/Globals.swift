@@ -8,9 +8,9 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Time
 import CTarantool
 
-import struct Foundation.Date
 import struct Dispatch.DispatchQoS
 import class Dispatch.DispatchQueue
 
@@ -26,7 +26,7 @@ public func fiber(_ closure: @escaping () -> Void) {
 public func syncTask<T>(
     onQueue queue: DispatchQueue = DispatchQueue.global(),
     qos: DispatchQoS = .background,
-    deadline: Date = Date.distantFuture,
+    deadline: Time = .distantFuture,
     task: @escaping () throws -> T
 ) throws -> T {
     return try COIO.syncTask(
@@ -41,13 +41,14 @@ public func yield() {
 }
 
 @inline(__always)
-public func sleep(until deadline: Date) {
-    _fiber_sleep(deadline.timeIntervalSinceNow)
+public func sleep(until deadline: Time) {
+    _fiber_sleep(Double(deadline.timeIntervalSinceNow))
 }
 
 @inline(__always)
-public func now() -> Date {
-    return Date(timeIntervalSince1970: _fiber_time())
+public func now() -> Time {
+    let time = _fiber_time()
+    return Time(seconds: Int(time), nanoseconds: 0)
 }
 
 @inline(__always)

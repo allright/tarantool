@@ -8,10 +8,9 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Time
 import CTarantool
 import TarantoolModule
-
-import struct Foundation.Date
 
 struct DispatchTests {
     static func testSyncTask() throws {
@@ -20,7 +19,7 @@ struct DispatchTests {
         fiber {
             while iterations < 10 {
                 // tick tock tick tock
-                sleep(until: Date().addingTimeInterval(0.09))
+                sleep(until: .now + 90.ms)
                 iterations += 1
             }
         }

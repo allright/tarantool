@@ -8,6 +8,7 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Time
 import Network
 import Platform
 import Foundation
@@ -109,7 +110,7 @@ class TarantoolProcess {
         let socket = try Socket()
             .bind(to: "127.0.0.1", port: syncPort)
             .listen()
-        _ = try socket.accept(deadline: Date(timeIntervalSinceNow: 5))
+        _ = try socket.accept(deadline: .now + 5.s)
     }
 
     func terminate() -> Int {

@@ -10,10 +10,10 @@
 
 @_exported import Async
 
+import Time
 import Platform
 import CTarantool
 
-import struct Foundation.Date
 import struct Dispatch.DispatchQoS
 import class Dispatch.DispatchQueue
 
@@ -30,7 +30,7 @@ public struct AsyncTarantool: Async {
     public func syncTask<T>(
         onQueue queue: DispatchQueue = DispatchQueue.global(),
         qos: DispatchQoS = .background,
-        deadline: Date = Date.distantFuture,
+        deadline: Time = .distantFuture,
         task: @escaping () throws -> T
     ) throws -> T {
         return try COIO.syncTask(
@@ -40,13 +40,13 @@ public struct AsyncTarantool: Async {
     public func wait(
         for descriptor: Descriptor,
         event: IOEvent,
-        deadline: Date = Date.distantFuture
+        deadline: Time = .distantFuture
     ) throws {
         try COIO.wait(for: descriptor, event: event, deadline: deadline)
     }
 
-    public func sleep(until deadline: Date) {
-        _fiber_sleep(deadline.timeIntervalSinceNow)
+    public func sleep(until deadline: Time) {
+        _fiber_sleep(Double(deadline.timeIntervalSinceNow))
     }
 
     public func testCancel() throws {
@@ -61,7 +61,7 @@ public struct TarantoolLoop: AsyncLoop {
         // fallback to tarantool's built-in event loop
     }
 
-    public func run(until date: Date) {
+    public func run(until date: Time) {
         fatalError("not implemented")
     }
 

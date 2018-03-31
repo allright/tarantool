@@ -8,11 +8,10 @@
  * See CONTRIBUTORS.txt for the list of the project authors
  */
 
+import Time
 import Async
 import Platform
 import CTarantool
-
-import struct Foundation.Date
 
 public struct COIO {
     struct Timeout {
@@ -34,11 +33,11 @@ public struct COIO {
     public static func wait(
         for descriptor: Descriptor,
         event: IOEvent,
-        deadline: Date = Date.distantFuture
+        deadline: Time = .distantFuture
     ) throws {
-        let timeout = deadline == Date.distantFuture
+        let timeout = deadline == .distantFuture
             ? Timeout.infinity
-            : deadline.timeIntervalSinceNow
+            : Double(deadline.timeIntervalSinceNow)
 
         let event = Event(event)
         let result = _coio_wait(descriptor.rawValue, event.rawValue, timeout)

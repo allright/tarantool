@@ -30,6 +30,9 @@ let package = Package(
             url: "https://github.com/tris-foundation/async.git",
             .branch("master")),
         .package(
+            url: "https://github.com/tris-foundation/time.git",
+            .branch("master")),
+        .package(
             url: "https://github.com/tris-foundation/crypto.git",
             .branch("master")),
         .package(
@@ -50,7 +53,7 @@ let package = Package(
             dependencies: ["Tarantool", "Network", "Crypto"]),
         .target(
             name: "TarantoolModule",
-            dependencies: ["CTarantool", "Tarantool", "Async"]),
+            dependencies: ["CTarantool", "Tarantool", "Async", "Time"]),
         .target(
             name: "TarantoolModuleTest",
             dependencies: ["TarantoolModule"]),
