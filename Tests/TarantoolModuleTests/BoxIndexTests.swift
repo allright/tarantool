@@ -68,7 +68,8 @@ class BoxIndexTests: TestCase {
 
             iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -78,120 +79,92 @@ class BoxIndexTests: TestCase {
     }
 
     func testHash() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             _ = try iproto.call("BoxIndexTests_testHash")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testTree() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             _ = try iproto.call("BoxIndexTests_testTree")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testRTree() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             _ = try iproto.call("BoxIndexTests_testRTree")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testBitset() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             _ = try iproto.call("BoxIndexTests_testBitset")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSequence() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             _ = try iproto.call("BoxIndexTests_testSequence")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testMany() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             _ = try iproto.call("BoxIndexTests_testMany")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testCount() {
-        do {
+        scope {
             _ = try iproto.call("BoxIndexTests_testCount")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSelect() {
-        do {
+        scope {
             _ = try iproto.call("BoxIndexTests_testSelect")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testGet() {
-        do {
+        scope {
             _ = try iproto.call("BoxIndexTests_testGet")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testInsert() {
-        do {
+        scope {
             _ = try iproto.call("BoxIndexTests_testInsert")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testReplace() {
-        do {
+        scope {
             _ = try iproto.call("BoxIndexTests_testReplace")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testDelete() {
-        do {
+        scope {
             _ = try iproto.call("BoxIndexTests_testDelete")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUpdate() {
-        do {
+        scope {
             _ = try iproto.call("BoxIndexTests_testUpdate")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUpsert() {
-        do {
+        scope {
             _ = try iproto.call("BoxIndexTests_testUpsert")
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

@@ -9,11 +9,10 @@
  */
 
 import Test
+import File
 import AsyncDispatch
 @testable import Async
 @testable import TestUtils
-
-import class Foundation.FileManager
 
 class TestUtilsTests: TestCase {
     override func setUp() {
@@ -21,30 +20,26 @@ class TestUtilsTests: TestCase {
     }
 
     func testTarantoolProcess() {
-        do {
+        scope {
             let tarantool = try TarantoolProcess()
             assertEqual(tarantool.isRunning, false)
-            
+
             try tarantool.launch()
             assertEqual(tarantool.isRunning, true)
-            
+
             let exitCode = tarantool.terminate()
             assertEqual(tarantool.isRunning, false)
             assertEqual(exitCode, 0)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testTempFolder() {
-        do {
+        scope {
             let tarantool = try TarantoolProcess()
             assertEqual(tarantool.temp, tarantool.temp)
-            
+
             let tarantool2 = try TarantoolProcess()
             assertNotEqual(tarantool.temp, tarantool2.temp)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
@@ -53,6 +48,6 @@ class TestUtilsTests: TestCase {
             fail()
             return
         }
-        assertTrue(FileManager.default.fileExists(atPath: path))
+        assertTrue(File.isExists(at: Path(string: path)))
     }
 }

@@ -41,7 +41,8 @@ class IProtoIteratorTests: TestCase {
             }
             self.testSpaceId = testSpaceId
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -51,7 +52,7 @@ class IProtoIteratorTests: TestCase {
     }
 
     func testSelectAll() {
-        do {
+        scope {
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([1, "foo"]),
                 IProto.Tuple([2, "bar"]),
@@ -59,71 +60,59 @@ class IProtoIteratorTests: TestCase {
             ]
             let result = try source.select(testSpaceId, 0, .all, [], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSelectEQ() {
-        do {
+        scope {
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([2, "bar"])
             ]
             let result = try source.select(testSpaceId, 0, .eq, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSelectGT() {
-        do {
+        scope {
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([3, "baz"])
             ]
             let result = try source.select(testSpaceId, 0, .gt, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSelectGE() {
-        do {
+        scope {
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([2, "bar"]),
                 IProto.Tuple([3, "baz"])
             ]
             let result = try source.select(testSpaceId, 0, .ge, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSelectLT() {
-        do {
+        scope {
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([1, "foo"])
             ]
             let result = try source.select(testSpaceId, 0, .lt, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSelectLE() {
-        do {
+        scope {
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([2, "bar"]),
                 IProto.Tuple([1, "foo"])
             ]
             let result = try source.select(testSpaceId, 0, .le, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

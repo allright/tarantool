@@ -41,7 +41,8 @@ class IProtoSpaceTests: TestCase {
             self.space = schema.spaces["test"]
             self.seq = schema.spaces["seq"]
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -51,16 +52,14 @@ class IProtoSpaceTests: TestCase {
     }
 
     func testCount() {
-        do {
+        scope {
             let result = try space.count(.all)
             assertEqual(result, 3)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSelect() {
-        do {
+        scope {
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([1, "foo"]),
                 IProto.Tuple([2, "bar"]),
@@ -68,61 +67,49 @@ class IProtoSpaceTests: TestCase {
             ]
             let result = try space.select(iterator: .all)
             assertEqual([IProto.Tuple](result), expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testGet() {
-        do {
+        scope {
             let result = try space.get(keys: [3])
             assertEqual(result, IProto.Tuple([3, "baz"]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testInsert() {
-        do {
+        scope {
             try space.insert([4, "quux"])
             let result = try space.get(keys: [4])
             assertEqual(result, IProto.Tuple([4, "quux"]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testReplace() {
-        do {
+        scope {
             try space.replace([3, "zab"])
             let result = try space.get(keys: [3])
             assertEqual(result, IProto.Tuple([3, "zab"]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testDelete() {
-        do {
+        scope {
             try space.delete(keys: [3])
             assertNil(try space.get(keys: [3]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUpdate() {
-        do {
+        scope {
             try space.update(keys: [3], operations: [["=", 1, "zab"]])
             let result = try space.get(keys: [3])
             assertEqual(result, IProto.Tuple([3, "zab"]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUpsert() {
-        do {
+        scope {
             assertNil(try space.get(keys: [4]))
 
             try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
@@ -132,13 +119,11 @@ class IProtoSpaceTests: TestCase {
             try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
             let updateResult = try space.get(keys: [4])
             assertEqual(updateResult, IProto.Tuple([4, "quux", 50]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSequence() {
-        do {
+        scope {
             var id = try seq.insert([nil, "foo"])
             assertEqual(id, 1)
 
@@ -148,8 +133,6 @@ class IProtoSpaceTests: TestCase {
             let result = try seq.get(keys: [id])
             assertEqual(result, IProto.Tuple([2, "bar"]))
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

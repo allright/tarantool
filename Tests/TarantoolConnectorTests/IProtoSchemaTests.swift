@@ -29,7 +29,8 @@ class IProtoSchemaTests: TestCase {
 
             iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -39,7 +40,7 @@ class IProtoSchemaTests: TestCase {
     }
 
     func testSchema() {
-        do {
+        scope {
             let schema = try Schema(iproto)
 
             guard schema.spaces.count > 0 else {
@@ -63,13 +64,11 @@ class IProtoSchemaTests: TestCase {
             for (key, value) in expexted {
                 assertEqual(spaces[key]?.id, value)
             }
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testCreateSpace() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
 
@@ -90,8 +89,6 @@ class IProtoSchemaTests: TestCase {
             assertEqual(vinyl.id, 514)
             assertEqual(vinyl.name, "vinyl")
             assertEqual(vinyl.engine, .vinyl)
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

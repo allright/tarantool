@@ -53,7 +53,8 @@ class BoxTransactionTests: TestCase {
 
             iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -63,34 +64,26 @@ class BoxTransactionTests: TestCase {
     }
 
     func testCommit() {
-        do {
+        scope {
             _ = try iproto.call("BoxTransactionTests_testCommit")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testRollback() {
-        do {
+        scope {
             _ = try iproto.call("BoxTransactionTests_testRollback")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testTCommit() {
-        do {
+        scope {
             _ = try iproto.call("BoxTransactionTests_testTCommit")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testTRollback() {
-        do {
+        scope {
             _ = try iproto.call("BoxTransactionTests_testTRollback")
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

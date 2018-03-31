@@ -27,7 +27,8 @@ class IProtoConnectionTests: TestCase {
 
             iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -37,34 +38,28 @@ class IProtoConnectionTests: TestCase {
     }
 
     func testPing() {
-        do {
+        scope {
             try iproto.ping()
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testEval() {
-        do {
+        scope {
             let result = try iproto.eval("return 'he'..'l'..'lo'")
             assertEqual(result.first?.stringValue, "hello")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testAuth() {
-        do {
+        scope {
             _ = try iproto.eval(
                 "box.schema.user.create('tester', {password='tester'})")
             try iproto.auth(username: "tester", password: "tester")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testCall() {
-        do {
+        scope {
             _ = try iproto.eval("""
                 box.schema.func.create('hello')
                 function hello()
@@ -73,17 +68,13 @@ class IProtoConnectionTests: TestCase {
                 """)
             let result = try iproto.call("hello")
             assertEqual(result.first?.stringValue, "hey there!")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testRequest() {
-        do {
+        scope {
             let result = try iproto.request(code: .ping)
             assertEqual(result, [])
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

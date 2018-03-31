@@ -48,7 +48,8 @@ class BoxTupleTests: TestCase {
 
             iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -58,10 +59,8 @@ class BoxTupleTests: TestCase {
     }
 
     func testUnpackTuple() {
-        do {
+        scope {
             _ = try iproto.call("BoxTupleTests_testUnpackTuple")
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

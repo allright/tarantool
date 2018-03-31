@@ -52,56 +52,47 @@ class LuaTests: TestCase {
 
             iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
     override func tearDown() {
+        let log = tarantool.log
         let status = tarantool.terminate()
-        defer { tarantool.cleanup() }
         guard status == 0 else {
-            fail(tarantool.log ?? "")
+            fail(log ?? "")
             return
         }
     }
 
     func testEval() {
-        do {
+        scope {
             _ = try iproto.call("LuaTests_testEval")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testPushPop() {
-        do {
-             _ = try iproto.call("LuaTests_testPushPop")
-        } catch {
-            fail(String(describing: error))
+        scope {
+            _ = try iproto.call("LuaTests_testPushPop")
         }
     }
 
     func testPushPopMany() {
-        do {
+        scope {
             _ = try iproto.call("LuaTests_testPushPopMany")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testPushPopArray() {
-        do {
+        scope {
             _ = try iproto.call("LuaTests_testPushPopArray")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testPushPopMap() {
-        do {
+        scope {
             _ = try iproto.call("LuaTests_testPushPopMap")
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

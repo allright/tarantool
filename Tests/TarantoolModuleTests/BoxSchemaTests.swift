@@ -50,7 +50,8 @@ class BoxSchemaTests: TestCase {
 
             iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -60,19 +61,15 @@ class BoxSchemaTests: TestCase {
     }
 
     func testSchema() {
-        do {
+        scope {
             _ = try iproto.call("BoxSchemaTests_testSchema")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testCreateSpace() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             _ = try iproto.call("BoxSchemaTests_testCreateSpace")
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

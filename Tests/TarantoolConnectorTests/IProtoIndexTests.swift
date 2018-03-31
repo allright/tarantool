@@ -37,7 +37,8 @@ class IProtoIndexTests: TestCase {
             let schema = try Schema(iproto)
             self.space = schema.spaces["test"]
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -47,7 +48,7 @@ class IProtoIndexTests: TestCase {
     }
 
     func testHash() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_hash")
@@ -62,13 +63,11 @@ class IProtoIndexTests: TestCase {
                 parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(hash, expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testTree() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_tree")
@@ -83,13 +82,11 @@ class IProtoIndexTests: TestCase {
                 parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(tree, expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testRTree() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_rtree")
@@ -107,13 +104,11 @@ class IProtoIndexTests: TestCase {
                 parts: [Index.Part(field: 2, type: .array)],
                 source: iproto)
             assertEqual(rtree, expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testBitset() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_bitset")
@@ -131,13 +126,11 @@ class IProtoIndexTests: TestCase {
                 parts: [Index.Part(field: 2, type: .unsigned)],
                 source: iproto)
             assertEqual(rtree, expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSequence() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
             var space = try schema.createSpace(name: "test_sequence")
@@ -153,13 +146,11 @@ class IProtoIndexTests: TestCase {
                 parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(primary, expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testMany() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
 
@@ -206,26 +197,22 @@ class IProtoIndexTests: TestCase {
                 parts: [Index.Part(field: 1, type: .unsigned)],
                 source: iproto)
             assertEqual(nonUnique, expected3)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testCount() {
-        do {
+        scope {
             guard let index = space[index: 0] else {
                 fail("index not found")
                 return
             }
             let result = try index.count(iterator: .all)
             assertEqual(result, 3)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSelect() {
-        do {
+        scope {
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([1, "foo"]),
                 IProto.Tuple([2, "bar"]),
@@ -237,13 +224,11 @@ class IProtoIndexTests: TestCase {
             }
             let result = try index.select(iterator: .all)
             assertEqual([IProto.Tuple](result), expected)
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testGet() {
-        do {
+        scope {
             guard let index = space[index: 0] else {
                 fail("index not found")
                 return
@@ -253,13 +238,11 @@ class IProtoIndexTests: TestCase {
                 return
             }
             assertEqual(result, IProto.Tuple([3, "baz"]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testInsert() {
-        do {
+        scope {
             guard let index = space[index: 0] else {
                 fail("index not found")
                 return
@@ -270,13 +253,11 @@ class IProtoIndexTests: TestCase {
                 return
             }
             assertEqual(result, IProto.Tuple([4, "quux"]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testReplace() {
-        do {
+        scope {
             guard let index = space[index: 0] else {
                 fail("index not found")
                 return
@@ -287,26 +268,22 @@ class IProtoIndexTests: TestCase {
                 return
             }
             assertEqual(result, IProto.Tuple([3, "zab"]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testDelete() {
-        do {
+        scope {
             guard let index = space[index: 0] else {
                 fail("index not found")
                 return
             }
             try index.delete(keys: [3])
             assertNil(try index.get(keys: [3]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUpdate() {
-        do {
+        scope {
             guard let index = space[index: 0] else {
                 fail("index not found")
                 return
@@ -317,13 +294,11 @@ class IProtoIndexTests: TestCase {
                 return
             }
             assertEqual(result, IProto.Tuple([3, "zab"]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUpsert() {
-        do {
+        scope {
             guard let index = space[index: 0] else {
                 fail("index not found")
                 return
@@ -343,13 +318,11 @@ class IProtoIndexTests: TestCase {
                 return
             }
             assertEqual(updateResult, IProto.Tuple([4, "quux", 50]))
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUnsignedPartType() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
 
             var schema = try Schema(iproto)
@@ -371,13 +344,11 @@ class IProtoIndexTests: TestCase {
 
             assertEqual(index, expected)
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testIntegerPartType() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
 
             var schema = try Schema(iproto)
@@ -399,13 +370,11 @@ class IProtoIndexTests: TestCase {
 
             assertEqual(index, expected)
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testNumberPartType() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
 
             var schema = try Schema(iproto)
@@ -427,13 +396,11 @@ class IProtoIndexTests: TestCase {
 
             assertEqual(index, expected)
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testStringPartType() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
 
             var schema = try Schema(iproto)
@@ -455,13 +422,11 @@ class IProtoIndexTests: TestCase {
 
             assertEqual(index, expected)
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testBooleanPartType() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
 
             var schema = try Schema(iproto)
@@ -483,13 +448,11 @@ class IProtoIndexTests: TestCase {
 
             assertEqual(index, expected)
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testArrayPartType() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
 
             var schema = try Schema(iproto)
@@ -514,13 +477,11 @@ class IProtoIndexTests: TestCase {
 
             assertEqual(index, expected)
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testScalarPartType() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
 
             var schema = try Schema(iproto)
@@ -542,13 +503,11 @@ class IProtoIndexTests: TestCase {
 
             assertEqual(index, expected)
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUppercased() {
-        do {
+        scope {
             try iproto.auth(username: "admin", password: "admin")
 
             _ = try iproto.eval("local temp=box.schema.space.create('temp');" +
@@ -576,8 +535,6 @@ class IProtoIndexTests: TestCase {
 
             assertEqual(index, expected)
 
-        } catch {
-            fail(String(describing: error))
         }
     }
 }

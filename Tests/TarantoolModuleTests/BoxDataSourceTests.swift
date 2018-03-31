@@ -60,7 +60,8 @@ class BoxDataSourceTests: TestCase {
 
             iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
         } catch {
-            fatalError(String(describing: error))
+            continueAfterFailure = false
+            fail(String(describing: error))
         }
     }
 
@@ -70,66 +71,50 @@ class BoxDataSourceTests: TestCase {
     }
 
     func testCount() {
-        do {
+        scope {
             _ = try iproto.call("BoxDataSourceTests_testCount")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testSelect() {
-        do {
+        scope {
             _ = try iproto.call("BoxDataSourceTests_testSelect")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testGet() {
-        do {
+        scope {
             _ = try iproto.call("BoxDataSourceTests_testGet")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testInsert() {
-        do {
+        scope {
             _ = try iproto.call("BoxDataSourceTests_testInsert")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testReplace() {
-        do {
+        scope {
             _ = try iproto.call("BoxDataSourceTests_testReplace")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testDelete() {
-        do {
+        scope {
             _ = try iproto.call("BoxDataSourceTests_testDelete")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUpdate() {
-        do {
+        scope {
             _ = try iproto.call("BoxDataSourceTests_testUpdate")
-        } catch {
-            fail(String(describing: error))
         }
     }
 
     func testUpsert() {
-        do {
+        scope {
             _ = try iproto.call("BoxDataSourceTests_testUpsert")
-        } catch {
-            fail(String(describing: error))
         }
     }
 }
