@@ -39,7 +39,10 @@ public struct Schema<T: DataSource & LuaScript> {
     public init(_ source: T) throws {
         self.source = source
         self.spaces = [:]
+        try update()
+    }
 
+    public mutating func update() throws {
         let indices = try _vindex.select(iterator: .all)
             .reduce(into: [Int : [Index<T>]]()) { (result, row) in
                 guard let index =
@@ -47,7 +50,7 @@ public struct Schema<T: DataSource & LuaScript> {
                         throw Tarantool.Error.invalidIndex(message: "\(row)")
                 }
                 result[index.spaceId, default: []].append(index)
-            }
+        }
 
         self.spaces = try _vspace.select(iterator: .all)
             .reduce(into: [String : Space<T>]()) { (result, row) in
@@ -63,7 +66,7 @@ public struct Schema<T: DataSource & LuaScript> {
                     engine: engine,
                     indices: indices[id, default: []],
                     source: source)
-            }
+        }
     }
 
     @discardableResult
