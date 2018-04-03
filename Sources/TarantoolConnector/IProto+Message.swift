@@ -111,13 +111,13 @@ extension IProto.Message {
             body[key.rawValue] = value
         }
 
-        let stream = OutputByteStream()
-        var encoder = MessagePackWriter(stream)
+        let byteStream = OutputByteStream()
+        var encoder = MessagePackWriter(byteStream)
         try encoder.encode(header)
         try encoder.encode(body)
 
         // body + header size
-        let packet = stream.bytes
+        let packet = byteStream.bytes
         let size = try Length.pack(packet.count)
         try stream.write(size)
         try stream.write(packet)
