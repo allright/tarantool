@@ -37,7 +37,7 @@ extension Space {
         guard let partsArray = table["parts"]?.arrayValue else {
             throw Error.invalidIndex(message: "invalid 'parts' in \(table)")
         }
-        guard let parts = Index<T>.Part.parseMany(from: partsArray) else {
+        guard let parts = [Index<T>.Part](parse: partsArray) else {
             throw Error.invalidIndex(message: "parse 'parts' failed: \(table)")
         }
 

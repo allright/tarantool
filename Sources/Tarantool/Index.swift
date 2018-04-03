@@ -156,7 +156,7 @@ extension Index {
             let type = IndexType(rawValue: typeString.lowercased()),
             let options = messagePack[4]?.dictionaryValue,
             let partsArray = messagePack[5]?.arrayValue,
-            let parts = Index.Part.parseMany(from: partsArray),
+            let parts = [Index<T>.Part](parse: partsArray),
             let unique = Bool(options["unique"]) else {
                 return nil
         }
@@ -171,18 +171,24 @@ extension Index {
     }
 }
 
-extension Index.Part {
-    // TODO: extension Array where Element == Index.Part
-    static func parseMany(from array: [MessagePack]) -> [Index.Part]? {
-        var parts = [Index.Part]()
+protocol IndexPartProtocol {
+    init?(_ array: [MessagePack])
+    init?(_ map: [MessagePack : MessagePack])
+}
+// extension Array where Element == Index<T>.Part
+extension Index.Part: IndexPartProtocol {}
+
+extension Array where Element: IndexPartProtocol {
+    init?(parse array: [MessagePack]) {
+        var parts = [Element]()
         for item in array {
             switch item {
             case .map(let map):
-                if let value = Index.Part(map) {
+                if let value = Element(map) {
                     parts.append(value)
                 }
             case .array(let array):
-                if let value = Index.Part(array) {
+                if let value = Element(array) {
                     parts.append(value)
                 }
             default:
@@ -192,10 +198,12 @@ extension Index.Part {
         guard parts.count == array.count else {
             return nil
         }
-        return parts
+        self = parts
     }
+}
 
-    init?(_ array: [MessagePack]) {
+extension Index.Part {
+     init?(_ array: [MessagePack]) {
         guard array.count >= 2,
             let field = array[0].integerValue,
             let rawType = array[1].stringValue,
