@@ -30,22 +30,22 @@ let package = Package(
             url: "https://github.com/tris-foundation/async.git",
             .branch("master")),
         .package(
+            url: "https://github.com/tris-foundation/aio.git",
+            .branch("master")),
+        .package(
             url: "https://github.com/tris-foundation/time.git",
             .branch("master")),
         .package(
-            url: "https://github.com/tris-foundation/file.git",
-            .branch("master")),
-        .package(
             url: "https://github.com/tris-foundation/crypto.git",
-            .branch("master")),
-        .package(
-            url: "https://github.com/tris-foundation/network.git",
             .branch("master")),
         .package(
             url: "https://github.com/tris-foundation/messagepack.git",
             .branch("master")),
         .package(
             url: "https://github.com/tris-foundation/test.git",
+            .branch("master")),
+        .package(
+            url: "https://github.com/tris-foundation/fiber.git",
             .branch("master"))
     ],
     targets: [
@@ -66,13 +66,13 @@ let package = Package(
         .testTarget(
             name: "TarantoolModuleTests",
             dependencies: [
-                "TarantoolModule", "TarantoolConnector", "Test", "AsyncDispatch"
+                "TarantoolModule", "TarantoolConnector", "Test", "Fiber"
             ]),
         .testTarget(
             name: "TarantoolConnectorTests",
-            dependencies: ["TarantoolConnector", "Test", "AsyncDispatch"]),
+            dependencies: ["TarantoolConnector", "Test", "Fiber"]),
         .testTarget(
             name: "TestUtilsTests",
-            dependencies: ["TestUtils", "Test", "AsyncDispatch"])
+            dependencies: ["TestUtils", "Test", "Fiber"])
     ]
 )
