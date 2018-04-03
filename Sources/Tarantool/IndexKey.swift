@@ -41,12 +41,13 @@ extension RawRepresentable where RawValue == IndexKey {
 
 extension Array where Element == IndexKey {
     public func encode() throws -> [UInt8] {
-        var writer = MessagePackWriter(OutputByteStream())
+        let stream = OutputByteStream()
+        var writer = MessagePackWriter(stream)
         try writer.encodeArrayItemsCount(count)
         for indexKey in self {
             try writer.encode(indexKey.key)
         }
-        return writer.stream.bytes
+        return stream.bytes
     }
 }
 

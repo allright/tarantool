@@ -76,7 +76,8 @@ extension Box {
     public static func returnTuple(
         _ tuple: [MessagePack], to context: Context
     ) -> Result {
-        var writer = MessagePackWriter(OutputByteStream())
+        let stream = OutputByteStream()
+        var writer = MessagePackWriter(stream)
         do {
             try writer.encode(tuple)
         } catch {
@@ -85,7 +86,7 @@ extension Box {
                 message: "encoding of \(tuple) failed")
         }
 
-        let bytes = writer.stream.bytes
+        let bytes = stream.bytes
         let pointer = UnsafeRawPointer(bytes).assumingMemoryBound(to: Int8.self)
         let tuple = _box_tuple_new(
             _box_tuple_format_default(), pointer, pointer+bytes.count)
