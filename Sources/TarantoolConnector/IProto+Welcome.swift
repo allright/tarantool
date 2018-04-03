@@ -23,12 +23,8 @@ extension IProto {
             return size
         }
 
-        init<T: InputStream>(from stream: inout T) throws {
-            var buffer = [UInt8](repeating: 0, count: Welcome.packetSize)
-            guard try stream.read(to: &buffer) == Welcome.packetSize else {
-                throw IProto.Error.invalidWelcome(reason: .invalidSize)
-            }
-
+        init<T: StreamReader>(from stream: inout T) throws {
+            var buffer = try stream.read(count: Welcome.packetSize)
             self.header = String(slice: buffer.prefix(upTo: headerSize))
             self.salt = String(slice: buffer[headerSize..<headerSize+saltSize])
 
