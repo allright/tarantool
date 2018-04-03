@@ -9,112 +9,44 @@
  */
 
 import Test
-import AsyncDispatch
+import Fiber
 @testable import Async
-import TarantoolConnector
 @testable import TestUtils
 
 class BoxDataSourceTests: TestCase {
-    var tarantool: TarantoolProcess!
-    var iproto: IProto!
-
-    let functions: ContiguousArray<String> = [
-        "BoxDataSourceTests_testCount",
-        "BoxDataSourceTests_testSelect",
-        "BoxDataSourceTests_testGet",
-        "BoxDataSourceTests_testInsert",
-        "BoxDataSourceTests_testReplace",
-        "BoxDataSourceTests_testDelete",
-        "BoxDataSourceTests_testUpdate",
-        "BoxDataSourceTests_testUpsert"
-    ]
-
     override func setUp() {
-        do {
-            async.setUp(Dispatch.self)
-            guard let module = Module("TarantoolModuleTest").path else {
-                fail("can't find swift module")
-                return
-            }
-
-            let script = """
-                package.cpath = '\(module);'..package.cpath
-                require('TarantoolModuleTest')
-
-                box.schema.user.grant('guest', 'read,write,execute', 'universe')
-                local test = box.schema.space.create('test')
-                test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
-                test:replace({1, 'foo'})
-                test:replace({2, 'bar'})
-                test:replace({3, 'baz'})
-                """ +
-                functions.reduce("") {
-                    """
-                    \($0)
-                    box.schema.func.create('\($1)', {language = 'C'})
-                    """
-                }
-
-            tarantool = try TarantoolProcess(with: script)
-            try tarantool.launch()
-
-            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
-        } catch {
-            continueAfterFailure = false
-            fail(String(describing: error))
-        }
-    }
-
-    override func tearDown() {
-        let status = tarantool.terminate()
-        assertEqual(status, 0)
+        async.setUp(Fiber.self)
     }
 
     func testCount() {
-        scope {
-            _ = try iproto.call("BoxDataSourceTests_testCount")
-        }
+        TarantoolProcess.testProcedure("BoxDataSourceTests_testCount")
     }
 
     func testSelect() {
-        scope {
-            _ = try iproto.call("BoxDataSourceTests_testSelect")
-        }
+        TarantoolProcess.testProcedure("BoxDataSourceTests_testSelect")
     }
 
     func testGet() {
-        scope {
-            _ = try iproto.call("BoxDataSourceTests_testGet")
-        }
+        TarantoolProcess.testProcedure("BoxDataSourceTests_testGet")
     }
 
     func testInsert() {
-        scope {
-            _ = try iproto.call("BoxDataSourceTests_testInsert")
-        }
+        TarantoolProcess.testProcedure("BoxDataSourceTests_testInsert")
     }
 
     func testReplace() {
-        scope {
-            _ = try iproto.call("BoxDataSourceTests_testReplace")
-        }
+        TarantoolProcess.testProcedure("BoxDataSourceTests_testReplace")
     }
 
     func testDelete() {
-        scope {
-            _ = try iproto.call("BoxDataSourceTests_testDelete")
-        }
+        TarantoolProcess.testProcedure("BoxDataSourceTests_testDelete")
     }
 
     func testUpdate() {
-        scope {
-            _ = try iproto.call("BoxDataSourceTests_testUpdate")
-        }
+        TarantoolProcess.testProcedure("BoxDataSourceTests_testUpdate")
     }
 
     func testUpsert() {
-        scope {
-            _ = try iproto.call("BoxDataSourceTests_testUpsert")
-        }
+        TarantoolProcess.testProcedure("BoxDataSourceTests_testUpsert")
     }
 }

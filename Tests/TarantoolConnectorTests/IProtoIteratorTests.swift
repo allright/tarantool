@@ -9,7 +9,7 @@
  */
 
 import Test
-import AsyncDispatch
+import Fiber
 @testable import Async
 @testable import TestUtils
 @testable import TarantoolConnector
@@ -20,98 +20,110 @@ class IProtoIteratorTests: TestCase {
     var testSpaceId = 0
 
     override func setUp() {
-        do {
-            async.setUp(Dispatch.self)
-            tarantool = try TarantoolProcess(with: """
-                box.schema.user.grant('guest', 'read,write,execute', 'universe')
-                local test = box.schema.space.create('test')
-                test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
-                test:replace({1, 'foo'})
-                test:replace({2, 'bar'})
-                test:replace({3, 'baz'})
-                """)
-            try tarantool.launch()
-
-            source = try IProto(host: "127.0.0.1", port: tarantool.port)
-
-            let result = try source.eval("return box.space.test.id")
-            guard let testSpaceId = result.first?.integerValue else {
-                fail()
-                return
+        async.setUp(Fiber.self)
+        async.task {
+            scope {
+                let tarantool = try TarantoolProcess()
+                let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
+                let result = try iproto.eval("return box.space.test.id")
+                guard let testSpaceId = result.first?.integerValue else {
+                    throw "can't get test space id"
+                }
+                self.tarantool = tarantool
+                self.source = iproto
+                self.testSpaceId = testSpaceId
             }
-            self.testSpaceId = testSpaceId
-        } catch {
-            continueAfterFailure = false
-            fail(String(describing: error))
         }
+        async.loop.run()
     }
 
     override func tearDown() {
-        let status = tarantool.terminate()
-        assertEqual(status, 0)
+        async.task {
+            assertEqual(try? self.tarantool.terminate(), 0)
+        }
+        async.loop.run()
+    }
+
+    func withNewIProtoConnection(
+        _ file: StaticString = #file,
+        _ line: UInt = #line,
+        _ body: @escaping (IProto) throws -> Void)
+    {
+        async.task {
+            scope(file: file, line: line) {
+                try body(self.source)
+            }
+        }
+        async.loop.run()
     }
 
     func testSelectAll() {
-        scope {
+        withNewIProtoConnection { source in
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([1, "foo"]),
                 IProto.Tuple([2, "bar"]),
                 IProto.Tuple([3, "baz"])
             ]
-            let result = try source.select(testSpaceId, 0, .all, [], 0, 1000)
+            let spaceId = self.testSpaceId
+            let result = try source.select(spaceId, 0, .all, [], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
         }
     }
 
     func testSelectEQ() {
-        scope {
+        withNewIProtoConnection { source in
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([2, "bar"])
             ]
-            let result = try source.select(testSpaceId, 0, .eq, [2], 0, 1000)
+            let spaceId = self.testSpaceId
+            let result = try source.select(spaceId, 0, .eq, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
 
         }
     }
 
     func testSelectGT() {
-        scope {
+        withNewIProtoConnection { source in
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([3, "baz"])
             ]
-            let result = try source.select(testSpaceId, 0, .gt, [2], 0, 1000)
+            let spaceId = self.testSpaceId
+            let result = try source.select(spaceId, 0, .gt, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
         }
     }
 
     func testSelectGE() {
-        scope {
+        withNewIProtoConnection { source in
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([2, "bar"]),
                 IProto.Tuple([3, "baz"])
             ]
-            let result = try source.select(testSpaceId, 0, .ge, [2], 0, 1000)
+            let spaceId = self.testSpaceId
+            let result = try source.select(spaceId, 0, .ge, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
         }
     }
 
     func testSelectLT() {
-        scope {
+        withNewIProtoConnection { source in
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([1, "foo"])
             ]
-            let result = try source.select(testSpaceId, 0, .lt, [2], 0, 1000)
+            let spaceId = self.testSpaceId
+            let result = try source.select(spaceId, 0, .lt, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
         }
     }
 
     func testSelectLE() {
-        scope {
+        withNewIProtoConnection { source in
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([2, "bar"]),
                 IProto.Tuple([1, "foo"])
             ]
-            let result = try source.select(testSpaceId, 0, .le, [2], 0, 1000)
+            let spaceId = self.testSpaceId
+            let result = try source.select(spaceId, 0, .le, [2], 0, 1000)
             assertEqual([IProto.Tuple](result), expected)
         }
     }

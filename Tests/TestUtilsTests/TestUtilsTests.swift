@@ -10,37 +10,43 @@
 
 import Test
 import File
-import AsyncDispatch
+import Fiber
 @testable import Async
 @testable import TestUtils
 
 class TestUtilsTests: TestCase {
     override func setUp() {
-        async.setUp(Dispatch.self)
+        async.setUp(Fiber.self)
     }
 
     func testTarantoolProcess() {
-        scope {
-            let tarantool = try TarantoolProcess()
-            assertEqual(tarantool.isRunning, false)
+        async.task {
+            scope {
+                let tarantool = try TarantoolProcess()
+                assertEqual(tarantool.isRunning, false)
 
-            try tarantool.launch()
-            assertEqual(tarantool.isRunning, true)
+                try tarantool.launch()
+                assertEqual(tarantool.isRunning, true)
 
-            let exitCode = tarantool.terminate()
-            assertEqual(tarantool.isRunning, false)
-            assertEqual(exitCode, 0)
+                let exitCode = try tarantool.terminate()
+                assertEqual(tarantool.isRunning, false)
+                assertEqual(exitCode, 0)
+            }
         }
+        async.loop.run()
     }
 
     func testTempFolder() {
-        scope {
-            let tarantool = try TarantoolProcess()
-            assertEqual(tarantool.temp, tarantool.temp)
+        async.task {
+            scope {
+                let tarantool = try TarantoolProcess()
+                assertEqual(tarantool.temp, tarantool.temp)
 
-            let tarantool2 = try TarantoolProcess()
-            assertNotEqual(tarantool.temp, tarantool2.temp)
+                let tarantool2 = try TarantoolProcess()
+                assertNotEqual(tarantool.temp, tarantool2.temp)
+            }
         }
+        async.loop.run()
     }
 
     func testModulePath() {

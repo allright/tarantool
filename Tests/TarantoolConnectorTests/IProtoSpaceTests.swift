@@ -9,76 +9,81 @@
  */
 
 import Test
-import AsyncDispatch
+import Fiber
 @testable import Async
 @testable import TestUtils
 @testable import TarantoolConnector
 
 class IProtoSpaceTests: TestCase {
     var tarantool: TarantoolProcess!
-    var space: Space<IProto>!
-    var seq: Space<IProto>!
+    var schema: Schema<IProto>!
 
     override func setUp() {
-        do {
-            async.setUp(Dispatch.self)
-            tarantool = try TarantoolProcess(with: """
-                box.schema.user.grant('guest', 'read,write,execute', 'universe')
-                local test = box.schema.space.create('test')
-                test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
-                test:replace({1, 'foo'})
-                test:replace({2, 'bar'})
-                test:replace({3, 'baz'})
-
-                local seq = box.schema.space.create('seq')
-                seq:create_index('primary', {sequence=true})
-                """)
-            try tarantool.launch()
-
-            let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
-            let schema = try Schema(iproto)
-
-            self.space = schema.spaces["test"]
-            self.seq = schema.spaces["seq"]
-        } catch {
-            continueAfterFailure = false
-            fail(String(describing: error))
+        async.setUp(Fiber.self)
+        async.task {
+            scope {
+                let tarantool = try TarantoolProcess()
+                let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
+                let schema = try Schema(iproto)
+                self.tarantool = tarantool
+                self.schema = schema
+            }
         }
+        async.loop.run()
     }
 
     override func tearDown() {
-        let status = tarantool.terminate()
-        assertEqual(status, 0)
+        async.task {
+            assertEqual(try? self.tarantool.terminate(), 0)
+        }
+        async.loop.run()
+    }
+
+    func withNewIProtoSchema(
+        _ file: StaticString = #file,
+        _ line: UInt = #line,
+        _ body: @escaping (Schema<IProto>) throws -> Void)
+    {
+        async.task {
+            scope(file: file, line: line) {
+                try body(self.schema)
+            }
+        }
+        async.loop.run()
     }
 
     func testCount() {
-        scope {
-            let result = try space.count(.all)
+        withNewIProtoSchema { schema in
+            let space = schema.spaces["test"]
+            let result = try space?.count(.all)
             assertEqual(result, 3)
         }
     }
 
     func testSelect() {
-        scope {
+        withNewIProtoSchema { schema in
             let expected: [IProto.Tuple] = [
                 IProto.Tuple([1, "foo"]),
                 IProto.Tuple([2, "bar"]),
                 IProto.Tuple([3, "baz"])
             ]
+            let space = schema.spaces["test"]!
             let result = try space.select(iterator: .all)
             assertEqual([IProto.Tuple](result), expected)
         }
     }
 
     func testGet() {
-        scope {
+        withNewIProtoSchema { schema in
+            let space = schema.spaces["test"]!
             let result = try space.get(keys: [3])
             assertEqual(result, IProto.Tuple([3, "baz"]))
         }
     }
 
     func testInsert() {
-        scope {
+        withNewIProtoSchema { schema in
+            let space = schema.spaces["test"]!
             try space.insert([4, "quux"])
             let result = try space.get(keys: [4])
             assertEqual(result, IProto.Tuple([4, "quux"]))
@@ -86,7 +91,8 @@ class IProtoSpaceTests: TestCase {
     }
 
     func testReplace() {
-        scope {
+        withNewIProtoSchema { schema in
+            let space = schema.spaces["test"]!
             try space.replace([3, "zab"])
             let result = try space.get(keys: [3])
             assertEqual(result, IProto.Tuple([3, "zab"]))
@@ -94,14 +100,16 @@ class IProtoSpaceTests: TestCase {
     }
 
     func testDelete() {
-        scope {
+        withNewIProtoSchema { schema in
+            let space = schema.spaces["test"]!
             try space.delete(keys: [3])
             assertNil(try space.get(keys: [3]))
         }
     }
 
     func testUpdate() {
-        scope {
+        withNewIProtoSchema { schema in
+            let space = schema.spaces["test"]!
             try space.update(keys: [3], operations: [["=", 1, "zab"]])
             let result = try space.get(keys: [3])
             assertEqual(result, IProto.Tuple([3, "zab"]))
@@ -109,7 +117,8 @@ class IProtoSpaceTests: TestCase {
     }
 
     func testUpsert() {
-        scope {
+        withNewIProtoSchema { schema in
+            let space = schema.spaces["test"]!
             assertNil(try space.get(keys: [4]))
 
             try space.upsert([4, "quux", 42], operations: [["+", 2, 8]])
@@ -123,7 +132,8 @@ class IProtoSpaceTests: TestCase {
     }
 
     func testSequence() {
-        scope {
+        withNewIProtoSchema { schema in
+            let seq = schema.spaces["seq"]!
             var id = try seq.insert([nil, "foo"])
             assertEqual(id, 1)
 
@@ -132,7 +142,6 @@ class IProtoSpaceTests: TestCase {
 
             let result = try seq.get(keys: [id])
             assertEqual(result, IProto.Tuple([2, "bar"]))
-
         }
     }
 }

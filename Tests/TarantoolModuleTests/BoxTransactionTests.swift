@@ -9,81 +9,28 @@
  */
 
 import Test
-import AsyncDispatch
+import Fiber
 @testable import Async
-import TarantoolConnector
 @testable import TestUtils
 
 class BoxTransactionTests: TestCase {
-    var tarantool: TarantoolProcess!
-    var iproto: IProto!
-
-    let functions: ContiguousArray<String> = [
-        "BoxTransactionTests_testCommit",
-        "BoxTransactionTests_testRollback",
-        "BoxTransactionTests_testTCommit",
-        "BoxTransactionTests_testTRollback",
-    ]
-
     override func setUp() {
-        do {
-            async.setUp(Dispatch.self)
-            guard let module = Module("TarantoolModuleTest").path else {
-                fail("can't find swift module")
-                return
-            }
-
-            let script = """
-                package.cpath = '\(module);'..package.cpath
-                require('TarantoolModuleTest')
-
-                box.schema.user.grant('guest', 'read,write,execute', 'universe')
-                local test = box.schema.space.create('test')
-                test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
-                """ +
-                functions.reduce("") {
-                    """
-                    \($0)
-                    box.schema.func.create('\($1)', {language = 'C'})
-                    """
-                }
-
-            tarantool = try TarantoolProcess(with: script)
-            try tarantool.launch()
-
-            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
-        } catch {
-            continueAfterFailure = false
-            fail(String(describing: error))
-        }
-    }
-
-    override func tearDown() {
-        let status = tarantool.terminate()
-        assertEqual(status, 0)
+        async.setUp(Fiber.self)
     }
 
     func testCommit() {
-        scope {
-            _ = try iproto.call("BoxTransactionTests_testCommit")
-        }
+        TarantoolProcess.testProcedure("BoxTransactionTests_testCommit")
     }
 
     func testRollback() {
-        scope {
-            _ = try iproto.call("BoxTransactionTests_testRollback")
-        }
+        TarantoolProcess.testProcedure("BoxTransactionTests_testRollback")
     }
 
     func testTCommit() {
-        scope {
-            _ = try iproto.call("BoxTransactionTests_testTCommit")
-        }
+        TarantoolProcess.testProcedure("BoxTransactionTests_testTCommit")
     }
 
     func testTRollback() {
-        scope {
-            _ = try iproto.call("BoxTransactionTests_testTRollback")
-        }
+        TarantoolProcess.testProcedure("BoxTransactionTests_testTRollback")
     }
 }

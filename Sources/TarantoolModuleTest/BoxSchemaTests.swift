@@ -46,17 +46,19 @@ struct BoxSchemaTests {
         guard let newSpace = schema.spaces["new_space"] else {
             throw "new_space not found"
         }
-        try assertEqualThrows(newSpace.id, 512)
+        try assertTrueThrows(newSpace.id > 0)
         try assertEqualThrows(newSpace.name, "new_space")
         try assertEqualThrows(newSpace.engine, .memtx)
 
         let anotherSpace = try schema.createSpace(name: "another_space")
-        try assertEqualThrows(anotherSpace.id, 513)
+        try assertTrueThrows(anotherSpace.id > 0)
+        try assertNotEqualThrows(anotherSpace.id, newSpace.id)
         try assertEqualThrows(anotherSpace.name, "another_space")
         try assertEqualThrows(anotherSpace.engine, .memtx)
 
         let vinyl = try schema.createSpace(name: "vinyl", engine: .vinyl)
-        try assertEqualThrows(vinyl.id, 514)
+        try assertTrueThrows(vinyl.id > 0)
+        try assertNotEqualThrows(vinyl.id, anotherSpace.id)
         try assertEqualThrows(vinyl.name, "vinyl")
         try assertEqualThrows(vinyl.engine, .vinyl)
     }

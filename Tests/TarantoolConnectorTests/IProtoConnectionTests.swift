@@ -9,49 +9,46 @@
  */
 
 import Test
-import AsyncDispatch
+import Fiber
 @testable import Async
-@testable import TestUtils
 @testable import TarantoolConnector
+@testable import TestUtils
 
 class IProtoConnectionTests: TestCase {
-    var tarantool: TarantoolProcess!
-    var iproto: IProto!
-    
     override func setUp() {
-        do {
-            async.setUp(Dispatch.self)
-            tarantool = try TarantoolProcess(with:
-                "box.schema.user.grant('guest', 'read,write,execute', 'universe')")
-            try tarantool.launch()
-
-            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
-        } catch {
-            continueAfterFailure = false
-            fail(String(describing: error))
-        }
+        async.setUp(Fiber.self)
     }
 
-    override func tearDown() {
-        let status = tarantool.terminate()
-        assertEqual(status, 0)
+    func withNewIProtoConnection(
+        _ file: StaticString = #file,
+        _ line: UInt = #line,
+        _ body: @escaping (IProto) throws -> Void)
+    {
+        async.task {
+            scope(file: file, line: line) {
+                let tarantool = try TarantoolProcess()
+                let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
+                try body(iproto)
+            }
+        }
+        async.loop.run()
     }
 
     func testPing() {
-        scope {
+        withNewIProtoConnection { iproto in
             try iproto.ping()
         }
     }
 
     func testEval() {
-        scope {
+        withNewIProtoConnection { iproto in
             let result = try iproto.eval("return 'he'..'l'..'lo'")
             assertEqual(result.first?.stringValue, "hello")
         }
     }
 
     func testAuth() {
-        scope {
+        withNewIProtoConnection { iproto in
             _ = try iproto.eval(
                 "box.schema.user.create('tester', {password='tester'})")
             try iproto.auth(username: "tester", password: "tester")
@@ -59,20 +56,20 @@ class IProtoConnectionTests: TestCase {
     }
 
     func testCall() {
-        scope {
+        withNewIProtoConnection { iproto in
             _ = try iproto.eval("""
-                box.schema.func.create('hello')
-                function hello()
-                  return 'hey there!'
-                end
-                """)
+                    box.schema.func.create('hello')
+                    function hello()
+                      return 'hey there!'
+                    end
+                    """)
             let result = try iproto.call("hello")
             assertEqual(result.first?.stringValue, "hey there!")
         }
     }
 
     func testRequest() {
-        scope {
+        withNewIProtoConnection { iproto in
             let result = try iproto.request(code: .ping)
             assertEqual(result, [])
         }

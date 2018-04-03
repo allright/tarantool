@@ -9,7 +9,7 @@
  */
 
 import Test
-import AsyncDispatch
+import Fiber
 @testable import Async
 @testable import TestUtils
 @testable import TarantoolConnector
@@ -19,28 +19,40 @@ class IProtoSchemaTests: TestCase {
     var iproto: IProto!
 
     override func setUp() {
-        do {
-            async.setUp(Dispatch.self)
-            tarantool = try TarantoolProcess(with: """
-                box.schema.user.grant('guest', 'read,write,execute', 'universe')
-                box.schema.user.passwd('admin', 'admin')
-                """)
-            try tarantool.launch()
-
-            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
-        } catch {
-            continueAfterFailure = false
-            fail(String(describing: error))
+        async.setUp(Fiber.self)
+        async.task {
+            scope {
+                let tarantool = try TarantoolProcess()
+                let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
+                self.tarantool = tarantool
+                self.iproto = iproto
+            }
         }
+        async.loop.run()
     }
 
     override func tearDown() {
-        let status = tarantool.terminate()
-        assertEqual(status, 0)
+        async.task {
+            assertEqual(try? self.tarantool.terminate(), 0)
+        }
+        async.loop.run()
+    }
+
+    func withNewIProtoConnection(
+        _ file: StaticString = #file,
+        _ line: UInt = #line,
+        _ body: @escaping (IProto) throws -> Void)
+    {
+        async.task {
+            scope(file: file, line: line) {
+                try body(self.iproto)
+            }
+        }
+        async.loop.run()
     }
 
     func testSchema() {
-        scope {
+        withNewIProtoConnection { iproto in
             let schema = try Schema(iproto)
 
             guard schema.spaces.count > 0 else {
@@ -68,7 +80,7 @@ class IProtoSchemaTests: TestCase {
     }
 
     func testCreateSpace() {
-        scope {
+        withNewIProtoConnection { iproto in
             try iproto.auth(username: "admin", password: "admin")
             var schema = try Schema(iproto)
 
@@ -76,17 +88,19 @@ class IProtoSchemaTests: TestCase {
             guard let newSpace = schema.spaces["new_space"] else {
                 throw "new_space not found"
             }
-            assertEqual(newSpace.id, 512)
+            assertTrue(newSpace.id > 0)
             assertEqual(newSpace.name, "new_space")
             assertEqual(newSpace.engine, .memtx)
 
             let anotherSpace = try schema.createSpace(name: "another_space")
-            assertEqual(anotherSpace.id, 513)
+            assertTrue(anotherSpace.id > 0)
+            assertNotEqual(anotherSpace.id, newSpace.id)
             assertEqual(anotherSpace.name, "another_space")
             assertEqual(anotherSpace.engine, .memtx)
 
             let vinyl = try schema.createSpace(name: "vinyl", engine: .vinyl)
-            assertEqual(vinyl.id, 514)
+            assertTrue(vinyl.id > 0)
+            assertNotEqual(vinyl.id, anotherSpace.id)
             assertEqual(vinyl.name, "vinyl")
             assertEqual(vinyl.engine, .vinyl)
         }

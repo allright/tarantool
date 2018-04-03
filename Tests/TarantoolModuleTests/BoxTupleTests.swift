@@ -9,58 +9,16 @@
  */
 
 import Test
-import AsyncDispatch
+import Fiber
 @testable import Async
-import TarantoolConnector
 @testable import TestUtils
 
 class BoxTupleTests: TestCase {
-    var tarantool: TarantoolProcess!
-    var iproto: IProto!
-
-    let functions: ContiguousArray<String> = [
-        "BoxTupleTests_testUnpackTuple",
-    ]
-
     override func setUp() {
-        do {
-            async.setUp(Dispatch.self)
-            guard let module = Module("TarantoolModuleTest").path else {
-                fail("can't find swift module")
-                return
-            }
-
-            let script = """
-                package.cpath = '\(module);'..package.cpath
-                require('TarantoolModuleTest')
-
-                box.schema.user.grant('guest', 'read,write,execute', 'universe')
-                """ +
-                functions.reduce("") {
-                    """
-                    \($0)
-                    box.schema.func.create('\($1)', {language = 'C'})
-                    """
-                }
-
-            tarantool = try TarantoolProcess(with: script)
-            try tarantool.launch()
-
-            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
-        } catch {
-            continueAfterFailure = false
-            fail(String(describing: error))
-        }
-    }
-
-    override func tearDown() {
-        let status = tarantool.terminate()
-        assertEqual(status, 0)
+        async.setUp(Fiber.self)
     }
 
     func testUnpackTuple() {
-        scope {
-            _ = try iproto.call("BoxTupleTests_testUnpackTuple")
-        }
+        TarantoolProcess.testProcedure("BoxTupleTests_testUnpackTuple")
     }
 }

@@ -9,122 +9,48 @@
  */
 
 import Test
-import AsyncDispatch
+import Fiber
 @testable import Async
-import TarantoolConnector
 @testable import TestUtils
 
 class BoxSpaceTests: TestCase {
-    var tarantool: TarantoolProcess!
-    var iproto: IProto!
-
-    let functions: ContiguousArray<String> = [
-        "BoxSpaceTests_testCount",
-        "BoxSpaceTests_testSelect",
-        "BoxSpaceTests_testGet",
-        "BoxSpaceTests_testInsert",
-        "BoxSpaceTests_testReplace",
-        "BoxSpaceTests_testDelete",
-        "BoxSpaceTests_testUpdate",
-        "BoxSpaceTests_testUpsert",
-        "BoxSpaceTests_testSequence"
-    ]
-
     override func setUp() {
-        do {
-            async.setUp(Dispatch.self)
-            guard let module = Module("TarantoolModuleTest").path else {
-                fail("can't find swift module")
-                return
-            }
-
-            let script = """
-                package.cpath = '\(module);'..package.cpath
-                require('TarantoolModuleTest')
-
-                box.schema.user.grant('guest', 'read,write,execute', 'universe')
-                local test = box.schema.space.create('test')
-                test:create_index('primary', {type = 'tree', parts = {1, 'unsigned'}})
-                test:replace({1, 'foo'})
-                test:replace({2, 'bar'})
-                test:replace({3, 'baz'})
-
-                local seq = box.schema.space.create('seq')
-                seq:create_index('primary', {sequence=true})
-                """ +
-                functions.reduce("") {
-                    """
-                    \($0)
-                    box.schema.func.create('\($1)', {language = 'C'})
-                    """
-                }
-
-            tarantool = try TarantoolProcess(with: script)
-            try tarantool.launch()
-
-            iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
-        } catch {
-            continueAfterFailure = false
-            fail(String(describing: error))
-        }
-    }
-
-    override func tearDown() {
-        let status = tarantool.terminate()
-        assertEqual(status, 0)
+        async.setUp(Fiber.self)
     }
 
     func testCount() {
-        scope {
-            _ = try iproto.call("BoxSpaceTests_testCount")
-        }
+        TarantoolProcess.testProcedure("BoxSpaceTests_testCount")
     }
 
     func testSelect() {
-        scope {
-            _ = try iproto.call("BoxSpaceTests_testSelect")
-        }
+        TarantoolProcess.testProcedure("BoxSpaceTests_testSelect")
     }
 
     func testGet() {
-        scope {
-            _ = try iproto.call("BoxSpaceTests_testGet")
-        }
+        TarantoolProcess.testProcedure("BoxSpaceTests_testGet")
     }
 
     func testInsert() {
-        scope {
-            _ = try iproto.call("BoxSpaceTests_testInsert")
-        }
+        TarantoolProcess.testProcedure("BoxSpaceTests_testInsert")
     }
 
     func testReplace() {
-        scope {
-            _ = try iproto.call("BoxSpaceTests_testReplace")
-        }
+        TarantoolProcess.testProcedure("BoxSpaceTests_testReplace")
     }
 
     func testDelete() {
-        scope {
-            _ = try iproto.call("BoxSpaceTests_testDelete")
-        }
+        TarantoolProcess.testProcedure("BoxSpaceTests_testDelete")
     }
 
     func testUpdate() {
-        scope {
-            _ = try iproto.call("BoxSpaceTests_testUpdate")
-        }
+        TarantoolProcess.testProcedure("BoxSpaceTests_testUpdate")
     }
 
     func testUpsert() {
-        scope {
-            _ = try iproto.call("BoxSpaceTests_testUpsert")
-        }
+        TarantoolProcess.testProcedure("BoxSpaceTests_testUpsert")
     }
 
     func testSequence() {
-        scope {
-            _ = try iproto.call("BoxSpaceTests_testSequence")
-        }
+        TarantoolProcess.testProcedure("BoxSpaceTests_testSequence")
     }
 }
