@@ -156,7 +156,7 @@ extension Index {
             let type = IndexType(rawValue: typeString.lowercased()),
             let options = messagePack[4]?.dictionaryValue,
             let partsArray = messagePack[5]?.arrayValue,
-            let parts = [Index<T>.Part](parse: partsArray),
+            let parts = [Index<T>.Part](from: partsArray),
             let unique = Bool(options["unique"]) else {
                 return nil
         }
@@ -179,7 +179,7 @@ protocol IndexPartProtocol {
 extension Index.Part: IndexPartProtocol {}
 
 extension Array where Element: IndexPartProtocol {
-    init?(parse array: [MessagePack]) {
+    init?(from array: [MessagePack]) {
         var parts = [Element]()
         for item in array {
             switch item {

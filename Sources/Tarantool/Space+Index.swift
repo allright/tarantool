@@ -37,8 +37,8 @@ extension Space {
         guard let partsArray = table["parts"]?.arrayValue else {
             throw Error.invalidIndex(message: "invalid 'parts' in \(table)")
         }
-        guard let parts = [Index<T>.Part](parse: partsArray) else {
-            throw Error.invalidIndex(message: "parse 'parts' failed: \(table)")
+        guard let parts = [Index<T>.Part](from: partsArray) else {
+            throw Error.invalidIndex(message: "indalid 'parts' \(partsArray)")
         }
 
         let unique = Bool(table["unique"]) ?? false
