@@ -44,7 +44,7 @@ extension Space {
         let unique = Bool(table["unique"]) ?? false
         let sequenceId = Int(table["sequence_id"])
 
-        return Index(
+        let index = Index(
             spaceId: self.id,
             id: id,
             name: name,
@@ -53,6 +53,10 @@ extension Space {
             unique: unique,
             parts: parts,
             source: source)
+
+        indices.append(index)
+
+        return index
     }
 
     private func buildArguments(

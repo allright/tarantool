@@ -53,4 +53,8 @@ class BoxSpaceTests: TestCase {
     func testSequence() {
         TarantoolProcess.testProcedure("BoxSpaceTests_testSequence")
     }
+
+    func testStoreIndex() {
+        TarantoolProcess.testProcedure("BoxSpaceTests_testStoreIndex")
+    }
 }

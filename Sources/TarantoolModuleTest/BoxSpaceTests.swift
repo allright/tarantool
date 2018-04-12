@@ -115,6 +115,13 @@ struct BoxSpaceTests {
             throw "\(String(describing: result)) is not equal to [2, 'bar']"
         }
     }
+
+    static func testStoreIndex() throws {
+        var space = self.space
+        let new = try space.createIndex(name: "new", type: .tree)
+        let index = space[index: "new"]
+        try assertEqualThrows(new, index)
+    }
 }
 
 // C API Wrappers
@@ -179,5 +186,12 @@ public func BoxSpaceTests_testUpsert(context: Box.Context) -> Box.Result {
 public func BoxSpaceTests_testSequence(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxSpaceTests.testSequence()
+    }
+}
+
+@_silgen_name("BoxSpaceTests_testStoreIndex")
+public func BoxSpaceTests_testStoreIndex(context: Box.Context) -> Box.Result {
+    return Box.execute {
+        try BoxSpaceTests.testStoreIndex()
     }
 }
