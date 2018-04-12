@@ -82,7 +82,7 @@ class IProtoSchemaTests: TestCase {
     func testCreateSpace() {
         withNewIProtoConnection { iproto in
             try iproto.auth(username: "admin", password: "admin")
-            var schema = try Schema(iproto)
+            let schema = try Schema(iproto)
 
             try schema.createSpace(name: "new_space")
             guard let newSpace = schema.spaces["new_space"] else {

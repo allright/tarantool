@@ -32,7 +32,7 @@ extension Schema {
     }
 }
 
-public struct Schema<T: DataSource & LuaScript> {
+public final class Schema<T: DataSource & LuaScript> {
     let source: T
     public private(set) var spaces: [String: Space<T>]
 
@@ -42,7 +42,7 @@ public struct Schema<T: DataSource & LuaScript> {
         try update()
     }
 
-    public mutating func update() throws {
+    public func update() throws {
         let indices = try _vindex.select(iterator: .all)
             .reduce(into: [Int : [Index<T>]]()) { (result, row) in
                 guard let index =
@@ -70,7 +70,7 @@ public struct Schema<T: DataSource & LuaScript> {
     }
 
     @discardableResult
-    public mutating func createSpace(
+    public func createSpace(
         name: String,
         engine: Space<T>.Engine = .memtx
     ) throws -> Space<T> {

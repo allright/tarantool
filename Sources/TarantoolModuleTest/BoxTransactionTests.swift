@@ -15,8 +15,8 @@ import TarantoolModule
 
 struct BoxTransactionTests {
     private static var space: Space<Box> = {
-        var schema = try! Schema(Box())
-        var space = try! schema.createSpace(name: "transaction_test")
+        let schema = try! Schema(Box())
+        let space = try! schema.createSpace(name: "transaction_test")
         try! space.createIndex(name: "hash", type: .hash)
         return space
     }()

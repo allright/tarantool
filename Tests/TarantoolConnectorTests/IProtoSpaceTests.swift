@@ -14,7 +14,7 @@ import Fiber
 @testable import TestUtils
 @testable import TarantoolConnector
 
-class IProtoSpaceTests: TestCase {
+final class IProtoSpaceTests: TestCase {
     var tarantool: TarantoolProcess!
     var schema: Schema<IProto>!
 

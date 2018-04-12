@@ -14,7 +14,7 @@ extension Space {
     typealias Error = Tarantool.Error
 
     @discardableResult
-    public mutating func createIndex(
+    public func createIndex(
         name: String,
         type: Index<T>.`Type` = .tree,
         sequence: Bool? = nil,

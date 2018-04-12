@@ -19,7 +19,7 @@ extension Space {
     }
 }
 
-public struct Space<T: DataSource & LuaScript> {
+public final class Space<T: DataSource & LuaScript> {
     public let id: Int
     public let name: String
     public let engine: Engine

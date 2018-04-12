@@ -40,7 +40,7 @@ struct BoxSchemaTests {
     }
 
     static func testCreateSpace() throws {
-        var schema = try Schema(Box())
+        let schema = try Schema(Box())
 
         try schema.createSpace(name: "new_space")
         guard let newSpace = schema.spaces["new_space"] else {

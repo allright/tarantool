@@ -18,8 +18,8 @@ struct BoxIndexTests {
 
     static func testHash() throws {
         let box = Box()
-        var schema = try Schema(box)
-        var space = try schema.createSpace(name: "test_hash")
+        let schema = try Schema(box)
+        let space = try schema.createSpace(name: "test_hash")
 
         let hash = try space.createIndex(name: "hash", type: .hash)
         let expected = Index(
@@ -35,8 +35,8 @@ struct BoxIndexTests {
 
     static func testTree() throws {
         let box = Box()
-        var schema = try Schema(box)
-        var space = try schema.createSpace(name: "test_tree")
+        let schema = try Schema(box)
+        let space = try schema.createSpace(name: "test_tree")
 
         let tree = try space.createIndex(name: "tree", type: .tree)
         let expected = Index(
@@ -52,8 +52,8 @@ struct BoxIndexTests {
 
     static func testRTree() throws {
         let box = Box()
-        var schema = try Schema(box)
-        var space = try schema.createSpace(name: "test_rtree")
+        let schema = try Schema(box)
+        let space = try schema.createSpace(name: "test_rtree")
 
         // primary key must be unique
         try space.createIndex(name: "primary", type: .hash)
@@ -72,8 +72,8 @@ struct BoxIndexTests {
 
     static func testBitset() throws {
         let box = Box()
-        var schema = try Schema(box)
-        var space = try schema.createSpace(name: "test_bitset")
+        let schema = try Schema(box)
+        let space = try schema.createSpace(name: "test_bitset")
 
         // primary key must be unique
         try space.createIndex(name: "primary", type: .hash)
@@ -92,8 +92,8 @@ struct BoxIndexTests {
 
     static func testSequence() throws {
         let box = Box()
-        var schema = try Schema(box)
-        var space = try schema.createSpace(name: "test_sequence")
+        let schema = try Schema(box)
+        let space = try schema.createSpace(name: "test_sequence")
 
         let primary = try space.createIndex(
             name: "primary", type: .hash, sequence: true)
@@ -112,8 +112,8 @@ struct BoxIndexTests {
 
     static func testMany() throws {
         let box = Box()
-        var schema = try Schema(box)
-        var space = try schema.createSpace(name: "test_indices")
+        let schema = try Schema(box)
+        let space = try schema.createSpace(name: "test_indices")
 
         let hash = try space.createIndex(name: "hash", type: .hash)
         let expected0 = Index(

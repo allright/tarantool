@@ -23,7 +23,7 @@ class IProtoIndexTests: TestCase {
      func withNewIProtoSchema(
         _ file: StaticString = #file,
         _ line: UInt = #line,
-        _ body: @escaping (inout Schema<IProto>) throws -> Void)
+        _ body: @escaping (Schema<IProto>) throws -> Void)
     {
         async.task {
             scope(file: file, line: line) {
@@ -31,9 +31,9 @@ class IProtoIndexTests: TestCase {
                 let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
                 try iproto.auth(username: "admin", password: "admin")
 
-                var schema = try Schema(iproto)
+                let schema = try Schema(iproto)
 
-                try body(&schema)
+                try body(schema)
             }
         }
         async.loop.run()
@@ -41,7 +41,7 @@ class IProtoIndexTests: TestCase {
 
     func testHash() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "test_hash")
+            let space = try schema.createSpace(name: "test_hash")
 
             let hash = try space.createIndex(name: "hash", type: .hash)
             let expected = Index(
@@ -58,7 +58,7 @@ class IProtoIndexTests: TestCase {
 
     func testTree() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "test_tree")
+            let space = try schema.createSpace(name: "test_tree")
 
             let tree = try space.createIndex(name: "tree", type: .tree)
             let expected = Index(
@@ -75,7 +75,7 @@ class IProtoIndexTests: TestCase {
 
     func testRTree() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "test_rtree")
+            let space = try schema.createSpace(name: "test_rtree")
 
             // primary key must be unique
             try space.createIndex(name: "primary", type: .hash)
@@ -95,7 +95,7 @@ class IProtoIndexTests: TestCase {
 
     func testBitset() {
        withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "test_bitset")
+            let space = try schema.createSpace(name: "test_bitset")
 
             // primary key must be unique
             try space.createIndex(name: "primary", type: .hash)
@@ -115,7 +115,7 @@ class IProtoIndexTests: TestCase {
 
     func testSequence() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "test_sequence")
+            let space = try schema.createSpace(name: "test_sequence")
 
             let primary = try space.createIndex(
                 name: "primary", type: .hash, sequence: true)
@@ -135,7 +135,7 @@ class IProtoIndexTests: TestCase {
 
     func testMany() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "test_indexes")
+            let space = try schema.createSpace(name: "test_indexes")
 
             let hash = try space.createIndex(name: "hash", type: .hash)
             let expected0 = Index(
@@ -320,7 +320,7 @@ class IProtoIndexTests: TestCase {
 
     func testUnsignedPartType() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "temp")
+            let space = try schema.createSpace(name: "temp")
 
             let index = try space.createIndex(
                 name: "unsigned",
@@ -342,7 +342,7 @@ class IProtoIndexTests: TestCase {
 
     func testIntegerPartType() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "temp")
+            let space = try schema.createSpace(name: "temp")
 
             let index = try space.createIndex(
                 name: "integer",
@@ -364,7 +364,7 @@ class IProtoIndexTests: TestCase {
 
     func testNumberPartType() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "temp")
+            let space = try schema.createSpace(name: "temp")
 
             let index = try space.createIndex(
                 name: "number",
@@ -386,7 +386,7 @@ class IProtoIndexTests: TestCase {
 
     func testStringPartType() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "temp")
+            let space = try schema.createSpace(name: "temp")
 
             let index = try space.createIndex(
                 name: "string",
@@ -408,7 +408,7 @@ class IProtoIndexTests: TestCase {
 
     func testBooleanPartType() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "temp")
+            let space = try schema.createSpace(name: "temp")
 
             let index = try space.createIndex(
                 name: "boolean",
@@ -430,7 +430,7 @@ class IProtoIndexTests: TestCase {
 
     func testArrayPartType() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "temp")
+            let space = try schema.createSpace(name: "temp")
 
             try space.createIndex(name: "primary")
 
@@ -455,7 +455,7 @@ class IProtoIndexTests: TestCase {
 
     func testScalarPartType() {
         withNewIProtoSchema { schema in
-            var space = try schema.createSpace(name: "temp")
+            let space = try schema.createSpace(name: "temp")
 
             let index = try space.createIndex(
                 name: "scalar",
