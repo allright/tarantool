@@ -1,37 +1,34 @@
-/*
- * Copyright 2017 Tris Foundation and the project authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License
- *
- * See LICENSE.txt in the project root for license information
- * See CONTRIBUTORS.txt for the list of the project authors
- */
-
-/****************************************************
- * Description was taken from Tarantool source code *
- ****************************************************/
-
-/*
- * Controls how to iterate over tuples in an index.
- * Different index types support different iterator types.
- * For example, one can start iteration from a particular value
- * (request key) and then retrieve all tuples where keys are
- * greater or equal (= .ge) to this key.
- *
- * If iterator type is not supported by the selected index type,
- * iterator constructor must fail with ER_UNSUPPORTED. To be
- * selectable for primary key, an index must support at least
- * .eq and .ge types.
- *
- * NULL value of request key corresponds to the first or last
- * key in the index, depending on iteration direction.
- * (first key for .ge and .gt types, and last key for .le and .lt).
- * Therefore, to iterate over all tuples in an index, one can
- * use .ge or .le iteration types with start key equal
- * to NULL.
- * For .eq, the key must not be NULL.
- */
+/******************************************************************************
+ *                                                                            *
+ * Tris Foundation disclaims copyright to this source code.                   *
+ * In place of a legal notice, here is a blessing:                            *
+ *                                                                            *
+ *     May you do good and not evil.                                          *
+ *     May you find forgiveness for yourself and forgive others.              *
+ *     May you share freely, never taking more than you give.                 *
+ *                                                                            *
+ ******************************************************************************
+ * The description was taken from Tarantool source code                       *
+ *                                                                            *
+ * Controls how to iterate over tuples in an index.                           *
+ * Different index types support different iterator types.                    *
+ * For example, one can start iteration from a particular value               *
+ * (request key) and then retrieve all tuples where keys are                  *
+ * greater or equal (= .ge) to this key.                                      *
+ *                                                                            *
+ * If iterator type is not supported by the selected index type,              *
+ * iterator constructor must fail with ER_UNSUPPORTED. To be                  *
+ * selectable for primary key, an index must support at least                 *
+ * .eq and .ge types.                                                         *
+ *                                                                            *
+ * NULL value of request key corresponds to the first or last                 *
+ * key in the index, depending on iteration direction.                        *
+ * (first key for .ge and .gt types, and last key for .le and .lt).           *
+ * Therefore, to iterate over all tuples in an index, one can                 *
+ * use .ge or .le iteration types with start key equal                        *
+ * to NULL.                                                                   *
+ * For .eq, the key must not be NULL.                                         *
+ ******************************************************************************/
 
 public enum Iterator: Int {
     /* EQ must be the first member for request_create  */

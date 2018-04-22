@@ -1,16 +1,15 @@
-/*
- * Copyright 2017 Tris Foundation and the project authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License
- *
- * See LICENSE.txt in the project root for license information
- * See CONTRIBUTORS.txt for the list of the project authors
- */
-
-/****************************************************************************
- * this file contains modified version of module.h from tarantool-dev package
- *****************************************************************************/
+/******************************************************************************
+ *                                                                            *
+ * Tris Foundation disclaims copyright to this source code.                   *
+ * In place of a legal notice, here is a blessing:                            *
+ *                                                                            *
+ *     May you do good and not evil.                                          *
+ *     May you find forgiveness for yourself and forgive others.              *
+ *     May you share freely, never taking more than you give.                 *
+ *                                                                            *
+ ******************************************************************************
+ * This file contains modified version of module.h from tarantool-dev package *
+ ******************************************************************************/
 
 #ifndef TARANTOOL_MODULE_H_INCLUDED
 #define TARANTOOL_MODULE_H_INCLUDED

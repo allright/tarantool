@@ -1,2 +1,0 @@
-Roman Tsisyk <roman@tarantool.org>
-Veniamin Gvozdikov <g.veniamin@googlemail.com>
