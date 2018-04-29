@@ -27,6 +27,10 @@ class BoxDataSourceTests: TestCase {
         TarantoolProcess.testProcedure("BoxDataSourceTests_testSelect")
     }
 
+    func testLimit() {
+        TarantoolProcess.testProcedure("BoxDataSourceTests_testLimit")
+    }
+
     func testGet() {
         TarantoolProcess.testProcedure("BoxDataSourceTests_testGet")
     }

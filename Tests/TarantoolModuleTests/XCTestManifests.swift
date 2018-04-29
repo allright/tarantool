@@ -6,6 +6,7 @@ extension BoxDataSourceTests {
         ("testDelete", testDelete),
         ("testGet", testGet),
         ("testInsert", testInsert),
+        ("testLimit", testLimit),
         ("testReplace", testReplace),
         ("testSelect", testSelect),
         ("testUpdate", testUpdate),
@@ -48,6 +49,7 @@ extension BoxSpaceTests {
         ("testReplace", testReplace),
         ("testSelect", testSelect),
         ("testSequence", testSequence),
+        ("testStoreIndex", testStoreIndex),
         ("testUpdate", testUpdate),
         ("testUpsert", testUpsert),
     ]

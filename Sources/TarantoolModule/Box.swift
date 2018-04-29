@@ -39,7 +39,12 @@ public struct Box: DataSource, LuaScript {
     ) throws -> AnySequence<Tuple> {
         let keys = try keys.encode()
         return try Box.API.select(
-            numericCast(spaceId), numericCast(indexId), iterator, keys)
+            numericCast(spaceId),
+            numericCast(indexId),
+            iterator,
+            keys,
+            offset,
+            limit)
     }
 
     public func get(

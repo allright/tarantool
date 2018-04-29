@@ -37,6 +37,15 @@ struct BoxDataSourceTests {
         }
     }
 
+    static func testSelectLimit() throws {
+        let expected: [[MessagePack]] = [[2, "bar"]]
+        let result = try source.select(testId, 0, .all, [], 1, 1)
+        let converted = [[MessagePack]](result)
+        guard converted == expected else {
+            throw "\(converted) is not equal to \(expected)"
+        }
+    }
+
     static func testGet() throws {
         let result = try source.get(testId, 0, [3])
         guard let tuple = result, tuple.unpack() == [3, "baz"] else {
@@ -111,6 +120,13 @@ public func BoxDataSourceTests_testCount(context: Box.Context) -> Box.Result {
 public func BoxDataSourceTests_testSelect(context: Box.Context) -> Box.Result {
     return Box.execute {
         try BoxDataSourceTests.testSelect()
+    }
+}
+
+@_silgen_name("BoxDataSourceTests_testLimit")
+public func BoxDataSourceTests_testLimit(context: Box.Context) -> Box.Result {
+    return Box.execute {
+        try BoxDataSourceTests.testSelectLimit()
     }
 }
 

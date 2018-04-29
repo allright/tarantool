@@ -35,14 +35,18 @@ extension Box {
             _ spaceId: UInt32,
             _ indexId: UInt32,
             _ iterator: Iterator,
-            _ keys: [UInt8]
+            _ keys: [UInt8],
+            _ offset: Int,
+            _ limit: Int
         ) throws -> AnySequence<Box.Tuple> {
             guard let iterator = Box.IndexIterator(
                 spaceId,
                 indexId,
                 Int32(iterator.rawValue),
                 UnsafePointer<CChar>(keys),
-                UnsafePointer<CChar>(keys) + keys.count)
+                UnsafePointer<CChar>(keys) + keys.count,
+                offset,
+                limit)
             else {
                 throw Error()
             }

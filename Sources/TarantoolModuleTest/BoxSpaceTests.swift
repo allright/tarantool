@@ -118,10 +118,10 @@ struct BoxSpaceTests {
     }
 
     static func testStoreIndex() throws {
-        let space = self.space
         let new = try space.createIndex(name: "new", type: .tree)
         let index = space[index: "new"]
-        try assertEqualThrows(new, index)
+        try assertEqualThrows(new.id, index?.id)
+        try assertEqualThrows(new.name, index?.name)
     }
 }
 
