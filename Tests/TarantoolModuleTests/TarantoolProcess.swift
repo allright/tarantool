@@ -53,6 +53,7 @@ extension TarantoolProcess {
             scope(file: file, line: line) {
                 let tarantool = try TarantoolProcess(registerFunction: name)
                 let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
+                try iproto.auth(username: "admin", password: "admin")
                 _ = try iproto.call(name)
 
                 let status = try tarantool.terminate()
