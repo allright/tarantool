@@ -38,7 +38,7 @@ class TarantoolProcess {
 
     private let syncPort: Int
 
-    let temp = Path(string: "/tmp/TarantoolTemp\(arc4random())")
+    let temp = Path(string: "/tmp/TarantoolTemp\(Int.random(in: 0..<Int.max))")
 
     var lock: File {
         return File(name: "lock", at: temp)
@@ -60,8 +60,8 @@ class TarantoolProcess {
     }
 
     init(with script: String = "") throws {
-        self.syncPort = Int(arc4random_uniform(64_000)) + 1_500
-        self.port = Int(arc4random_uniform(64_000)) + 1_500
+        self.syncPort = Int.random(in: 64_000...65_500)
+        self.port = Int.random(in: 64_000...65_500)
         self.script = script
     }
 
