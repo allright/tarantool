@@ -15,10 +15,29 @@ import CTarantool
 import struct Dispatch.DispatchQoS
 import class Dispatch.DispatchQueue
 
+public struct Fiber {
+    public static let attr = _fiber_attr_new()
+
+    public static var stackSize: Int {
+        get {
+            return _fiber_attr_getstacksize(attr)
+        }
+        set {
+            _ = _fiber_attr_setstacksize(attr, newValue)
+        }
+    }
+}
+
+@usableFromInline
+var defaultStackSize: Void = {
+    Fiber.stackSize = 4096 * 32
+}()
+
 @inline(__always)
 public func fiber(_ closure: @escaping () -> Void) {
+    _ = defaultStackSize
     var closure = closure
-    fiber_wrapper(&closure, { pointer in
+    fiber_wrapper_ex(&closure, Fiber.attr, { pointer in
         pointer?.assumingMemoryBound(to: (() -> Void).self).pointee()
     })
 }

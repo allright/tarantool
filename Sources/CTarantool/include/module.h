@@ -57,6 +57,48 @@
 
 /** \cond public */
 
+/**
+ * Fiber attributes container
+ */
+struct fiber_attr;
+
+
+/**
+ * Create a new fiber attribute container and initialize it
+ * with default parameters.
+ * Can be used for many fibers creation, corresponding fibers
+ * will not take ownership.
+ */
+struct fiber_attr *
+(*_fiber_attr_new)();
+
+/**
+ * Delete the fiber_attr and free all allocated resources.
+ * This is safe when fibers created with this attribute still exist.
+ *
+ *\param fiber_attr fiber attribute
+ */
+void
+(*_fiber_attr_delete)(struct fiber_attr *fiber_attr);
+
+/**
+ * Set stack size for the fiber attribute.
+ *
+ * \param fiber_attribute fiber attribute container
+ * \param stacksize stack size for new fibers
+ */
+int
+(*_fiber_attr_setstacksize)(struct fiber_attr *fiber_attr, size_t stack_size);
+
+/**
+ * Get stack size from the fiber attribute.
+ *
+ * \param fiber_attribute fiber attribute container or NULL for default
+ * \retval stack size
+ */
+size_t
+(*_fiber_attr_getstacksize)(struct fiber_attr *fiber_attr);
+
 struct fiber;
 /**
  * Fiber - contains information about fiber
@@ -82,6 +124,25 @@ typedef int (*fiber_func)(va_list);
  */
 struct fiber *
 (*_fiber_new)(const char *name, fiber_func f);
+
+/**
+ * Create a new fiber with defined attributes.
+ *
+ * Can fail only if there is not enough memory for
+ * the fiber structure or fiber stack.
+ *
+ * The created fiber automatically returns itself
+ * to the fiber cache if has default stack size
+ * when its "main" function completes.
+ *
+ * \param name       string with fiber name
+ * \param fiber_attr fiber attributes
+ * \param fiber_func func for run inside fiber
+ *
+ * \sa fiber_start
+ */
+struct fiber *
+(*_fiber_new_ex)(const char *name, const struct fiber_attr *fiber_attr, fiber_func f);
 
 /**
  * Return control to another fiber and wait until it'll be woken.

@@ -58,7 +58,12 @@ static void resolve(void *handle, const char *symbol, void **to) {
 }
 
 static void resolve_tarantool(void *handle) {
+    resolve(handle, "fiber_attr_new", (void**)&_fiber_attr_new);
+    resolve(handle, "fiber_attr_delete", (void**)&_fiber_attr_delete);
+    resolve(handle, "fiber_attr_setstacksize", (void**)&_fiber_attr_setstacksize);
+    resolve(handle, "fiber_attr_getstacksize", (void**)&_fiber_attr_getstacksize);
     resolve(handle, "fiber_new", (void**)&_fiber_new);
+    resolve(handle, "fiber_new_ex", (void**)&_fiber_new_ex);
     resolve(handle, "fiber_yield", (void**)&_fiber_yield);
     resolve(handle, "fiber_start", (void**)&_fiber_start);
     resolve(handle, "fiber_wakeup", (void**)&_fiber_wakeup);

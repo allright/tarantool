@@ -29,6 +29,11 @@ void fiber_wrapper(void* ctx, void (*closure)(void*)) {
     _fiber_start(swift_closure, ctx, closure);
 }
 
+void fiber_wrapper_ex(void* ctx, struct fiber_attr* attr, void (*closure)(void*)) {
+    struct fiber *swift_closure = _fiber_new_ex("fiber_wrapper_ex", attr, fiber_invoke);
+    _fiber_start(swift_closure, ctx, closure);
+}
+
 int box_error_set_wrapper(const char* file, unsigned line, uint32_t code, const char* message) {
     size_t len = strlen(message);
     if (len <= 0)
