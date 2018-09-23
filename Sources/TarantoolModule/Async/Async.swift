@@ -46,6 +46,10 @@ public struct AsyncTarantool: Async {
         try COIO.wait(for: descriptor, event: event, deadline: deadline)
     }
 
+    public func yield() {
+        _fiber_reschedule()
+    }
+
     public func sleep(until deadline: Time) {
         _fiber_sleep(Double(deadline.timeIntervalSinceNow))
     }
