@@ -47,15 +47,15 @@ public struct AsyncTarantool: Async {
     }
 
     public func yield() {
-        _fiber_reschedule()
+        fiber_reschedule()
     }
 
     public func sleep(until deadline: Time) {
-        _fiber_sleep(Double(deadline.timeIntervalSinceNow))
+        fiber_sleep(Double(deadline.timeIntervalSinceNow))
     }
 
     public func testCancel() throws {
-        if _fiber_is_cancelled() {
+        if fiber_is_cancelled() {
             throw AsyncError.taskCanceled
         }
     }

@@ -25,7 +25,7 @@ extension Box {
               _ offset: Int,
               _ limit: Int)
         {
-            guard let iterator = _box_index_iterator(
+            guard let iterator = box_index_iterator(
                 spaceId, indexId, iterator, keys, keysEnd) else {
                     return nil
             }
@@ -35,7 +35,7 @@ extension Box {
         }
 
         deinit {
-            _box_iterator_free(iterator)
+            box_iterator_free(iterator)
         }
 
         func next() -> Tuple? {
@@ -48,7 +48,7 @@ extension Box {
                 }
             }
             var result: OpaquePointer?
-            guard _box_iterator_next(iterator, &result) == 0,
+            guard box_iterator_next(iterator, &result) == 0,
                 let pointer = result else {
                     return nil
             }
@@ -60,7 +60,7 @@ extension Box {
             var result: OpaquePointer?
             while count > 0 {
                 count -= 1
-                guard _box_iterator_next(iterator, &result) == 0 else {
+                guard box_iterator_next(iterator, &result) == 0 else {
                     return false
                 }
             }

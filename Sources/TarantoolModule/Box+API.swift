@@ -19,7 +19,7 @@ extension Box {
             _ iterator: Iterator,
             _ keys: [UInt8]
         ) throws -> Int {
-            let count = _box_index_count(
+            let count = box_index_count(
                 spaceId,
                 indexId,
                 Int32(iterator.rawValue),
@@ -57,7 +57,7 @@ extension Box {
             _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
         ) throws -> Box.Tuple? {
             var result: OpaquePointer?
-            guard _box_index_get(
+            guard box_index_get(
                 spaceId,
                 indexId,
                 UnsafePointer<CChar>(keys),
@@ -78,7 +78,7 @@ extension Box {
         ) throws -> Box.Tuple {
             let pointer = try copyToInternalMemory(tuple)
             var result: OpaquePointer?
-            guard _box_insert(
+            guard box_insert(
                 spaceId,
                 pointer,
                 pointer+tuple.count,
@@ -98,7 +98,7 @@ extension Box {
             var result: OpaquePointer?
             let pKeys = UnsafePointer<CChar>(keys)
             let pKeysEnd = pKeys + keys.count
-            guard _box_index_max(
+            guard box_index_max(
                 spaceId, indexId, pKeys, pKeysEnd, &result) == 0 else {
                     throw Error()
             }
@@ -111,7 +111,7 @@ extension Box {
 
         static func replace(_ spaceId: UInt32, _ tuple: [UInt8]) throws {
             let pointer = try copyToInternalMemory(tuple)
-            guard _box_replace(
+            guard box_replace(
                 spaceId, pointer, pointer+tuple.count, nil) == 0 else {
                     throw Error()
             }
@@ -125,7 +125,7 @@ extension Box {
         ) throws {
             let pKeys = try copyToInternalMemory(keys)
             let pOps = try copyToInternalMemory(ops)
-            guard _box_update(
+            guard box_update(
                 spaceId,
                 indexId,
                 pKeys,
@@ -147,7 +147,7 @@ extension Box {
         ) throws {
             let pTuple = try copyToInternalMemory(tuple)
             let pOps = try copyToInternalMemory(ops)
-            guard _box_upsert(
+            guard box_upsert(
                 spaceId,
                 indexId,
                 pTuple,
@@ -165,7 +165,7 @@ extension Box {
             _ spaceId: UInt32, _ indexId: UInt32, _ keys: [UInt8]
         ) throws{
             let pointer = UnsafePointer<CChar>(keys)
-            guard _box_delete(
+            guard box_delete(
                 spaceId, indexId, pointer, pointer+keys.count, nil) == 0 else {
                     throw Error()
             }
@@ -178,7 +178,7 @@ extension Box.API {
 
     static func getSpaceIdByName(_ name: [UInt8]) throws -> UInt32 {
         let pointer = UnsafePointer<CChar>(name)
-        let id = _box_space_id_by_name(pointer, UInt32(name.count))
+        let id = box_space_id_by_name(pointer, UInt32(name.count))
         if id == invalid {
             throw Tarantool.Error.spaceNotFound
         }
@@ -189,7 +189,7 @@ extension Box.API {
         _ name: [UInt8], spaceId: UInt32
     ) throws -> UInt32 {
         let pointer = UnsafePointer<CChar>(name)
-        let id = _box_index_id_by_name(spaceId, pointer, UInt32(name.count))
+        let id = box_index_id_by_name(spaceId, pointer, UInt32(name.count))
         if id == invalid {
             throw Tarantool.Error.indexNotFound
         }
@@ -201,7 +201,7 @@ extension Box.API {
     static func copyToInternalMemory(
         _ bytes: [UInt8]
     ) throws -> UnsafePointer<CChar> {
-        guard let buffer = _box_txn_alloc(bytes.count) else {
+        guard let buffer = box_txn_alloc(bytes.count) else {
             throw Tarantool.Error.notEnoughMemory
         }
         memcpy(buffer, bytes, bytes.count)

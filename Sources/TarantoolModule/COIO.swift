@@ -41,7 +41,7 @@ public struct COIO {
             : Double(deadline.timeIntervalSinceNow)
 
         let event = Event(event)
-        let result = _coio_wait(descriptor.rawValue, event.rawValue, timeout)
+        let result = coio_wait(descriptor.rawValue, event.rawValue, timeout)
         guard let receivedEvent = Event(rawValue: result) else {
             throw AsyncError.taskCanceled
         }

@@ -15,21 +15,21 @@ extension Box.API {
     struct Transaction {
         @inline(__always)
         fileprivate static func begin() throws {
-            guard _box_txn_begin() == 0 else {
+            guard box_txn_begin() == 0 else {
                 throw Box.Error()
             }
         }
 
         @inline(__always)
         fileprivate static func commit() throws {
-            guard _box_txn_commit() == 0 else {
+            guard box_txn_commit() == 0 else {
                 throw Box.Error()
             }
         }
 
         @inline(__always)
         fileprivate static func rollback() throws {
-            guard _box_txn_rollback() == 0 else {
+            guard box_txn_rollback() == 0 else {
                 throw Box.Error()
             }
         }

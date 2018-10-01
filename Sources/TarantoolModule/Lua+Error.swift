@@ -28,16 +28,16 @@ extension Lua.Error {
 extension Lua.Error {
     init(_ L: OpaquePointer) {
         // standart lua error
-        if let pointer = _lua_tolstring(L, -1, nil) {
+        if let pointer = lua_tolstring(L, -1, nil) {
             self.code = nil
             self.message = String(cString: pointer)
             return
         }
 
         // tarantool error
-        if let errorPointer = _box_error_last(),
-            let messagePointer = _box_error_message(errorPointer) {
-            self.code = Int(_box_error_code(errorPointer))
+        if let errorPointer = box_error_last(),
+            let messagePointer = box_error_message(errorPointer) {
+            self.code = Int(box_error_code(errorPointer))
             self.message = String(cString: messagePointer)
             return
         }

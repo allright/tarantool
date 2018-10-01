@@ -22,14 +22,14 @@ extension Box {
         }
 
         init() {
-            guard let error = _box_error_last() else {
+            guard let error = box_error_last() else {
                 self.code = .unknown
                 self.message = "success"
                 return
             }
 
-            guard let code = Code(rawValue: _box_error_code(error)),
-                let message = _box_error_message(error) else {
+            guard let code = Code(rawValue: box_error_code(error)),
+                let message = box_error_message(error) else {
                     self.code = .unknown
                     self.message = "error"
                     return

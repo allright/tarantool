@@ -27,6 +27,11 @@ Follow the examples link below to see how to use it all together.
 
 ## Usage
 
+```bash
+swift build -Xlinker -undefined -Xlinker dynamic_lookup
+swift test -Xlinker -undefined -Xlinker dynamic_lookup
+```
+
 You can find this code and more in [examples](https://github.com/tris-foundation/examples).
 
 ### Tarantool Connector

@@ -16,14 +16,14 @@ import struct Dispatch.DispatchQoS
 import class Dispatch.DispatchQueue
 
 public struct Fiber {
-    public static let attr = _fiber_attr_new()
+    public static let attr = fiber_attr_new()
 
     public static var stackSize: Int {
         get {
-            return _fiber_attr_getstacksize(attr)
+            return fiber_attr_getstacksize(attr)
         }
         set {
-            _ = _fiber_attr_setstacksize(attr, newValue)
+            _ = fiber_attr_setstacksize(attr, newValue)
         }
     }
 }
@@ -57,17 +57,17 @@ public func syncTask<T>(
 
 @inline(__always)
 public func yield() {
-    _fiber_reschedule()
+    fiber_reschedule()
 }
 
 @inline(__always)
 public func sleep(until deadline: Time) {
-    _fiber_sleep(Double(deadline.timeIntervalSinceNow))
+    fiber_sleep(Double(deadline.timeIntervalSinceNow))
 }
 
 @inline(__always)
 public func now() -> Time {
-    let time = _fiber_time()
+    let time = fiber_time()
     return Time(seconds: Int(time), nanoseconds: 0)
 }
 

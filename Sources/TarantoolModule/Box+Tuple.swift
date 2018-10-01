@@ -23,7 +23,7 @@ extension Box {
         }
 
         var size: Int {
-            return _box_tuple_bsize(pointer)
+            return box_tuple_bsize(pointer)
         }
 
         public var startIndex: Int {
@@ -31,7 +31,7 @@ extension Box {
         }
 
         public var endIndex: Int {
-            return Int(_box_tuple_field_count(pointer))
+            return Int(box_tuple_field_count(pointer))
         }
 
         public func index(before i: Int) -> Int {
@@ -51,7 +51,7 @@ extension Box {
 
         public subscript(index: Int) -> MessagePack? {
             guard let field =
-                _box_tuple_field(pointer, numericCast(index)) else {
+                box_tuple_field(pointer, numericCast(index)) else {
                     return nil
             }
             var decoder = MessagePackReader(UnsafeRawInputStream(
@@ -68,12 +68,12 @@ extension Box.Tuple {
             return []
         }
 
-        let iterator = _box_tuple_iterator(pointer)!
-        defer { _box_tuple_iterator_free(iterator) }
+        let iterator = box_tuple_iterator(pointer)!
+        defer { box_tuple_iterator_free(iterator) }
 
         var tuple = [MessagePack]()
 
-        if let first = _box_tuple_next(iterator) {
+        if let first = box_tuple_next(iterator) {
             let tupleEnd = first + size
             first.withMemoryRebound(to: UInt8.self, capacity: size) { pointer in
                 var decoder = MessagePackReader(
@@ -82,7 +82,7 @@ extension Box.Tuple {
             }
 
             var fieldSize = size
-            while let next = _box_tuple_next(iterator) {
+            while let next = box_tuple_next(iterator) {
                 fieldSize = tupleEnd - next
                 next.withMemoryRebound(
                     to: UInt8.self, capacity: fieldSize
@@ -100,7 +100,7 @@ extension Box.Tuple {
 
 extension Box.Tuple {
     public subscript(index: Int, as type: Bool.Type) -> Bool? {
-        guard let field = _box_tuple_field(pointer, numericCast(index)) else {
+        guard let field = box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
         var decoder = MessagePackReader(
@@ -109,7 +109,7 @@ extension Box.Tuple {
     }
 
     public subscript(index: Int, as type: Int.Type) -> Int? {
-        guard let field = _box_tuple_field(pointer, numericCast(index)) else {
+        guard let field = box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
         var decoder = MessagePackReader(
@@ -118,7 +118,7 @@ extension Box.Tuple {
     }
 
     public subscript(index: Int, as type: UInt.Type) -> UInt? {
-        guard let field = _box_tuple_field(pointer, numericCast(index)) else {
+        guard let field = box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
         var decoder = MessagePackReader(
@@ -127,7 +127,7 @@ extension Box.Tuple {
     }
 
     public subscript(index: Int, as type: Float.Type) -> Float? {
-        guard let field = _box_tuple_field(pointer, numericCast(index)) else {
+        guard let field = box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
         var decoder = MessagePackReader(
@@ -136,7 +136,7 @@ extension Box.Tuple {
     }
 
     public subscript(index: Int, as type: Double.Type) -> Double? {
-        guard let field = _box_tuple_field(pointer, numericCast(index)) else {
+        guard let field = box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
         var decoder = MessagePackReader(
@@ -145,7 +145,7 @@ extension Box.Tuple {
     }
 
     public subscript(index: Int, as type: String.Type) -> String? {
-        guard let field = _box_tuple_field(pointer, numericCast(index)) else {
+        guard let field = box_tuple_field(pointer, numericCast(index)) else {
             return nil
         }
         var decoder = MessagePackReader(

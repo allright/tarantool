@@ -1,0 +1,5 @@
+module CTarantool {
+    header "tarantool.h"
+    header "wrappers.h"
+    export *
+}

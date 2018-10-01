@@ -14,7 +14,7 @@
 #include <stdlib.h>
 
 #include <wrappers.h>
-#include <module.h>
+#include <tarantool/module.h>   
 
 
 int fiber_invoke(va_list ap) {
@@ -25,13 +25,13 @@ int fiber_invoke(va_list ap) {
 }
 
 void fiber_wrapper(void* ctx, void (*closure)(void*)) {
-    struct fiber *swift_closure = _fiber_new("fiber_wrapper", fiber_invoke);
-    _fiber_start(swift_closure, ctx, closure);
+    struct fiber *swift_closure = fiber_new("fiber_wrapper", fiber_invoke);
+    fiber_start(swift_closure, ctx, closure);
 }
 
 void fiber_wrapper_ex(void* ctx, struct fiber_attr* attr, void (*closure)(void*)) {
-    struct fiber *swift_closure = _fiber_new_ex("fiber_wrapper_ex", attr, fiber_invoke);
-    _fiber_start(swift_closure, ctx, closure);
+    struct fiber *swift_closure = fiber_new_ex("fiber_wrapper_ex", attr, fiber_invoke);
+    fiber_start(swift_closure, ctx, closure);
 }
 
 int box_error_set_wrapper(const char* file, unsigned line, uint32_t code, const char* message) {
@@ -48,5 +48,5 @@ int box_error_set_wrapper(const char* file, unsigned line, uint32_t code, const 
         }
     }
 
-    return _box_error_set(file, line, code, buf);
+    return box_error_set(file, line, code, buf);
 }

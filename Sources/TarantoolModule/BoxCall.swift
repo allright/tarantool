@@ -71,7 +71,7 @@ extension Box {
     public static func returnTuple(
         _ tuple: Tuple, to context: Context
     ) -> Result {
-        return _box_return_tuple(context, tuple.pointer)
+        return box_return_tuple(context, tuple.pointer)
     }
 
     public static func returnTuple(
@@ -89,9 +89,9 @@ extension Box {
 
         let bytes = stream.bytes
         let pointer = UnsafeRawPointer(bytes).assumingMemoryBound(to: Int8.self)
-        let tuple = _box_tuple_new(
-            _box_tuple_format_default(), pointer, pointer+bytes.count)
-        return _box_return_tuple(context, tuple)
+        let tuple = box_tuple_new(
+            box_tuple_format_default(), pointer, pointer+bytes.count)
+        return box_return_tuple(context, tuple)
     }
 
     public static func returnError(
