@@ -10,12 +10,13 @@
  ******************************************************************************/
 
 import Test
+import File
 import Async
 import TarantoolConnector
 @testable import TestUtils
 
 extension TarantoolProcess {
-    convenience init(registerFunction function: String) throws {
+    convenience init(at path: Path, function: String) throws {
         guard let module = Module("TarantoolModuleTest").path else {
             throw "can't find swift module"
         }
@@ -40,27 +41,22 @@ extension TarantoolProcess {
             box.schema.func.create('\(function)', {language = 'C'})
             """
 
-        try self.init(with: script)
+        try self.init(at: path, with: script)
         try launch()
     }
 
-    static func testProcedure(
+    func call(
         _ name: String,
         _ file: StaticString = #file,
-        _ line: UInt = #line)
+        _ line: UInt = #line,
+        _ function: StaticString = #function) throws
     {
-        async.task {
-            scope(file: file, line: line) {
-                let tarantool = try TarantoolProcess(registerFunction: name)
-                let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
-                try iproto.auth(username: "admin", password: "admin")
-                _ = try iproto.call(name)
+        let iproto = try IProto(host: "127.0.0.1", port: self.port)
+        try iproto.auth(username: "admin", password: "admin")
+        _ = try iproto.call(name)
 
-                let status = try tarantool.terminate()
+        let status = try self.terminate()
 
-                assertEqual(status, 0, file: file, line: line)
-            }
-        }
-        async.loop.run()
+        assertEqual(status, 0, file: file, line: line)
     }
 }

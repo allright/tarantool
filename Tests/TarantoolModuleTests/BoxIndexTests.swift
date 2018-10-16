@@ -10,68 +10,91 @@
  ******************************************************************************/
 
 import Test
+import File
 import Fiber
 @testable import Async
 @testable import TestUtils
 
 class BoxIndexTests: TestCase {
+    let temp = Path(string: "/tmp/BoxIndexTests")
+
     override func setUp() {
         async.setUp(Fiber.self)
     }
 
+    override func tearDown() {
+        try? Directory.remove(at: temp)
+    }
+
+    func test(
+        _ name: String,
+        _ file: StaticString = #file,
+        _ line: UInt = #line,
+        _ function: String = #function)
+    {
+        async.task { [unowned self] in
+            scope(file: file, line: line) {
+                let path = self.temp.appending(function)
+                let tarantool = try TarantoolProcess(at: path, function: name)
+                try tarantool.call(name)
+            }
+        }
+        async.loop.run()
+    }
+
     func testHash() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testHash")
+        test("BoxIndexTests_testHash")
     }
 
     func testTree() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testTree")
+        test("BoxIndexTests_testTree")
     }
 
     func testRTree() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testRTree")
+        test("BoxIndexTests_testRTree")
     }
 
     func testBitset() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testBitset")
+        test("BoxIndexTests_testBitset")
     }
 
     func testSequence() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testSequence")
+        test("BoxIndexTests_testSequence")
     }
 
     func testMany() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testMany")
+        test("BoxIndexTests_testMany")
     }
 
     func testCount() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testCount")
+        test("BoxIndexTests_testCount")
     }
 
     func testSelect() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testSelect")
+        test("BoxIndexTests_testSelect")
     }
 
     func testGet() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testGet")
+        test("BoxIndexTests_testGet")
     }
 
     func testInsert() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testInsert")
+        test("BoxIndexTests_testInsert")
     }
 
     func testReplace() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testReplace")
+        test("BoxIndexTests_testReplace")
     }
 
     func testDelete() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testDelete")
+        test("BoxIndexTests_testDelete")
     }
 
     func testUpdate() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testUpdate")
+        test("BoxIndexTests_testUpdate")
     }
 
     func testUpsert() {
-        TarantoolProcess.testProcedure("BoxIndexTests_testUpsert")
+        test("BoxIndexTests_testUpsert")
     }
 }

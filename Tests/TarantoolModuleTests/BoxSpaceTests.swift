@@ -10,52 +10,75 @@
  ******************************************************************************/
 
 import Test
+import File
 import Fiber
 @testable import Async
 @testable import TestUtils
 
 class BoxSpaceTests: TestCase {
+    let temp = Path(string: "/tmp/BoxSpaceTests")
+
     override func setUp() {
         async.setUp(Fiber.self)
     }
 
+    override func tearDown() {
+        try? Directory.remove(at: temp)
+    }
+
+    func test(
+        _ name: String,
+        _ file: StaticString = #file,
+        _ line: UInt = #line,
+        _ function: String = #function)
+    {
+        async.task { [unowned self] in
+            scope(file: file, line: line) {
+                let path = self.temp.appending(function)
+                let tarantool = try TarantoolProcess(at: path, function: name)
+                try tarantool.call(name)
+            }
+        }
+        async.loop.run()
+    }
+
     func testCount() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testCount")
+        test("BoxSpaceTests_testCount")
     }
 
     func testSelect() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testSelect")
+        test("BoxSpaceTests_testSelect")
     }
 
     func testGet() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testGet")
+        test("BoxSpaceTests_testGet")
     }
 
     func testInsert() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testInsert")
+        test("BoxSpaceTests_testInsert")
     }
 
     func testReplace() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testReplace")
+        test("BoxSpaceTests_testReplace")
     }
 
     func testDelete() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testDelete")
+        test("BoxSpaceTests_testDelete")
     }
 
     func testUpdate() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testUpdate")
+        test("BoxSpaceTests_testUpdate")
     }
 
     func testUpsert() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testUpsert")
+        test("BoxSpaceTests_testUpsert")
     }
 
     func testSequence() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testSequence")
+        test("BoxSpaceTests_testSequence")
     }
 
     func testStoreIndex() {
-        TarantoolProcess.testProcedure("BoxSpaceTests_testStoreIndex")
+        test("BoxSpaceTests_testStoreIndex")
     }
 }

@@ -9,11 +9,12 @@
  *                                                                            *
  ******************************************************************************/
 
+import File
 import TarantoolConnector
 @testable import TestUtils
 
 extension TarantoolProcess {
-    convenience init() throws {
+    convenience init(at path: Path) throws {
         let script = """
         box.schema.user.grant('guest', 'read,write,execute', 'universe')
         box.schema.user.passwd('admin', 'admin')
@@ -28,7 +29,7 @@ extension TarantoolProcess {
         seq:create_index('primary', {sequence=true})
         """
 
-        try self.init(with: script)
+        try self.init(at: path, with: script)
         try launch()
     }
 

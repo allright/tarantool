@@ -10,6 +10,7 @@
  ******************************************************************************/
 
 import Test
+import File
 import Fiber
 @testable import Async
 @testable import TestUtils
@@ -17,18 +18,26 @@ import Fiber
 @testable import TarantoolConnector
 
 class IProtoIndexTests: TestCase {
+    let temp = Path(string: "/tmp/IProtoIndexTests")
+
     override func setUp() {
         async.setUp(Fiber.self)
+    }
+
+    override func tearDown() {
+        try? Directory.remove(at: temp)
     }
 
      func withNewIProtoSchema(
         _ file: StaticString = #file,
         _ line: UInt = #line,
+        _ function: String = #function,
         _ body: @escaping (Schema<IProto>) throws -> Void)
     {
-        async.task {
+        async.task { [unowned self] in
             scope(file: file, line: line) {
-                let tarantool = try TarantoolProcess()
+                let path = self.temp.appending(function)
+                let tarantool = try TarantoolProcess(at: path)
                 let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
                 try iproto.auth(username: "admin", password: "admin")
 

@@ -38,7 +38,7 @@ class TarantoolProcess {
 
     private let syncPort: Int
 
-    let temp = Path(string: "/tmp/TarantoolTemp\(Int.random(in: 0..<Int.max))")
+    let temp: Path
 
     var lock: File {
         return File(name: "lock", at: temp)
@@ -59,9 +59,10 @@ class TarantoolProcess {
             .readUntilEnd(as: String.self)
     }
 
-    init(with script: String = "") throws {
+    init(at path: Path, with script: String = "") throws {
         self.syncPort = Int.random(in: 64_000...65_500)
         self.port = Int.random(in: 64_000...65_500)
+        self.temp = path
         self.script = script
     }
 
@@ -77,7 +78,8 @@ class TarantoolProcess {
               memtx_dir='\(temp.string)',
               wal_dir='\(temp.string)',
               vinyl_dir='\(temp.string)',
-              memtx_memory=100000000
+              memtx_memory=100000000,
+              feedback_enabled=false
             }
             \(self.script)
             local fiber = require('fiber')

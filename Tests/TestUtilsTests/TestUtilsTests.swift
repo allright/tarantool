@@ -16,14 +16,21 @@ import Fiber
 @testable import TestUtils
 
 class TestUtilsTests: TestCase {
+    let temp = Path(string: "/tmp/TestUtilsTests")
+
     override func setUp() {
         async.setUp(Fiber.self)
+    }
+
+    override func tearDown() {
+        try? Directory.remove(at: temp)
     }
 
     func testTarantoolProcess() {
         async.task {
             scope {
-                let tarantool = try TarantoolProcess()
+                let temp = self.temp.appending("tarantool_\(#function)")
+                let tarantool = try TarantoolProcess(at: temp)
                 assertEqual(tarantool.isRunning, false)
 
                 try tarantool.launch()
@@ -32,19 +39,6 @@ class TestUtilsTests: TestCase {
                 let exitCode = try tarantool.terminate()
                 assertEqual(tarantool.isRunning, false)
                 assertEqual(exitCode, 0)
-            }
-        }
-        async.loop.run()
-    }
-
-    func testTempFolder() {
-        async.task {
-            scope {
-                let tarantool = try TarantoolProcess()
-                assertEqual(tarantool.temp, tarantool.temp)
-
-                let tarantool2 = try TarantoolProcess()
-                assertNotEqual(tarantool.temp, tarantool2.temp)
             }
         }
         async.loop.run()

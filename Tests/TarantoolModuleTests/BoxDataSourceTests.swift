@@ -10,48 +10,71 @@
  ******************************************************************************/
 
 import Test
+import File
 import Fiber
 @testable import Async
 @testable import TestUtils
 
 class BoxDataSourceTests: TestCase {
+    let temp = Path(string: "/tmp/BoxDataSourceTests")
+
     override func setUp() {
         async.setUp(Fiber.self)
     }
 
+    override func tearDown() {
+        try? Directory.remove(at: temp)
+    }
+
+    func test(
+        _ name: String,
+        _ file: StaticString = #file,
+        _ line: UInt = #line,
+        _ function: String = #function)
+    {
+        async.task { [unowned self] in
+            scope(file: file, line: line) {
+                let path = self.temp.appending(function)
+                let tarantool = try TarantoolProcess(at: path, function: name)
+                try tarantool.call(name)
+            }
+        }
+        async.loop.run()
+    }
+
     func testCount() {
-        TarantoolProcess.testProcedure("BoxDataSourceTests_testCount")
+        test("BoxDataSourceTests_testCount")
     }
 
     func testSelect() {
-        TarantoolProcess.testProcedure("BoxDataSourceTests_testSelect")
+        test("BoxDataSourceTests_testSelect")
     }
 
     func testLimit() {
-        TarantoolProcess.testProcedure("BoxDataSourceTests_testLimit")
+        test("BoxDataSourceTests_testLimit")
     }
 
     func testGet() {
-        TarantoolProcess.testProcedure("BoxDataSourceTests_testGet")
+        test("BoxDataSourceTests_testGet")
     }
 
     func testInsert() {
-        TarantoolProcess.testProcedure("BoxDataSourceTests_testInsert")
+        test("BoxDataSourceTests_testInsert")
     }
 
     func testReplace() {
-        TarantoolProcess.testProcedure("BoxDataSourceTests_testReplace")
+        test("BoxDataSourceTests_testReplace")
     }
 
     func testDelete() {
-        TarantoolProcess.testProcedure("BoxDataSourceTests_testDelete")
+        test("BoxDataSourceTests_testDelete")
     }
 
     func testUpdate() {
-        TarantoolProcess.testProcedure("BoxDataSourceTests_testUpdate")
+        test("BoxDataSourceTests_testUpdate")
     }
 
     func testUpsert() {
-        TarantoolProcess.testProcedure("BoxDataSourceTests_testUpsert")
+        test("BoxDataSourceTests_testUpsert")
     }
 }

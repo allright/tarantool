@@ -10,24 +10,33 @@
  ******************************************************************************/
 
 import Test
+import File
 import Fiber
 @testable import Async
 @testable import TestUtils
 @testable import TarantoolConnector
 
 class IProtoDataSourceTests: TestCase {
+    let temp = Path(string: "/tmp/IProtoDataSourceTests")
+
     override func setUp() {
         async.setUp(Fiber.self)
+    }
+
+    override func tearDown() {
+        try? Directory.remove(at: temp)
     }
 
     func withNewIProtoConnection(
         _ file: StaticString = #file,
         _ line: UInt = #line,
+        _ function: String = #function,
         _ body: @escaping (IProto, Int) throws -> Void)
     {
-        async.task {
+        async.task { [unowned self] in
             scope(file: file, line: line) {
-                let tarantool = try TarantoolProcess()
+                let path = self.temp.appending(function)
+                let tarantool = try TarantoolProcess(at: path)
                 let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
                 let result = try iproto.eval("return box.space.test.id")
                 guard let testSpaceId = result.first?.integerValue else {

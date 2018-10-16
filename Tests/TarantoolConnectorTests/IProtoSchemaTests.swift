@@ -10,43 +10,36 @@
  ******************************************************************************/
 
 import Test
+import File
 import Fiber
 @testable import Async
 @testable import TestUtils
 @testable import TarantoolConnector
 
 class IProtoSchemaTests: TestCase {
-    var tarantool: TarantoolProcess!
-    var iproto: IProto!
+    let temp = Path(string: "/tmp/IProtoSchemaTests")
 
     override func setUp() {
         async.setUp(Fiber.self)
-        async.task {
-            scope {
-                let tarantool = try TarantoolProcess()
-                let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
-                self.tarantool = tarantool
-                self.iproto = iproto
-            }
-        }
-        async.loop.run()
     }
 
     override func tearDown() {
-        async.task {
-            assertEqual(try? self.tarantool.terminate(), 0)
-        }
-        async.loop.run()
+        try? Directory.remove(at: temp)
     }
 
     func withNewIProtoConnection(
         _ file: StaticString = #file,
         _ line: UInt = #line,
+        _ function: String = #function,
         _ body: @escaping (IProto) throws -> Void)
     {
-        async.task {
+        async.task { [unowned self] in
             scope(file: file, line: line) {
-                try body(self.iproto)
+                let path = self.temp.appending(function)
+                let tarantool = try TarantoolProcess(at: path)
+                let iproto = try IProto(host: "127.0.0.1", port: tarantool.port)
+                try body(iproto)
+                assertEqual(try? tarantool.terminate(), 0)
             }
         }
         async.loop.run()

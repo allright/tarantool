@@ -4,7 +4,6 @@ extension TestUtilsTests {
     static let __allTests = [
         ("testModulePath", testModulePath),
         ("testTarantoolProcess", testTarantoolProcess),
-        ("testTempFolder", testTempFolder),
     ]
 }
 
