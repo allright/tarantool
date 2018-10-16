@@ -80,6 +80,7 @@ public final class Schema<T: DataSource & LuaScript> {
         case .memtx: options = "{ engine='memtx' }"
         case .vinyl: options = "{ engine='vinyl' }"
         case .sysview: throw Tarantool.Error.invalidEngine
+        case .blackhole: throw Tarantool.Error.invalidEngine
         }
         let script = "return box.schema.space.create('\(name)', \(options)).id"
         let result = try source.eval(script, arguments: [])

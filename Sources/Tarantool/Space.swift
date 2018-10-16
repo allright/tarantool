@@ -17,6 +17,7 @@ extension Space {
         case sysview
         case memtx
         case vinyl
+        case blackhole
     }
 }
 
