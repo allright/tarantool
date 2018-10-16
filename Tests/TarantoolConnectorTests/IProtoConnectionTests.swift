@@ -12,8 +12,8 @@
 import Test
 import Fiber
 @testable import Async
-@testable import TarantoolConnector
 @testable import TestUtils
+@testable import TarantoolConnector
 
 class IProtoConnectionTests: TestCase {
     override func setUp() {

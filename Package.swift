@@ -67,10 +67,15 @@ let package = Package(
         .target(
             name: "TestUtils",
             dependencies: ["Platform", "AIO", "Process"]),
+        .target(name: "CTestUtils"),
         .testTarget(
             name: "TarantoolModuleTests",
             dependencies: [
-                "TarantoolModule", "TarantoolConnector", "Test", "Fiber"
+                "Test",
+                "Fiber",
+                "CTestUtils",
+                "TarantoolModule",
+                "TarantoolConnector"
             ]),
         .testTarget(
             name: "TarantoolConnectorTests",

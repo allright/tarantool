@@ -14,8 +14,7 @@
 #include <stdlib.h>
 
 #include <wrappers.h>
-#include <tarantool/module.h>   
-
+#include <tarantool/module.h>
 
 int fiber_invoke(va_list ap) {
     void *ctx = va_arg(ap, void*);
