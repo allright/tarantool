@@ -41,11 +41,11 @@ class TarantoolProcess {
     let temp: Path
 
     var lock: File {
-        return File(name: "lock", at: temp)
+        return try! File(name: "lock", at: temp)
     }
 
     var logFile: File {
-        return File(name: "tarantool.log", at: temp)
+        return try! File(name: "tarantool.log", at: temp)
     }
 
     var isRunning: Bool {
@@ -95,7 +95,7 @@ class TarantoolProcess {
         try Directory.create(at: temp)
         try lock.create()
 
-        let config = File(name: "init.lua", at: temp)
+        let config = try File(name: "init.lua", at: temp)
         let stream = try config.open(flags: [.create, .truncate, .write])
         try stream.write(script)
         try stream.flush()

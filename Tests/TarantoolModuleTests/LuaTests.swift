@@ -16,7 +16,7 @@ import Fiber
 @testable import TestUtils
 
 class LuaTests: TestCase {
-    let temp = Path(string: "/tmp/LuaTests")
+    let temp = Path("/tmp/LuaTests")
 
     override func setUp() {
         async.setUp(Fiber.self)

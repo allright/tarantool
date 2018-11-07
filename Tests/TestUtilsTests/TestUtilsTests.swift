@@ -16,7 +16,7 @@ import Fiber
 @testable import TestUtils
 
 class TestUtilsTests: TestCase {
-    let temp = Path(string: "/tmp/TestUtilsTests")
+    let temp = Path("/tmp/TestUtilsTests")
 
     override func setUp() {
         async.setUp(Fiber.self)
@@ -49,6 +49,6 @@ class TestUtilsTests: TestCase {
             fail()
             return
         }
-        assertTrue(File.isExists(at: Path(string: path)))
+        assertTrue(File.isExists(at: Path(path)))
     }
 }

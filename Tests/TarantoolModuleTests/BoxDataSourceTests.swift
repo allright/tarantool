@@ -16,7 +16,7 @@ import Fiber
 @testable import TestUtils
 
 class BoxDataSourceTests: TestCase {
-    let temp = Path(string: "/tmp/BoxDataSourceTests")
+    let temp = Path("/tmp/BoxDataSourceTests")
 
     override func setUp() {
         async.setUp(Fiber.self)

@@ -17,7 +17,7 @@ import Fiber
 @testable import TarantoolConnector
 
 class IProtoConnectionTests: TestCase {
-    let temp = Path(string: "/tmp/IProtoConnectionTests")
+    let temp = Path("/tmp/IProtoConnectionTests")
 
     override func setUp() {
         async.setUp(Fiber.self)

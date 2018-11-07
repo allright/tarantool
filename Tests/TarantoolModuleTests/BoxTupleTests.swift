@@ -16,7 +16,7 @@ import Fiber
 @testable import TestUtils
 
 class BoxTupleTests: TestCase {
-    let temp = Path(string: "/tmp/BoxTupleTests")
+    let temp = Path("/tmp/BoxTupleTests")
 
     override func setUp() {
         async.setUp(Fiber.self)
