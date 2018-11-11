@@ -15,8 +15,12 @@ import PackageDescription
 let package = Package(
     name: "Tarantool",
     products: [
-        .library(name: "TarantoolConnector", targets: ["TarantoolConnector"]),
-        .library(name: "TarantoolModule", targets: ["TarantoolModule"]),
+        .library(
+            name: "TarantoolConnector",
+            targets: ["TarantoolConnector"]),
+        .library(
+            name: "TarantoolModule",
+            targets: ["TarantoolModule"]),
         // used by TarantoolModuleTests
         .library(
             name: "TarantoolModuleTest",
@@ -53,8 +57,11 @@ let package = Package(
             .branch("master"))
     ],
     targets: [
-        .target(name: "CTarantool"),
-        .target(name: "Tarantool", dependencies: ["MessagePack"]),
+        .target(
+            name: "CTarantool"),
+        .target(
+            name: "Tarantool",
+            dependencies: ["MessagePack"]),
         .target(
             name: "TarantoolConnector",
             dependencies: ["Tarantool", "Network", "SHA1"]),
@@ -67,7 +74,8 @@ let package = Package(
         .target(
             name: "TestUtils",
             dependencies: ["Platform", "AIO", "Process"]),
-        .target(name: "CTestUtils"),
+        .target(
+            name: "CTestUtils"),
         .testTarget(
             name: "TarantoolModuleTests",
             dependencies: [
