@@ -9,7 +9,7 @@
  *                                                                            *
  ******************************************************************************/
 
-import Crypto
+import SHA1
 
 extension Array where Element == UInt8 {
     func chapSha1(salt: [UInt8]) -> [UInt8] {

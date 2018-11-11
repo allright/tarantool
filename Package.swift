@@ -57,7 +57,7 @@ let package = Package(
         .target(name: "Tarantool", dependencies: ["MessagePack"]),
         .target(
             name: "TarantoolConnector",
-            dependencies: ["Tarantool", "Network", "Crypto"]),
+            dependencies: ["Tarantool", "Network", "SHA1"]),
         .target(
             name: "TarantoolModule",
             dependencies: ["CTarantool", "Tarantool", "Async", "Time"]),

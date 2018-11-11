@@ -10,7 +10,7 @@
  ******************************************************************************/
 
 import Test
-import Foundation
+import SHA1
 @testable import TarantoolConnector
 
 class CHAPSHA1Tests: TestCase {
