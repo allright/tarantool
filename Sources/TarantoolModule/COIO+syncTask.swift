@@ -12,8 +12,9 @@
 import Time
 import Async
 import Platform
-import Dispatch
 
+// FIXME: remove dependencies
+import Dispatch
 #if os(Linux)
 import class Foundation.Thread
 #endif

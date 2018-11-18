@@ -14,14 +14,13 @@ import File
 import Network
 import Platform
 import Process
-import class Foundation.ProcessInfo
 
 extension String: Error {}
 
 class TarantoolProcess {
     lazy var process: Process = {
         let path: String
-        if let env_bin = ProcessInfo.processInfo.environment["TARANTOOL_BIN"] {
+        if let env_bin = Environment["TARANTOOL_BIN"] {
             path = env_bin
         } else {
             #if os(macOS)

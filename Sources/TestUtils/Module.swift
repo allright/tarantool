@@ -9,7 +9,8 @@
  *                                                                            *
  ******************************************************************************/
 
-import Foundation
+import AIO
+import Platform
 
 struct Module {
     let name: String
@@ -23,35 +24,33 @@ struct Module {
 
     private var xcodeModuleUrl: String? {
         guard let xcodeBuildDir =
-            ProcessInfo.processInfo.environment["__XPC_DYLD_FRAMEWORK_PATH"],
+            Environment["__XPC_DYLD_FRAMEWORK_PATH"],
             !xcodeBuildDir.contains(":") else {
                 return nil
         }
-        return URL(fileURLWithPath: xcodeBuildDir)
-            .appendingPathComponent("\(name).framework")
-            .appendingPathComponent(name)
-            .path
+        return Path(xcodeBuildDir)
+            .appending("\(name).framework")
+            .appending(name)
+            .string
     }
 
     private var swiftPMModuleUrl: String? {
-        var url = URL(fileURLWithPath: #file)
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .deletingLastPathComponent()
-            .appendingPathComponent(".build")
-            .appendingPathComponent("debug")
+        var path = Path(#file)
+            .deletingLastComponent
+            .deletingLastComponent
+            .deletingLastComponent
+            .appending(".build")
 
         switch _isDebugAssertConfiguration() {
-        case true: url.appendPathComponent("debug")
-        case false: url.appendPathComponent("release")
+        case true: path.append("debug")
+        case false: path.append("release")
         }
-        url.deleteLastPathComponent()
-        url.appendPathComponent("lib\(name)")
     #if os(macOS)
-        url.appendPathExtension("dylib")
+        path.append("lib\(name).dylib")
     #else
-        url.appendPathExtension("so")
+        path.append("lib\(name).so")
     #endif
-        return url.path
+        print(path.string)
+        return path.string
     }
 }

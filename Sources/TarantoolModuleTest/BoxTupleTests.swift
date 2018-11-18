@@ -10,7 +10,6 @@
  ******************************************************************************/
 
 import Platform
-import Foundation
 import MessagePack
 import TarantoolModule
 

@@ -11,10 +11,11 @@
 
 import Stream
 import Network
-import Foundation
-
 @_exported import Tarantool
 @_exported import MessagePack
+
+// FIXME: remove dependency
+import struct Foundation.Data
 
 public class IProto {
     let welcome: Welcome

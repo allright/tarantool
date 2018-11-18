@@ -9,7 +9,6 @@
  *                                                                            *
  ******************************************************************************/
 
-import Foundation
 import MessagePack
 import Tarantool
 

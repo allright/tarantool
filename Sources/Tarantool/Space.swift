@@ -9,7 +9,6 @@
  *                                                                            *
  ******************************************************************************/
 
-import Foundation
 import MessagePack
 
 extension Space {
