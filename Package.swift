@@ -47,6 +47,9 @@ let package = Package(
             url: "https://github.com/tris-foundation/messagepack.git",
             .branch("master")),
         .package(
+            url: "https://github.com/tris-foundation/radix.git",
+            .branch("master")),
+        .package(
             url: "https://github.com/tris-foundation/test.git",
             .branch("master")),
         .package(
@@ -64,7 +67,7 @@ let package = Package(
             dependencies: ["MessagePack"]),
         .target(
             name: "TarantoolConnector",
-            dependencies: ["Tarantool", "Network", "SHA1"]),
+            dependencies: ["Tarantool", "Network", "SHA1", "Base64"]),
         .target(
             name: "TarantoolModule",
             dependencies: ["CTarantool", "Tarantool", "Async", "Time"]),
@@ -83,13 +86,11 @@ let package = Package(
                 "Fiber",
                 "CTestUtils",
                 "TarantoolModule",
-                "TarantoolConnector"
-            ]),
+                "TarantoolConnector"]),
         .testTarget(
             name: "TarantoolConnectorTests",
             dependencies: ["TarantoolConnector", "Test", "Fiber"]),
         .testTarget(
             name: "TestUtilsTests",
-            dependencies: ["TestUtils", "Test", "Fiber"])
-    ]
+            dependencies: ["TestUtils", "Test", "Fiber"])]
 )

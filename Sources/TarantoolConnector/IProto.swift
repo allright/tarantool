@@ -9,13 +9,11 @@
  *                                                                            *
  ******************************************************************************/
 
+import Base64
 import Stream
 import Network
 @_exported import Tarantool
 @_exported import MessagePack
-
-// FIXME: remove dependency
-import struct Foundation.Data
 
 public class IProto {
     let welcome: Welcome
@@ -65,13 +63,11 @@ extension IProto {
     }
 
     public func auth(username: String, password: String) throws {
-        let data = [UInt8](password.utf8)
-        guard let salt = Data(base64Encoded: welcome.salt) else {
+        let bytes = [UInt8](password.utf8)
+        guard let salt = [UInt8](decodingBase64: welcome.salt) else {
             throw IProto.Error.invalidSalt
         }
-
-        let scramble = data.chapSha1(salt: [UInt8](salt))
-
+        let scramble = bytes.chapSha1(salt: salt)
         let keys: [Key : MessagePack] = [
             .username: .string(username),
             .tuple: .array([
