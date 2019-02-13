@@ -1,4 +1,4 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.0
 import PackageDescription
 
 let package = Package(
@@ -50,7 +50,11 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "CTarantool"),
+            name: "CTarantool",
+            linkerSettings: [
+                .unsafeFlags(
+                    ["-Xlinker", "-undefined", "-Xlinker", "dynamic_lookup"],
+                    .when(platforms: [.macOS]))]),
         .target(
             name: "Tarantool",
             dependencies: ["MessagePack"]),
