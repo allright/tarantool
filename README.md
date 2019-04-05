@@ -15,14 +15,14 @@ Key features:
 * **TarantoolConnector**: an implementation which can run the same code by communicating with a remote instance.
 
 And the one that allows us run the code in different environments:
-* **AsyncTarantool**: an implementation of our [Async](https://github.com/tris-foundation/async) protocol to switch over different cooperative multitasking [systems](https://github.com/tris-foundation/fiber).
+* **AsyncTarantool**: an implementation of our [Async](https://github.com/tris-code/async) protocol to switch over different cooperative multitasking [systems](https://github.com/tris-code/fiber).
 
 Follow the examples link below to see how to use it all together.
 
 ## Package.swift
 
 ```swift
-.package(url: "https://github.com/tris-foundation/tarantool.git", .branch("master"))
+.package(url: "https://github.com/tris-code/tarantool.git", .branch("master"))
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ swift build
 swift test
 ```
 
-You can find this code and more in [examples](https://github.com/tris-foundation/examples).
+You can find this code and more in [examples](https://github.com/tris-code/examples).
 
 ### Tarantool Connector
 
