@@ -27,6 +27,8 @@ Follow the examples link below to see how to use it all together.
 
 ## Usage
 
+Please use Swift 5 Release or Xcode 10; recent dev builds are not supported yet.
+
 ```bash
 swift build
 swift test
